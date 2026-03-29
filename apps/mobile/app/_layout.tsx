@@ -1,4 +1,3 @@
-import '../global.css'
 import { useEffect } from 'react'
 import { Stack } from 'expo-router'
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo'
