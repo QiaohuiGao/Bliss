@@ -1,0 +1,127 @@
+{
+  "great:everything_going_well": {
+    "validation": "That's genuinely wonderful to hear — and not something to take for granted. Wedding planning is hard, and you're navigating it well.",
+    "honestTip": "Moments of calm are great times to get ahead on something you've been putting off. No pressure, but a little momentum now pays off later.",
+    "actionTiles": ["Check what's next in Stage", "Get ahead on one task", "Enjoy this moment", "Update your partner"]
+  },
+  "great:excited_about_decision": {
+    "validation": "Excitement at this stage is real and earned. You've made good decisions and it's coming together.",
+    "honestTip": "Write down what you're excited about right now — it's easy to forget these moments once you're in the thick of logistics.",
+    "actionTiles": ["Note what's working", "Share with partner", "Keep the momentum", "See what's next"]
+  },
+  "great:ahead_of_schedule": {
+    "validation": "Being ahead of schedule is a gift you're giving your future self. Nice work.",
+    "honestTip": "Use extra runway to make one decision more carefully than you otherwise would, rather than just moving faster.",
+    "actionTiles": ["Review upcoming tasks", "Make one decision well", "Take a real break", "Help partner catch up"]
+  },
+  "great:partner_aligned": {
+    "validation": "Partner alignment is genuinely one of the biggest factors in a smooth planning process. That alignment is worth protecting.",
+    "honestTip": "Keep doing whatever you're doing — checking in with each other regularly, not letting resentments build, splitting the load fairly.",
+    "actionTiles": ["Celebrate together", "Plan a date night", "Keep communicating", "See what's next"]
+  },
+  "great:just_finished_something_big": {
+    "validation": "Finishing something significant — venue, photographer, invitations — is a real milestone. You're allowed to feel good about it.",
+    "honestTip": "Give yourself a day before jumping to the next thing. The work will be there. Let the win land.",
+    "actionTiles": ["Celebrate the win", "Tell someone you love", "Rest before next step", "See what's next"]
+  },
+  "okay:managing_but_tired": {
+    "validation": "Okay and tired is honest. Wedding planning adds real cognitive load on top of regular life — that's not a complaint, it's just true.",
+    "honestTip": "Identify the one thing taking the most mental energy and try to close that loop this week. Open decisions are the biggest drain.",
+    "actionTiles": ["Find the open loop", "Close one decision", "Delegate one task", "Rest intentionally"]
+  },
+  "okay:some_things_uncertain": {
+    "validation": "Uncertainty is uncomfortable but often temporary. Most planning uncertainties resolve themselves once you make one key decision.",
+    "honestTip": "Write down the specific uncertainties. Then pick the one that, if resolved, would make the others feel smaller.",
+    "actionTiles": ["List what's uncertain", "Pick the biggest one", "Make a decision", "Let go of the rest"]
+  },
+  "okay:partner_not_engaged": {
+    "validation": "Uneven engagement is one of the most common sources of friction in wedding planning. You're not alone in this.",
+    "honestTip": "Try giving your partner a specific, bounded task they can own completely. Broad involvement requests rarely work; specific ownership does.",
+    "actionTiles": ["Give partner a task to own", "Have one honest conversation", "Identify what you each do best", "Ask what holds them back"]
+  },
+  "okay:budget_feeling_tight": {
+    "validation": "Budget tension is real and almost universal. Most couples find creative ways through it — but it takes honest conversations.",
+    "honestTip": "The most useful thing you can do right now is get a clear picture of what you've committed to versus what's still flexible. Clarity reduces anxiety more than the budget number itself.",
+    "actionTiles": ["Review committed costs", "Find 2 flexible areas", "Look at DIY options", "Revisit priorities"]
+  },
+  "okay:decisions_feeling_big": {
+    "validation": "Wedding decisions feel permanent in a way that everyday decisions don't. That's real — but most of them are less permanent than they feel in the moment.",
+    "honestTip": "Identify which decisions are actually reversible (most are) and which aren't (very few). Focus your energy on the ones that genuinely can't be undone.",
+    "actionTiles": ["Separate reversible from not", "Decide the irreversible one", "Draft on the rest", "Move forward"]
+  },
+  "overwhelmed:too_many_decisions": {
+    "validation": "That's okay — overwhelm almost always comes from holding too many open loops at once. Your brain isn't broken; it's full.",
+    "honestTip": "You don't have to decide everything today. Pick one decision to close this week and defer the rest explicitly. 'I'm not deciding this until X date' is a decision.",
+    "actionTiles": ["List open decisions", "Close just one", "Defer the rest explicitly", "Breathe"]
+  },
+  "overwhelmed:too_many_tasks": {
+    "validation": "When everything feels urgent at once, nothing gets done well. This is a sign you need to triage, not accelerate.",
+    "honestTip": "Look at your current stage tasks. Find the one task that, if done, would make the others easier. Do only that one today.",
+    "actionTiles": ["Find the keystone task", "Do only that one", "Ignore the rest today", "Reassess tomorrow"]
+  },
+  "overwhelmed:family_pressure": {
+    "validation": "Family expectations are one of the hardest parts of wedding planning that no planning app can fully solve. The fact that it's hard doesn't mean you're doing it wrong.",
+    "honestTip": "Decide what you actually want — in writing, just for yourself. Then decide what you're willing to accommodate. Those are two different questions, and mixing them is where stress comes from.",
+    "actionTiles": ["Write what you actually want", "Decide what to accommodate", "Have one clear conversation", "Set one boundary"]
+  },
+  "overwhelmed:vendor_coordination": {
+    "validation": "Coordinating multiple vendors is genuinely complex logistics. The fact that it feels hard is because it is hard, not because you're bad at it.",
+    "honestTip": "The most powerful move here is a single shared document — a vendor contact sheet with everyone's info, arrival times, and what they're responsible for. One source of truth eliminates most coordination stress.",
+    "actionTiles": ["Build vendor contact sheet", "Confirm one vendor today", "Assign day-of point person", "Review timeline"]
+  },
+  "overwhelmed:time_running_out": {
+    "validation": "Feeling like time is running out is often worse than the reality — but it's a signal worth taking seriously.",
+    "honestTip": "Open your current stage tasks right now. Identify what is actually time-sensitive (has a real deadline) vs. what just feels urgent. Focus only on the time-sensitive items.",
+    "actionTiles": ["Find real deadlines", "Do the time-sensitive one", "Defer the rest", "Ask for help"]
+  },
+  "stressed:conflict_with_partner": {
+    "validation": "Planning stress often creates or amplifies relationship tension. This is normal and doesn't mean something is wrong with your relationship.",
+    "honestTip": "Separate the planning conflict from the relationship conversation. 'We disagree about the venue' and 'I feel like you don't care' are different conversations that need different approaches.",
+    "actionTiles": ["Separate the issues", "Talk about the planning one first", "Take a break from planning", "Come back when calm"]
+  },
+  "stressed:financial_strain": {
+    "validation": "Money stress is real and valid. It's also one of the most common sources of both planning and relationship stress — you're not unique in this, and there's no shame in it.",
+    "honestTip": "The most useful thing right now is getting honest numbers on paper. Most financial anxiety comes from vague dread, not specific numbers. The specific numbers are usually more manageable than the dread.",
+    "actionTiles": ["Get specific numbers", "Find two things to cut", "Identify one DIY swap", "Have the budget talk"]
+  },
+  "stressed:something_went_wrong": {
+    "validation": "Things going wrong during wedding planning is normal, not a bad omen. Almost every wedding has something that doesn't go as planned — the ones that feel perfect are the ones where couples rolled with it.",
+    "honestTip": "Ask yourself: will this matter on the day? Will it matter in a year? If no to both, give yourself permission to let it go. If yes to either, figure out the specific fix needed — not a general worry, a specific action.",
+    "actionTiles": ["Assess real impact", "Find the specific fix", "Let go if it doesn't matter", "Ask for help"]
+  },
+  "stressed:overwhelmed_by_options": {
+    "validation": "Too many options creates real decision fatigue. This is a well-documented cognitive phenomenon, not a personal weakness.",
+    "honestTip": "Constrain your options artificially. Tell yourself: I'm choosing between these 2 things only. Cut everything else out of consideration. Good-enough choices made now beat perfect choices made never.",
+    "actionTiles": ["Pick two options only", "Make the call", "Move on", "Trust your gut"]
+  },
+  "stressed:work_life_balance": {
+    "validation": "Trying to plan a wedding while maintaining a full life is genuinely hard. The planning doesn't stop because work gets busy.",
+    "honestTip": "Define dedicated planning time (even 30 minutes, twice a week) and protect it. Trying to plan in stolen moments while doing everything else creates constant low-level stress.",
+    "actionTiles": ["Schedule two planning sessions", "Identify one task to delegate", "Lower this week's scope", "Protect one rest day"]
+  },
+  "lost:dont_know_where_to_start": {
+    "validation": "Not knowing where to start is completely normal, especially early in planning. There's no intuitive starting point — you have to be shown one.",
+    "honestTip": "You're in Stage 1 for a reason. Don't try to plan the whole wedding at once. Just do the next task in front of you. That's it.",
+    "actionTiles": ["Look at your next task", "Do just that one", "Ignore everything else", "Come back tomorrow"]
+  },
+  "lost:conflicting_advice": {
+    "validation": "Everyone has opinions about weddings. This is genuinely one of the hardest parts of the process — everyone means well but the advice conflicts.",
+    "honestTip": "The only advice that matters is yours and your partner's. Everyone else is giving you the wedding they would want. You get to want something different.",
+    "actionTiles": ["Reconnect with your vision", "Write what you actually want", "Decide one thing together", "Tune out the rest"]
+  },
+  "lost:changed_my_mind": {
+    "validation": "Changing your mind during planning is normal. Visions evolve. What felt right six months ago might not anymore, and that's okay.",
+    "honestTip": "Identify specifically what changed — your taste, your budget, your priorities? Then assess what decisions can be revisited vs. what's already committed. Most things are more flexible than they feel.",
+    "actionTiles": ["Identify what changed", "Check what's flexible", "Revisit one decision", "Talk to partner"]
+  },
+  "lost:comparison_anxiety": {
+    "validation": "Instagram weddings are the highlight reel of highlight reels. Comparing your planning process to a curated photo of someone's best moment is a recipe for feeling inadequate.",
+    "honestTip": "Come back to your vision from Stage 1. What did you say mattered most? Those words are your filter — not someone else's floral budget or venue.",
+    "actionTiles": ["Revisit your vision", "Close Instagram", "Focus on your priorities", "Remember what matters"]
+  },
+  "lost:not_enjoying_planning": {
+    "validation": "You're allowed to not love wedding planning. Many people find it genuinely stressful and that's a completely valid experience.",
+    "honestTip": "Find the one part of the wedding you are genuinely excited about and do something related to that today. Let that be your anchor. You don't have to enjoy the process to have a beautiful wedding.",
+    "actionTiles": ["Find your one joy", "Do something toward it", "Delegate the rest", "Give yourself permission"]
+  }
+}

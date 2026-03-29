@@ -1,0 +1,8 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "cd ../.. && bun run build --filter=@bliss/web",
+  "outputDirectory": "apps/web/.next",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@bliss-api-url"
+  }
+}

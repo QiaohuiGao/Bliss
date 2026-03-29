@@ -1,0 +1,34 @@
+{
+  "name": "@bliss/api",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "bun run src/db/migrate.ts",
+    "db:seed": "bun run src/db/seed/index.ts",
+    "db:studio": "drizzle-kit studio",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@bliss/types": "workspace:*",
+    "@clerk/backend": "^1.3.0",
+    "drizzle-orm": "^0.31.0",
+    "fastify": "^4.28.0",
+    "@fastify/cors": "^9.0.1",
+    "@fastify/jwt": "^8.0.1",
+    "@fastify/rate-limit": "^9.1.0",
+    "postgres": "^3.4.4",
+    "@sendgrid/mail": "^8.1.3",
+    "svix": "^1.21.0",
+    "zod": "^3.23.8",
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.11",
+    "drizzle-kit": "^0.22.0",
+    "typescript": "^5.4.0"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "note": "All values in cents. Ranges based on US averages 2024.",
+  "estimates": {
+    "micro": {
+      "urban": {
+        "full_diy":     { "venue": [0, 50000], "catering": [30000, 80000], "photography": [80000, 150000], "music": [0, 30000], "florals": [5000, 20000], "attire": [30000, 80000], "stationery": [2000, 8000], "other": [10000, 30000] },
+        "mixed":        { "venue": [50000, 200000], "catering": [60000, 150000], "photography": [150000, 250000], "music": [10000, 60000], "florals": [20000, 60000], "attire": [50000, 150000], "stationery": [5000, 20000], "other": [20000, 60000] },
+        "vendor_led":   { "venue": [100000, 300000], "catering": [100000, 250000], "photography": [200000, 350000], "music": [30000, 120000], "florals": [40000, 120000], "attire": [80000, 200000], "stationery": [10000, 30000], "other": [30000, 80000] },
+        "full_service": { "venue": [150000, 400000], "catering": [150000, 350000], "photography": [250000, 500000], "music": [50000, 200000], "florals": [60000, 200000], "attire": [100000, 300000], "stationery": [15000, 50000], "other": [50000, 150000] }
+      },
+      "suburban": {
+        "full_diy":     { "venue": [0, 30000], "catering": [20000, 60000], "photography": [60000, 120000], "music": [0, 20000], "florals": [3000, 15000], "attire": [25000, 70000], "stationery": [1500, 6000], "other": [8000, 25000] },
+        "mixed":        { "venue": [30000, 150000], "catering": [50000, 120000], "photography": [120000, 200000], "music": [8000, 50000], "florals": [15000, 50000], "attire": [40000, 120000], "stationery": [4000, 15000], "other": [15000, 50000] },
+        "vendor_led":   { "venue": [80000, 250000], "catering": [80000, 200000], "photography": [160000, 280000], "music": [25000, 100000], "florals": [30000, 100000], "attire": [60000, 160000], "stationery": [8000, 25000], "other": [25000, 70000] },
+        "full_service": { "venue": [120000, 350000], "catering": [120000, 300000], "photography": [200000, 400000], "music": [40000, 180000], "florals": [50000, 180000], "attire": [80000, 250000], "stationery": [12000, 40000], "other": [40000, 120000] }
+      },
+      "rural": {
+        "full_diy":     { "venue": [0, 20000], "catering": [15000, 50000], "photography": [50000, 100000], "music": [0, 15000], "florals": [2000, 10000], "attire": [20000, 60000], "stationery": [1000, 5000], "other": [5000, 20000] },
+        "mixed":        { "venue": [20000, 100000], "catering": [40000, 100000], "photography": [100000, 170000], "music": [5000, 40000], "florals": [10000, 40000], "attire": [30000, 100000], "stationery": [3000, 12000], "other": [10000, 40000] },
+        "vendor_led":   { "venue": [50000, 200000], "catering": [70000, 180000], "photography": [130000, 250000], "music": [20000, 80000], "florals": [25000, 80000], "attire": [50000, 130000], "stationery": [6000, 20000], "other": [20000, 60000] },
+        "full_service": { "venue": [80000, 300000], "catering": [100000, 260000], "photography": [170000, 350000], "music": [35000, 150000], "florals": [40000, 150000], "attire": [65000, 220000], "stationery": [10000, 35000], "other": [30000, 100000] }
+      }
+    },
+    "intimate": {
+      "urban": {
+        "full_diy":     { "venue": [0, 100000], "catering": [100000, 300000], "photography": [150000, 250000], "music": [0, 50000], "florals": [20000, 80000], "attire": [40000, 100000], "stationery": [5000, 20000], "other": [20000, 60000] },
+        "mixed":        { "venue": [150000, 400000], "catering": [200000, 600000], "photography": [200000, 350000], "music": [50000, 150000], "florals": [60000, 200000], "attire": [60000, 200000], "stationery": [10000, 40000], "other": [40000, 120000] },
+        "vendor_led":   { "venue": [300000, 800000], "catering": [400000, 1000000], "photography": [280000, 500000], "music": [100000, 400000], "florals": [120000, 400000], "attire": [100000, 300000], "stationery": [20000, 70000], "other": [60000, 200000] },
+        "full_service": { "venue": [500000, 1200000], "catering": [600000, 1500000], "photography": [350000, 700000], "music": [150000, 600000], "florals": [200000, 600000], "attire": [150000, 500000], "stationery": [30000, 100000], "other": [100000, 350000] }
+      },
+      "suburban": {
+        "full_diy":     { "venue": [0, 60000], "catering": [60000, 200000], "photography": [100000, 200000], "music": [0, 30000], "florals": [15000, 60000], "attire": [35000, 90000], "stationery": [4000, 15000], "other": [15000, 50000] },
+        "mixed":        { "venue": [80000, 300000], "catering": [150000, 500000], "photography": [160000, 300000], "music": [30000, 120000], "florals": [40000, 150000], "attire": [50000, 160000], "stationery": [8000, 30000], "other": [30000, 100000] },
+        "vendor_led":   { "venue": [200000, 600000], "catering": [300000, 800000], "photography": [220000, 400000], "music": [80000, 300000], "florals": [80000, 300000], "attire": [80000, 250000], "stationery": [15000, 55000], "other": [50000, 160000] },
+        "full_service": { "venue": [350000, 900000], "catering": [450000, 1200000], "photography": [280000, 550000], "music": [120000, 500000], "florals": [150000, 500000], "attire": [120000, 400000], "stationery": [25000, 80000], "other": [80000, 280000] }
+      },
+      "rural": {
+        "full_diy":     { "venue": [0, 40000], "catering": [40000, 150000], "photography": [80000, 160000], "music": [0, 20000], "florals": [10000, 50000], "attire": [30000, 80000], "stationery": [3000, 12000], "other": [10000, 40000] },
+        "mixed":        { "venue": [50000, 200000], "catering": [100000, 400000], "photography": [130000, 250000], "music": [20000, 100000], "florals": [30000, 120000], "attire": [40000, 130000], "stationery": [6000, 25000], "other": [25000, 80000] },
+        "vendor_led":   { "venue": [120000, 450000], "catering": [250000, 700000], "photography": [180000, 350000], "music": [60000, 250000], "florals": [60000, 250000], "attire": [60000, 200000], "stationery": [12000, 45000], "other": [40000, 130000] },
+        "full_service": { "venue": [200000, 700000], "catering": [350000, 1000000], "photography": [230000, 480000], "music": [100000, 400000], "florals": [120000, 420000], "attire": [100000, 350000], "stationery": [20000, 65000], "other": [65000, 230000] }
+      }
+    },
+    "classic": {
+      "urban": {
+        "full_diy":     { "venue": [100000, 400000], "catering": [300000, 800000], "photography": [200000, 350000], "music": [50000, 200000], "florals": [80000, 250000], "attire": [60000, 150000], "stationery": [20000, 60000], "other": [50000, 150000] },
+        "mixed":        { "venue": [400000, 1200000], "catering": [700000, 2000000], "photography": [300000, 600000], "music": [150000, 500000], "florals": [200000, 700000], "attire": [100000, 300000], "stationery": [40000, 120000], "other": [100000, 300000] },
+        "vendor_led":   { "venue": [800000, 2500000], "catering": [1200000, 3500000], "photography": [400000, 800000], "music": [300000, 1000000], "florals": [400000, 1200000], "attire": [150000, 500000], "stationery": [70000, 200000], "other": [150000, 500000] },
+        "full_service": { "venue": [1200000, 4000000], "catering": [1800000, 5000000], "photography": [500000, 1200000], "music": [500000, 1500000], "florals": [600000, 2000000], "attire": [200000, 800000], "stationery": [100000, 300000], "other": [250000, 800000] }
+      },
+      "suburban": {
+        "full_diy":     { "venue": [50000, 250000], "catering": [200000, 600000], "photography": [150000, 280000], "music": [30000, 150000], "florals": [50000, 180000], "attire": [50000, 130000], "stationery": [15000, 50000], "other": [40000, 120000] },
+        "mixed":        { "venue": [250000, 900000], "catering": [500000, 1500000], "photography": [240000, 500000], "music": [100000, 400000], "florals": [150000, 550000], "attire": [80000, 250000], "stationery": [30000, 100000], "other": [80000, 250000] },
+        "vendor_led":   { "venue": [600000, 2000000], "catering": [900000, 2800000], "photography": [320000, 650000], "music": [250000, 800000], "florals": [300000, 1000000], "attire": [120000, 400000], "stationery": [55000, 160000], "other": [120000, 400000] },
+        "full_service": { "venue": [1000000, 3000000], "catering": [1400000, 4000000], "photography": [400000, 1000000], "music": [400000, 1200000], "florals": [500000, 1600000], "attire": [160000, 650000], "stationery": [80000, 250000], "other": [200000, 650000] }
+      },
+      "rural": {
+        "full_diy":     { "venue": [20000, 150000], "catering": [150000, 500000], "photography": [120000, 240000], "music": [20000, 100000], "florals": [40000, 150000], "attire": [40000, 110000], "stationery": [10000, 40000], "other": [30000, 100000] },
+        "mixed":        { "venue": [150000, 700000], "catering": [400000, 1200000], "photography": [200000, 420000], "music": [80000, 320000], "florals": [120000, 450000], "attire": [65000, 210000], "stationery": [25000, 80000], "other": [60000, 200000] },
+        "vendor_led":   { "venue": [400000, 1600000], "catering": [750000, 2300000], "photography": [260000, 540000], "music": [200000, 650000], "florals": [250000, 850000], "attire": [100000, 330000], "stationery": [45000, 130000], "other": [100000, 330000] },
+        "full_service": { "venue": [700000, 2400000], "catering": [1100000, 3300000], "photography": [330000, 830000], "music": [330000, 1000000], "florals": [400000, 1350000], "attire": [130000, 530000], "stationery": [65000, 200000], "other": [165000, 530000] }
+      }
+    },
+    "grand": {
+      "urban": {
+        "full_diy":     { "venue": [200000, 800000], "catering": [600000, 2000000], "photography": [250000, 450000], "music": [100000, 400000], "florals": [150000, 500000], "attire": [80000, 200000], "stationery": [40000, 120000], "other": [100000, 300000] },
+        "mixed":        { "venue": [800000, 3000000], "catering": [1500000, 5000000], "photography": [400000, 800000], "music": [300000, 1000000], "florals": [500000, 1500000], "attire": [150000, 400000], "stationery": [80000, 250000], "other": [200000, 600000] },
+        "vendor_led":   { "venue": [2000000, 6000000], "catering": [3000000, 9000000], "photography": [550000, 1200000], "music": [600000, 2000000], "florals": [1000000, 3000000], "attire": [250000, 700000], "stationery": [150000, 450000], "other": [350000, 1000000] },
+        "full_service": { "venue": [3500000, 10000000], "catering": [5000000, 15000000], "photography": [800000, 2000000], "music": [1000000, 4000000], "florals": [1500000, 5000000], "attire": [400000, 1200000], "stationery": [250000, 700000], "other": [600000, 2000000] }
+      },
+      "suburban": {
+        "full_diy":     { "venue": [100000, 500000], "catering": [400000, 1500000], "photography": [200000, 380000], "music": [60000, 300000], "florals": [100000, 380000], "attire": [60000, 170000], "stationery": [30000, 100000], "other": [80000, 250000] },
+        "mixed":        { "venue": [500000, 2200000], "catering": [1000000, 4000000], "photography": [320000, 680000], "music": [200000, 800000], "florals": [360000, 1200000], "attire": [120000, 340000], "stationery": [60000, 200000], "other": [160000, 500000] },
+        "vendor_led":   { "venue": [1400000, 4500000], "catering": [2400000, 7200000], "photography": [440000, 980000], "music": [480000, 1600000], "florals": [800000, 2400000], "attire": [200000, 580000], "stationery": [120000, 360000], "other": [280000, 820000] },
+        "full_service": { "venue": [2500000, 7500000], "catering": [4000000, 12000000], "photography": [640000, 1600000], "music": [800000, 3200000], "florals": [1200000, 4000000], "attire": [320000, 960000], "stationery": [200000, 560000], "other": [480000, 1600000] }
+      },
+      "rural": {
+        "full_diy":     { "venue": [50000, 300000], "catering": [300000, 1200000], "photography": [160000, 320000], "music": [40000, 200000], "florals": [80000, 320000], "attire": [50000, 140000], "stationery": [25000, 80000], "other": [60000, 200000] },
+        "mixed":        { "venue": [300000, 1600000], "catering": [800000, 3200000], "photography": [260000, 560000], "music": [160000, 640000], "florals": [280000, 960000], "attire": [100000, 280000], "stationery": [50000, 160000], "other": [130000, 400000] },
+        "vendor_led":   { "venue": [1000000, 3600000], "catering": [1900000, 5800000], "photography": [360000, 800000], "music": [380000, 1280000], "florals": [640000, 1920000], "attire": [160000, 480000], "stationery": [100000, 290000], "other": [225000, 660000] },
+        "full_service": { "venue": [2000000, 6000000], "catering": [3200000, 9600000], "photography": [520000, 1280000], "music": [640000, 2560000], "florals": [960000, 3200000], "attire": [260000, 780000], "stationery": [160000, 450000], "other": [380000, 1280000] }
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "venue_booked": {
+    "type": "full_card",
+    "headline": "You booked your venue.",
+    "body": "That's the hardest one. Seriously — finding the right venue, locking a date, signing a contract, and making it real takes more than most people expect. Everything else builds on this. Take a breath.",
+    "emoji": "🏛️"
+  },
+  "photographer_booked": {
+    "type": "full_card",
+    "headline": "Your photographer is booked.",
+    "body": "Your day is going to be beautiful, and you'll have it forever. You chose well.",
+    "emoji": "📷"
+  },
+  "save_dates_sent": {
+    "type": "full_card",
+    "headline": "It's official.",
+    "body": "People are clearing their calendars for you right now. That's a real thing that's happening.",
+    "emoji": "✉️"
+  },
+  "stage_1_complete": {
+    "type": "full_card",
+    "headline": "Foundation: complete.",
+    "body": "You know what you want, you've agreed on your vision, and your guest count is set. That's the real work. Everything from here is building on a solid foundation.",
+    "emoji": "🌱"
+  },
+  "stage_2_complete": {
+    "type": "full_card",
+    "headline": "You have a date. You have a venue.",
+    "body": "Two of the most important pieces are locked. The rest of the planning has somewhere to live now.",
+    "emoji": "📅"
+  },
+  "stage_3_complete": {
+    "type": "full_card",
+    "headline": "Your core team is in place.",
+    "body": "Photographer, caterer, music, officiant — the people who will make your day happen are confirmed. That's no small thing.",
+    "emoji": "🤝"
+  },
+  "stage_4_complete": {
+    "type": "full_card",
+    "headline": "Your people know about your wedding.",
+    "body": "Invites sent. Website up. Guests can start planning their travel. It's real to the people you love now.",
+    "emoji": "💌"
+  },
+  "stage_5_complete": {
+    "type": "full_card",
+    "headline": "The details are in place.",
+    "body": "Florals, invitations, attire, rehearsal dinner — the pieces that make a wedding feel like yours are set. You're close.",
+    "emoji": "🌸"
+  },
+  "stage_6_complete": {
+    "type": "full_card",
+    "headline": "You're ready.",
+    "body": "Headcount in, vendors confirmed, timeline built, rehearsal done. You've done everything you can do. Now you just get to enjoy it.",
+    "emoji": "✨"
+  },
+  "stage_7_complete": {
+    "type": "full_card",
+    "headline": "You did it.",
+    "body": "The wedding happened, the thank-yous are sent, the photos are backed up. It's done — and it was yours. Congratulations.",
+    "emoji": "💍"
+  },
+  "task_batch_3": {
+    "type": "toast",
+    "message": "3 things done. You're building real momentum."
+  }
+}

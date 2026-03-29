@@ -1,0 +1,10 @@
+{
+  "name": "@bliss/config",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./tailwind.js",
+  "exports": {
+    "./tailwind": "./tailwind.js",
+    "./tsconfig": "./tsconfig.json"
+  }
+}

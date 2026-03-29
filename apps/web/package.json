@@ -1,0 +1,46 @@
+{
+  "name": "@bliss/web",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@bliss/types": "workspace:*",
+    "@clerk/nextjs": "^5.2.0",
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "date-fns": "^3.6.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.4.0",
+    "lucide-react": "^0.400.0",
+    "@radix-ui/react-dialog": "^1.1.1",
+    "@radix-ui/react-progress": "^1.1.0",
+    "@radix-ui/react-select": "^2.1.1",
+    "@radix-ui/react-toast": "^1.2.1",
+    "@radix-ui/react-tooltip": "^1.1.2",
+    "@radix-ui/react-tabs": "^1.1.0",
+    "@radix-ui/react-checkbox": "^1.1.1",
+    "react-hook-form": "^7.52.1",
+    "zod": "^3.23.8",
+    "@hookform/resolvers": "^3.9.0",
+    "swr": "^2.2.5"
+  },
+  "devDependencies": {
+    "@bliss/config": "workspace:*",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.6",
+    "typescript": "^5.4.0",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5"
+  }
+}

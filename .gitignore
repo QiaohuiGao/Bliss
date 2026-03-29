@@ -1,0 +1,19 @@
+node_modules/
+.next/
+dist/
+.expo/
+.turbo/
+
+# Env files — never commit
+.env
+.env.local
+*.env.local
+apps/api/.env
+apps/web/.env.local
+apps/mobile/.env
+
+# OS
+.DS_Store
+
+# TypeScript
+*.tsbuildinfo

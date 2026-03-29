@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-bliss-border;
+  }
+  body {
+    @apply bg-bliss-surface text-bliss-ink;
+  }
+  h1, h2, h3 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .warm-card {
+    @apply bg-white rounded-warm shadow-warm border border-bliss-border;
+  }
+  .warm-card-lg {
+    @apply bg-white rounded-warm-lg shadow-warm-lg border border-bliss-border;
+  }
+  .btn-primary {
+    @apply bg-bliss-rose-dark text-white font-medium px-6 py-3 rounded-warm
+           hover:bg-bliss-rose-dark/90 transition-colors shadow-warm
+           focus:outline-none focus:ring-2 focus:ring-bliss-rose-dark focus:ring-offset-2;
+  }
+  .btn-secondary {
+    @apply bg-bliss-petal text-bliss-ink font-medium px-6 py-3 rounded-warm
+           hover:bg-bliss-rose/30 transition-colors border border-bliss-border
+           focus:outline-none focus:ring-2 focus:ring-bliss-rose focus:ring-offset-2;
+  }
+  .btn-ghost {
+    @apply text-bliss-ink-light font-medium px-4 py-2 rounded-warm
+           hover:bg-bliss-petal transition-colors;
+  }
+  .input-warm {
+    @apply w-full px-4 py-3 rounded-warm border border-bliss-border bg-white
+           text-bliss-ink placeholder:text-bliss-muted
+           focus:outline-none focus:ring-2 focus:ring-bliss-rose focus:border-transparent
+           transition-shadow;
+  }
+  .chip {
+    @apply px-4 py-2 rounded-full border border-bliss-border text-sm font-medium
+           cursor-pointer transition-all select-none;
+  }
+  .chip-selected {
+    @apply bg-bliss-rose-dark text-white border-bliss-rose-dark;
+  }
+  .chip-unselected {
+    @apply bg-white text-bliss-ink-light hover:border-bliss-rose hover:text-bliss-ink;
+  }
+}
