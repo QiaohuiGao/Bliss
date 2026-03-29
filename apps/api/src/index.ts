@@ -57,7 +57,7 @@ await app.register(notificationRoutes)
 
 // Start
 const port = parseInt(process.env['PORT'] ?? '3001')
-const host = process.env['NODE_ENV'] === 'production' ? '0.0.0.0' : '127.0.0.1'
+const host = '0.0.0.0'
 
 try {
   await app.listen({ port, host })

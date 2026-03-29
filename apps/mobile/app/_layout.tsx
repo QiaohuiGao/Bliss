@@ -1,8 +1,9 @@
+import '../global.css'
 import { useEffect } from 'react'
 import { Stack } from 'expo-router'
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo'
 import * as SecureStore from 'expo-secure-store'
-import { SplashScreen } from 'expo-router'
+import * as SplashScreen from 'expo-splash-screen'
 import { registerForPushNotifications } from '@/lib/notifications'
 
 SplashScreen.preventAutoHideAsync()
