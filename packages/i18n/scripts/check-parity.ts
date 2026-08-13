@@ -1,5 +1,5 @@
 /**
- * Catalog parity check (US-MARKET-PLAN Phase 6, gate 2).
+ * Catalog parity check (CI i18n gate; see docs/I18N.md).
  *
  * Every locale must expose the same key set as `en`. Missing keys warn; extra
  * keys fail, because an extra key is almost always a typo that will silently

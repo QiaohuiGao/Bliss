@@ -42,7 +42,7 @@ packages/
   types/      Shared TypeScript types
   i18n/       Locale catalogs, content catalogs, formatters
   config/     Shared Tailwind and tsconfig
-docs/         Market plan, i18n guide, glossary, cultural traditions
+docs/         Market research, i18n guide, glossary, cultural traditions
 ```
 
 ## Getting started
@@ -76,18 +76,21 @@ diff instead of a surprise.
 
 | Doc | What it covers |
 |---|---|
-| [PRD.md](PRD.md) | Product requirements |
-| [DESIGN.md](DESIGN.md) | Technical design: data model, generator, API, sprints |
-| [docs/US-MARKET-PLAN.md](docs/US-MARKET-PLAN.md) | Market research, localization plan, budget benchmarks |
+| [PRD.md](PRD.md) | The product: goal, thesis, advantage, scope, principles |
+| [DESIGN.md](DESIGN.md) | How it is built: data model, resolver, scheduler, agent, API, sprints |
+| [docs/MARKET.md](docs/MARKET.md) | US market research: planning timeline, budget benchmarks, competitors |
 | [docs/I18N.md](docs/I18N.md) | How to add a locale, key naming, what must never be translated |
 | [docs/GLOSSARY.md](docs/GLOSSARY.md) | US wedding terminology used verbatim in UI copy |
 | [docs/CULTURAL-TRADITIONS.md](docs/CULTURAL-TRADITIONS.md) | How cultural packs work, and how to add one |
-| [docs/other/AGENTIC-SYSTEM-REFERENCE.md](docs/other/AGENTIC-SYSTEM-REFERENCE.md) | Agent architecture reference |
+
+Read PRD before DESIGN. `docs/other/` is personal reference material, not part of
+the spec set.
 
 ## Conventions
 
 - **Every file in this repo is written in English.** Code, comments, docs, UI
-  copy, commit messages. CI enforces it.
+  copy, commit messages. CI enforces it. The one exception is `docs/other/`,
+  which holds personal reference notes and is excluded from the check.
 - **No hardcoded user-facing strings.** Everything goes through
   `packages/i18n`.
 - **Enum values are identifiers, not display strings.** Translate the label,

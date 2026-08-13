@@ -199,7 +199,7 @@ export interface Task {
   createdAt: string
 }
 
-/** Planner-standard allocation categories. See docs/US-MARKET-PLAN.md §1.2. */
+/** Planner-standard allocation categories. See docs/MARKET.md §2. */
 export type BudgetCategory =
   | 'venue_catering'
   | 'photo_video'

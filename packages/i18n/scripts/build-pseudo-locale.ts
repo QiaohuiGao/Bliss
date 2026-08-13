@@ -1,5 +1,5 @@
 /**
- * Pseudo-locale generator (US-MARKET-PLAN Phase 6, gate 2).
+ * Pseudo-locale generator (CI i18n gate; see docs/I18N.md).
  *
  * Produces `en-XA`: every string accented and padded ~35%. Walking the app in
  * this locale is the cheapest possible proof that the i18n layer works, before

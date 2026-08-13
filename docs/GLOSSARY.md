@@ -66,7 +66,7 @@ which ones are load-bearing.
    product that taught them a different word has actively hurt them.
 2. **Attach the tooltip on first use per screen**, not every use.
 3. **Numbers come from
-   [docs/US-MARKET-PLAN.md](US-MARKET-PLAN.md) §1.2**, not from memory.
+   [docs/MARKET.md](MARKET.md) §2**, not from memory.
 4. **Never state a legal fact from memory.** Marriage license rules come from
    `apps/api/src/content/marriage-license.ts` and always ship with the
    disclaimer key `quest.legal.disclaimer`.
@@ -79,4 +79,4 @@ which ones are load-bearing.
 |---|---|---|
 | "Bride" / "groom" as structural roles | "You", "your partner", "the couple" | The product must work for same-sex couples. Attire quests are named by garment, not by gender. |
 | "The bride's family pays" | "Who's contributing" | Largely obsolete in the US, and never true for many immigrant families. |
-| Auspicious-date logic | Season, venue availability, holiday weekends, off-peak pricing | The China-market version of this product used a lunar calendar. The US equivalent is pricing and travel. |
+| Auspicious-date logic | Season, venue availability, holiday weekends, off-peak pricing | Date choice in the US market is driven by pricing and guest travel. Lunar-calendar preferences belong to a culture pack, not to the base product. |

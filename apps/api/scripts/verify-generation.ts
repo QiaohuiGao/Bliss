@@ -1,5 +1,5 @@
 /**
- * Verification for quest generation (US-MARKET-PLAN Phase 6, step 3).
+ * Verification for quest generation (the golden-path gate; see DESIGN.md §7).
  *
  * Generates a wedding for each variant and prints the resulting tree size, so a
  * change to templates, culture packs, or pruning shows up as a diff rather than

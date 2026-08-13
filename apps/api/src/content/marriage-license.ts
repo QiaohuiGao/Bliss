@@ -14,7 +14,7 @@ import type { MarriageLicenseRule } from '@bliss/types'
  * every surface that renders this must also render `quest.legal.disclaimer`.
  *
  * Data provenance:
- * - `waitingPeriodHours` is sourced from the research in docs/US-MARKET-PLAN.md §1.1.
+ * - `waitingPeriodHours` is sourced from the research in docs/MARKET.md §1.1.
  * - `validityDays` is 30-90 days nationally; where a state-specific figure is not
  *   yet sourced, the entry carries `verifyWithCounty: true` and the UI must lead
  *   with "confirm with your county clerk" rather than showing a number as fact.

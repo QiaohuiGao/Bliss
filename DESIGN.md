@@ -1,9 +1,10 @@
-# Bliss Design Doc v2 — Technical Design
+# Bliss — Technical Design
 
-**Status:** Draft v2 · Supersedes v1
-**Date:** 2026-08-12
-**Implements:** [PRD.md](PRD.md) · [docs/US-MARKET-PLAN.md](docs/US-MARKET-PLAN.md)
-**Concepts:** [docs/other/AGENTIC-SYSTEM-REFERENCE.md](docs/other/AGENTIC-SYSTEM-REFERENCE.md)
+**Date:** 2026-08-13
+**Implements:** [PRD.md](PRD.md) · benchmarks from [docs/MARKET.md](docs/MARKET.md)
+
+This document covers how Bliss is built. It assumes the product decisions in the
+PRD and does not re-argue them.
 
 ---
 
@@ -37,20 +38,22 @@
 **Rule of thumb for every new feature:** if the answer is computable, it is not the agent's
 job. The agent exists for questions with no correct answer, only a fitting one.
 
-### 1.1 Reuse vs. rewrite
+### 1.1 Where each layer lives
 
-| Area | Decision |
+| Layer | Home |
 |---|---|
-| Auth (Clerk), Fastify/Bun server, Drizzle, deploy config | **Keep** |
-| `weddings`, `users`, `wedding_members` | **Extend** — new columns, no rebuild |
-| `modules` → `quests`, `sub_modules`, `tasks` | **Rewrite** — new fields, drop the lock state |
-| `quest-templates.ts` (Chinese, China-market) | **Replace** — structural keys in code, copy in `packages/i18n` |
-| Web pages | **Rewrite** — English via catalogs, new scoping surface |
-| `apps/mobile` | **Deleted** — its screens targeted a removed data model. A native client, if it returns, is a rebuild against the quest API |
-| `stress`, `budget`, `guests` as standalone modules | **Remove** — folded into quests / cross-cutting |
+| Deterministic core | `apps/api/src/services/` — resolver, scheduler, progress, budget |
+| Content structure | `apps/api/src/content/` — quests, culture packs, predicates, legal tables |
+| All human-readable copy | `packages/i18n` — never in code, never in the database |
+| Agent | `apps/api/src/agent/` — harness, tools, skill packs, versioned prompts |
+| Web | `apps/web` — Next.js App Router under `/[locale]`, `en` prefix-less |
 
-Database has no real users. Migration strategy is a **hard cut**: drop and regenerate rather
-than write reversible data migrations.
+Budget and guests are **cross-cutting concerns, not standalone modules**: budget is
+a rollup over tasks, and guest work belongs to the Stationery and Travel quests.
+
+The database has no real users yet, so schema changes are a **hard cut** — drop and
+regenerate rather than write reversible data migrations. This stops being true at
+launch; the marriage-license blocker in [PRD.md](PRD.md) §12 gates that.
 
 ---
 
@@ -96,7 +99,7 @@ export const weddings = pgTable('weddings', {
   budgetTotalCents: bigint('budget_total_cents', { mode: 'number' }),
   budgetTier: budgetTierEnum('budget_tier'),
 
-  // The elastic dial for scheduling (PRD §5)
+  // The elastic dial for scheduling (PRD §7)
   weeklyCapacityHours: integer('weekly_capacity_hours').notNull().default(5),
 
   hasPlanner: boolean('has_planner').default(false),
@@ -141,7 +144,7 @@ export const quests = pgTable('quests', {
   templateKey: text('template_key').notNull(),
   i18nKey: text('i18n_key').notNull(),
   order: integer('order').notNull(),
-  status: questStatusEnum('status').default('not_started'), // NO 'locked' — see PRD §3.2
+  status: questStatusEnum('status').default('not_started'), // NO 'locked' — see PRD §6.1
   scopedAt: timestamp('scoped_at'),
   isCustom: boolean('is_custom').default(false),
   estimatedDays: integer('estimated_days'),
@@ -158,13 +161,13 @@ export const tasks = pgTable('tasks', {
   i18nKey: text('i18n_key'),                   // NULL ⇒ user-authored, never translated
   title: text('title').notNull(),              // rendered fallback / search field
 
-  // Provenance — what makes this agent-native (PRD §2.1)
+  // Provenance — what makes this agent-native (PRD §5.1)
   source: taskSourceEnum('source').notNull().default('template'), // template | ai | user
   confidence: text('confidence'),              // decided | assumed
   rationale: text('rationale'),                // why this task is on your list
   decisionId: uuid('decision_id'),             // which decision produced it
 
-  // Scheduling (PRD §5)
+  // Scheduling (PRD §7)
   effortHours: numeric('effort_hours', { precision: 5, scale: 1 }),
   leadTimeDays: integer('lead_time_days').default(0),
   leadTimeReasonKey: text('lead_time_reason_key'),
@@ -187,7 +190,7 @@ export const tasks = pgTable('tasks', {
   completedAt: timestamp('completed_at'),
 })
 
-// ─── Two-phase writes (PRD §7.1) ──────────────────────────────
+// ─── Two-phase writes (PRD §9) ──────────────────────────────
 export const taskProposals = pgTable('task_proposals', {
   id: uuid('id').primaryKey().defaultRandom(),
   weddingId: uuid('wedding_id').notNull(),
@@ -200,7 +203,7 @@ export const taskProposals = pgTable('task_proposals', {
   committedAt: timestamp('committed_at'),
 })
 
-// ─── Observability + eval dataset (PRD §8.1) ──────────────────
+// ─── Observability + eval dataset (PRD §11) ──────────────────
 export const agentRuns = pgTable('agent_runs', {
   id: uuid('id').primaryKey().defaultRandom(),
   weddingId: uuid('wedding_id').notNull(),
@@ -249,6 +252,47 @@ apps/api/src/content/
 packages/i18n/src/content/en/quests.json    all human-readable copy
 ```
 
+The pool is authored; the agent selects from it. That keeps generation cheap,
+reproducible, and translatable, and it is the mechanism behind
+[PRD.md](PRD.md) §9 guardrail 2.
+
+```ts
+QuestTemplate {
+  key: 'attire_beauty'
+  i18nKey: 'quest.attire.title'
+  order, prerequisites, estimatedDays
+  cultures?: Culture[]          // culture-pack contributions
+  weddingTypes?: WeddingType[]  // pruned for elopement / micro / destination
+
+  scenario: i18nKey             // static opening copy, rendered without a model call
+  scopingQuestions: ScopingQuestion[]
+  taskPool: TaskTemplate[]
+}
+
+ScopingQuestion {
+  key: 'attire.dress_acquisition'
+  prompt: i18nKey               // "Renting or buying the dress?"
+  options: [{ value: 'rent' | 'buy_offrack' | 'buy_custom', label: i18nKey }]
+  allowsDefer: true             // the "you decide for me" path
+  inferenceHint: i18nKey        // how to infer from the profile when deferred
+}
+
+TaskTemplate {
+  key, i18nKey
+  appliesWhen: Predicate[]      // ['attire.dress_acquisition in (buy_offrack, buy_custom)']
+  effortHours: number
+  leadTimeDays: number
+  leadTimeReason?: i18nKey      // 'Alterations take 6–8 weeks'
+  earliestStart?, latestFinish? // hard constraints, e.g. the license validity window
+  dependsOn: TaskKey[]
+  compressible: boolean
+  isOptional: boolean
+}
+```
+
+Option `value`s are stable English slugs — they are DB-facing identifiers. Only
+labels are translated.
+
 ### 3.2 The Resolver — pure, deterministic, no model
 
 This is the heart of the system and it contains no AI.
@@ -272,8 +316,8 @@ export function resolveQuestTasks(
 **Properties this buys:**
 
 - Same input ⇒ byte-identical output. Unit-testable without a model.
-- The rent-vs-custom divergence is demonstrable with zero AI code — the Phase 3 checkpoint
-  in [PRD.md](PRD.md) §10.
+- The rent-vs-custom divergence is demonstrable with zero AI code — the Sprint 3
+  checkpoint in §7 below.
 - Every task carries the predicate that admitted it, which becomes the user-visible
   `rationale`.
 
@@ -345,6 +389,22 @@ apps/api/src/agent/
   tools/    reads.ts  writes.ts  schemas.ts
   packs/    attire.ts  florals.ts  legal.ts … (per-quest skill packs)
   prompts/  system.md  scoping.md  companion.md   (versioned, hashed into agent_runs)
+```
+
+The tool surface. **Reads may be broad; writes are narrow, validated, and
+reversible.**
+
+```ts
+// Reads
+get_wedding_context()      get_quest(questKey)      get_decisions(questKey?)
+get_timeline_pressure(questKey)                     lookup_marriage_license(state, county?)
+
+// Writes — every one is user-visible
+propose_tasks(questKey, tasks[], rationale) → { proposalId }   // not persisted to tasks
+commit_tasks(proposalId, edits?)            → { created: Task[] }
+record_decision({ questKey, question, choice, reason, confidence })
+update_profile(patch, evidence)             // whitelisted fields only
+adjust_timeline(questKey, changes, reason)
 ```
 
 An agent run is **ephemeral**: created with a goal and budget, does its work, persists what
@@ -549,7 +609,7 @@ single model call is written.
 | Users won't answer scoping questions | Binary choices; "you decide"; list never gated. Golden-path test #5 enforces it |
 | The agent produces a wall of tasks | Hard cap of 15 per proposal; pool authored so lists stay short |
 | Generated lists feel generic | `rationale` on every task makes the personalization visible, not just present |
-| Inconsistent advice across quests | Single agent, shared memory, serialized writes (PRD §2.3) |
+| Inconsistent advice across quests | Single agent, shared memory, serialized writes (PRD §5.3) |
 | Legal errors (license waiting periods) | Lookup tables only, never model knowledge; disclaimers |
 | Cost/latency of scoping | Static scenario screen; cached stable prefix; 8-step budget cap |
 | Content authoring is the bottleneck | It is — Sprint 2 is the largest. Start with one quest, prove the shape, then parallelize |
@@ -560,7 +620,7 @@ single model call is written.
 
 | # | Decision | Rationale |
 |---|---|---|
-| 1 | Task lists generated from decisions, not pre-authored | Granularity cannot be enumerated in advance (PRD §1.2) |
+| 1 | Task lists generated from decisions, not pre-authored | Granularity cannot be enumerated in advance (PRD §3) |
 | 2 | AI selects from a pool; it does not invent | Quality control, reproducibility, cheapness, translatability |
 | 3 | Two-phase writes on everything | Removes the "AI changed my stuff" failure class; creates the moment |
 | 4 | One agent with skill packs, not one per quest | Context fragmentation and colliding implicit decisions |
