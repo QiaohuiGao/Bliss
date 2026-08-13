@@ -1,155 +1,104 @@
 import type { FastifyInstance } from 'fastify'
 import { db } from '../db'
-import { tasks, weddings, celebrations } from '../db/schema'
-import { eq, and, asc } from 'drizzle-orm'
-import { requireAuth, requireWeddingAccess } from '../middleware/auth'
-import celebrationContent from '../content/celebrations.json'
+import { tasks, taskPhotos, taskVendors, subModules, modules, moduleCelebrations } from '../db/schema'
+import { eq, and, sql } from 'drizzle-orm'
+import { requireAuth } from '../middleware/auth'
+import { differenceInDays } from 'date-fns'
 
-async function checkAndTriggerCelebration(weddingId: string, task: typeof tasks.$inferSelect) {
-  // Milestone celebration
-  if (task.celebrationTrigger && task.status === 'complete') {
-    await db.insert(celebrations).values({
-      weddingId,
-      triggerKey: task.celebrationTrigger,
-    }).onConflictDoNothing()
-  }
-
-  // Batch of 3 celebration
-  const recentlyCompleted = await db
-    .select()
+async function checkModuleCompletion(moduleId: string) {
+  const allTasks = await db
+    .select({ status: tasks.status, isOptional: tasks.isOptional })
     .from(tasks)
     .where(
-      and(
-        eq(tasks.weddingId, weddingId),
-        eq(tasks.stage, task.stage),
-        eq(tasks.status, 'complete')
-      )
+      sql`${tasks.subModuleId} in (select id from sub_modules where module_id = ${moduleId})`
     )
 
-  if (recentlyCompleted.length > 0 && recentlyCompleted.length % 3 === 0) {
-    await db.insert(celebrations).values({
-      weddingId,
-      triggerKey: 'task_batch_3',
-    })
-  }
-}
+  const requiredTasks = allTasks.filter(t => !t.isOptional)
+  const allRequiredDone = requiredTasks.every(t => t.status === 'done' || t.status === 'skipped')
 
-async function checkStageUnlock(weddingId: string, stage: number) {
-  const [wedding] = await db
-    .select()
-    .from(weddings)
-    .where(eq(weddings.id, weddingId))
-    .limit(1)
+  if (allRequiredDone && requiredTasks.length > 0) {
+    const [mod] = await db
+      .select()
+      .from(modules)
+      .where(eq(modules.id, moduleId))
+      .limit(1)
 
-  if (!wedding || wedding.currentStage !== stage) return
+    if (mod && mod.status !== 'completed') {
+      await db
+        .update(modules)
+        .set({ status: 'completed', completedAt: new Date() })
+        .where(eq(modules.id, moduleId))
 
-  // Check all deliverables in current stage are complete
-  const deliverables = await db
-    .select()
-    .from(tasks)
-    .where(
-      and(
-        eq(tasks.weddingId, weddingId),
-        eq(tasks.stage, stage),
-        eq(tasks.isDeliverable, true)
-      )
-    )
+      const completedCount = allTasks.filter(t => t.status === 'done').length
+      const daysTaken = mod.actualStartedAt
+        ? differenceInDays(new Date(), mod.actualStartedAt)
+        : null
 
-  const allComplete = deliverables.length > 0 && deliverables.every((t) => t.status === 'complete')
+      await db.insert(moduleCelebrations).values({
+        moduleId,
+        weddingId: mod.weddingId,
+        daysTaken,
+        tasksCompleted: completedCount,
+        photosUploaded: 0,
+        // Store the key, not rendered copy: two partners may read this in
+        // different languages. The module's i18nKey ends in `.title`.
+        encouragementKey: mod.i18nKey
+          ? mod.i18nKey.replace(/\.title$/, '.celebration')
+          : null,
+        encouragementParams: null,
+      })
 
-  if (allComplete && stage < 7) {
-    await db
-      .update(weddings)
-      .set({ currentStage: stage + 1, updatedAt: new Date() })
-      .where(eq(weddings.id, weddingId))
+      // Auto-unlock dependent modules
+      const dependents = await db
+        .select()
+        .from(modules)
+        .where(and(
+          eq(modules.weddingId, mod.weddingId),
+          eq(modules.status, 'locked'),
+        ))
 
-    // Stage complete celebration
-    await db.insert(celebrations).values({
-      weddingId,
-      triggerKey: `stage_${stage}_complete` as any,
-    })
+      for (const dep of dependents) {
+        const prereqs = (dep.prerequisites as string[]) ?? []
+        if (!prereqs.includes(mod.templateKey ?? '')) continue
+
+        const prereqModules = await db
+          .select()
+          .from(modules)
+          .where(and(
+            eq(modules.weddingId, mod.weddingId),
+            sql`${modules.templateKey} = any(${sql.raw(`ARRAY[${prereqs.map(p => `'${p}'`).join(',')}]`)})`
+          ))
+
+        if (prereqModules.every(m => m.status === 'completed')) {
+          await db
+            .update(modules)
+            .set({ status: 'active' })
+            .where(eq(modules.id, dep.id))
+        }
+      }
+    }
   }
 }
 
 export async function taskRoutes(app: FastifyInstance) {
-  // Get all tasks for a wedding (optionally filtered by stage)
-  app.get('/weddings/:weddingId/tasks', {
-    preHandler: [requireAuth, requireWeddingAccess]
+  app.patch('/tasks/:taskId', {
+    preHandler: [requireAuth]
   }, async (req, reply) => {
-    const { weddingId } = req.params as any
-    const { stage, status } = req.query as any
-
-    let query = db
-      .select()
-      .from(tasks)
-      .where(eq(tasks.weddingId, weddingId))
-      .$dynamic()
-
-    const conditions = [eq(tasks.weddingId, weddingId)]
-    if (stage) conditions.push(eq(tasks.stage, parseInt(stage)))
-    if (status) conditions.push(eq(tasks.status, status))
-
-    const result = await db
-      .select()
-      .from(tasks)
-      .where(and(...conditions))
-      .orderBy(asc(tasks.stage), asc(tasks.sortOrder))
-
-    return reply.send(result)
-  })
-
-  // Get a single task
-  app.get('/tasks/:taskId', { preHandler: requireAuth }, async (req, reply) => {
     const { taskId } = req.params as any
-    const userId = (req as any).userId as string
+    const body = req.body as any
 
-    const [task] = await db.select().from(tasks).where(eq(tasks.id, taskId)).limit(1)
-    if (!task) return reply.status(404).send({ error: 'Task not found' })
-
-    // Verify access via wedding
-    const [wedding] = await db
-      .select()
-      .from(weddings)
-      .where(eq(weddings.id, task.weddingId))
-      .limit(1)
-
-    if (!wedding || (wedding.partnerAId !== userId && wedding.partnerBId !== userId)) {
-      return reply.status(403).send({ error: 'Access denied' })
+    const updates: Record<string, any> = {}
+    if (body.status !== undefined) {
+      updates.status = body.status
+      updates.completedAt = body.status === 'done' ? new Date() : null
     }
-
-    return reply.send(task)
-  })
-
-  // Update task status
-  app.patch('/tasks/:taskId', { preHandler: requireAuth }, async (req, reply) => {
-    const { taskId } = req.params as any
-    const userId = (req as any).userId as string
-    const { status, assignedTo } = req.body as { status?: string; assignedTo?: string }
-
-    const [existing] = await db.select().from(tasks).where(eq(tasks.id, taskId)).limit(1)
-    if (!existing) return reply.status(404).send({ error: 'Task not found' })
-
-    // Verify access
-    const [wedding] = await db
-      .select()
-      .from(weddings)
-      .where(eq(weddings.id, existing.weddingId))
-      .limit(1)
-
-    if (!wedding || (wedding.partnerAId !== userId && wedding.partnerBId !== userId)) {
-      return reply.status(403).send({ error: 'Access denied' })
-    }
-
-    const updates: Partial<typeof tasks.$inferInsert> = {}
-    if (status) {
-      updates.status = status as any
-      if (status === 'complete') {
-        updates.completedAt = new Date()
-      } else {
-        updates.completedAt = null
-      }
-    }
-    if (assignedTo !== undefined) updates.assignedTo = assignedTo
+    if (body.rating !== undefined) updates.rating = body.rating
+    if (body.notes !== undefined) updates.notes = body.notes
+    if (body.costCents !== undefined) updates.costCents = body.costCents
+    if (body.costCategory !== undefined) updates.costCategory = body.costCategory
+    if (body.assigneeId !== undefined) updates.assigneeId = body.assigneeId
+    if (body.dueDate !== undefined) updates.dueDate = body.dueDate
+    if (body.title !== undefined) updates.title = body.title
 
     const [updated] = await db
       .update(tasks)
@@ -157,55 +106,155 @@ export async function taskRoutes(app: FastifyInstance) {
       .where(eq(tasks.id, taskId))
       .returning()
 
-    // Trigger celebration and stage unlock checks
-    if (status === 'complete') {
-      await checkAndTriggerCelebration(existing.weddingId, updated!)
-      await checkStageUnlock(existing.weddingId, existing.stage)
+    if (!updated) return reply.status(404).send({ error: 'Task not found' })
+
+    if (body.status === 'done' || body.status === 'skipped') {
+      const [sub] = await db
+        .select()
+        .from(subModules)
+        .where(eq(subModules.id, updated.subModuleId))
+        .limit(1)
+      if (sub) {
+        await checkModuleCompletion(sub.moduleId)
+      }
     }
 
     return reply.send(updated)
   })
 
-  // Get stage overview (all 7 stages with task counts)
-  app.get('/weddings/:weddingId/stages', {
-    preHandler: [requireAuth, requireWeddingAccess]
+  app.post('/sub-modules/:subModuleId/tasks', {
+    preHandler: [requireAuth]
   }, async (req, reply) => {
-    const { weddingId } = req.params as any
-    const wedding = (req as any).wedding
+    const { subModuleId } = req.params as any
+    const body = req.body as any
 
-    const allTasks = await db
+    const [sub] = await db
       .select()
+      .from(subModules)
+      .where(eq(subModules.id, subModuleId))
+      .limit(1)
+
+    if (!sub) return reply.status(404).send({ error: 'SubModule not found' })
+
+    const [mod] = await db
+      .select()
+      .from(modules)
+      .where(eq(modules.id, sub.moduleId))
+      .limit(1)
+
+    const maxOrder = await db
+      .select({ max: sql<number>`coalesce(max(${tasks.sortOrder}), 0)::int` })
       .from(tasks)
-      .where(eq(tasks.weddingId, weddingId))
-      .orderBy(asc(tasks.stage), asc(tasks.sortOrder))
+      .where(eq(tasks.subModuleId, subModuleId))
 
-    const STAGE_META = [
-      { stage: 1, title: 'Foundation', timeframe: '12–18 months out' },
-      { stage: 2, title: 'Venue & Date', timeframe: '12–14 months out' },
-      { stage: 3, title: 'Core Vendors', timeframe: '10–12 months out' },
-      { stage: 4, title: 'Guests & Logistics', timeframe: '6–9 months out' },
-      { stage: 5, title: 'Details & Design', timeframe: '3–6 months out' },
-      { stage: 6, title: 'Final Countdown', timeframe: '1–4 weeks out' },
-      { stage: 7, title: 'Post-Wedding', timeframe: 'Week after' },
-    ]
+    const [task] = await db
+      .insert(tasks)
+      .values({
+        subModuleId,
+        weddingId: mod!.weddingId,
+        title: body.title,
+        description: body.description ?? null,
+        sortOrder: (maxOrder[0]?.max ?? 0) + 1,
+        isOptional: body.isOptional ?? false,
+      })
+      .returning()
 
-    const stages = STAGE_META.map(({ stage, title, timeframe }) => {
-      const stageTasks = allTasks.filter((t) => t.stage === stage)
-      const deliverables = stageTasks.filter((t) => t.isDeliverable)
-      return {
-        stage,
-        title,
-        timeframe,
-        isUnlocked: stage <= wedding.currentStage,
-        isComplete: stage < wedding.currentStage,
-        tasks: stageTasks,
-        completedDeliverables: deliverables.filter((t) => t.status === 'complete').length,
-        totalDeliverables: deliverables.length,
-        completedTasks: stageTasks.filter((t) => t.status === 'complete').length,
-        totalTasks: stageTasks.length,
-      }
-    })
+    return reply.status(201).send(task)
+  })
 
-    return reply.send(stages)
+  app.delete('/tasks/:taskId', {
+    preHandler: [requireAuth]
+  }, async (req, reply) => {
+    const { taskId } = req.params as any
+    await db.delete(tasks).where(eq(tasks.id, taskId))
+    return reply.status(204).send()
+  })
+
+  app.get('/tasks/:taskId/photos', {
+    preHandler: [requireAuth]
+  }, async (req, reply) => {
+    const { taskId } = req.params as any
+    const photos = await db
+      .select()
+      .from(taskPhotos)
+      .where(eq(taskPhotos.taskId, taskId))
+      .orderBy(taskPhotos.createdAt)
+    return reply.send(photos)
+  })
+
+  app.post('/tasks/:taskId/photos', {
+    preHandler: [requireAuth]
+  }, async (req, reply) => {
+    const { taskId } = req.params as any
+    const body = req.body as any
+
+    const [photo] = await db
+      .insert(taskPhotos)
+      .values({
+        taskId,
+        url: body.url,
+        caption: body.caption ?? null,
+      })
+      .returning()
+
+    return reply.status(201).send(photo)
+  })
+
+  app.delete('/photos/:photoId', {
+    preHandler: [requireAuth]
+  }, async (req, reply) => {
+    const { photoId } = req.params as any
+    await db.delete(taskPhotos).where(eq(taskPhotos.id, photoId))
+    return reply.status(204).send()
+  })
+
+  app.put('/tasks/:taskId/vendor', {
+    preHandler: [requireAuth]
+  }, async (req, reply) => {
+    const { taskId } = req.params as any
+    const body = req.body as any
+
+    const [existing] = await db
+      .select()
+      .from(taskVendors)
+      .where(eq(taskVendors.taskId, taskId))
+      .limit(1)
+
+    if (existing) {
+      const [updated] = await db
+        .update(taskVendors)
+        .set({
+          vendorName: body.vendorName,
+          contactInfo: body.contactInfo,
+          priceQuoteCents: body.priceQuoteCents,
+          website: body.website,
+          notes: body.notes,
+        })
+        .where(eq(taskVendors.id, existing.id))
+        .returning()
+      return reply.send(updated)
+    }
+
+    const [vendor] = await db
+      .insert(taskVendors)
+      .values({
+        taskId,
+        vendorName: body.vendorName,
+        contactInfo: body.contactInfo,
+        priceQuoteCents: body.priceQuoteCents,
+        website: body.website,
+        notes: body.notes,
+      })
+      .returning()
+
+    return reply.status(201).send(vendor)
+  })
+
+  app.delete('/tasks/:taskId/vendor', {
+    preHandler: [requireAuth]
+  }, async (req, reply) => {
+    const { taskId } = req.params as any
+    await db.delete(taskVendors).where(eq(taskVendors.taskId, taskId))
+    return reply.status(204).send()
   })
 }

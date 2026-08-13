@@ -1,0 +1,133 @@
+{
+  "title": "Let's shape your wedding",
+  "subtitle": "Eight quick questions. You can change any of it later.",
+  "progress": "Step {current} of {total}",
+  "finish": "Build my plan",
+  "step": {
+    "date": {
+      "title": "When's the big day?",
+      "help": "Not sure yet? Pick a rough date and mark it flexible. We'll still build a usable timeline.",
+      "label": "Wedding date",
+      "flexible": "This date is still flexible"
+    },
+    "location": {
+      "title": "Where are you getting married?",
+      "help": "State matters more than you'd think. Marriage licenses, waiting periods, and officiant rules are all set at the state level.",
+      "stateLabel": "State",
+      "statePlaceholder": "Select a state",
+      "cityLabel": "City or town",
+      "cityPlaceholder": "e.g. Asheville"
+    },
+    "type": {
+      "title": "What kind of wedding?",
+      "help": "This changes how much there is to plan. An elopement skips a lot.",
+      "option": {
+        "traditional": "Traditional",
+        "traditionalHint": "Ceremony plus reception, the full guest list",
+        "micro": "Micro wedding",
+        "microHint": "50 guests or fewer",
+        "elopement": "Elopement",
+        "elopementHint": "Just the two of you, maybe witnesses",
+        "destination": "Destination",
+        "destinationHint": "Somewhere your guests travel to",
+        "courthouse": "Courthouse",
+        "courthouseHint": "Civil ceremony, possibly a party later"
+      }
+    },
+    "guests": {
+      "title": "How many people?",
+      "help": "The US average is about 117 guests. A rough number is fine, it drives venue size and catering.",
+      "exactLabel": "Guest count",
+      "rangeLabel": "Or pick a range",
+      "range": {
+        "under_50": "Under 50",
+        "50_100": "50 to 100",
+        "100_150": "100 to 150",
+        "150_250": "150 to 250",
+        "over_250": "250 or more"
+      }
+    },
+    "style": {
+      "title": "What should it feel like?",
+      "help": "Pick as many as you like. This shapes vendor and decor suggestions, not your options.",
+      "option": {
+        "classic": "Classic",
+        "modern": "Modern",
+        "rustic": "Rustic",
+        "garden": "Garden",
+        "beach_coastal": "Beach or coastal",
+        "boho": "Boho",
+        "black_tie": "Black tie",
+        "destination": "Destination",
+        "backyard": "Backyard",
+        "minimalist": "Minimalist",
+        "vintage": "Vintage"
+      }
+    },
+    "venue": {
+      "title": "Any venue types in mind?",
+      "help": "All-inclusive venues bundle catering, rentals, and coordination, which removes a lot of separate tasks.",
+      "option": {
+        "hotel_ballroom": "Hotel or ballroom",
+        "barn_farm": "Barn or farm",
+        "vineyard": "Vineyard or winery",
+        "estate_mansion": "Estate or mansion",
+        "garden_park": "Garden or park",
+        "beach": "Beach",
+        "church_temple": "Church, temple, or synagogue",
+        "restaurant": "Restaurant",
+        "museum_gallery": "Museum or gallery",
+        "backyard": "Private home or backyard",
+        "all_inclusive_resort": "All-inclusive resort",
+        "courthouse": "Courthouse"
+      }
+    },
+    "budget": {
+      "title": "What are you working with?",
+      "help": "The 2026 US average is about {average}, or roughly {perGuest} a guest. This is a starting point, not a ceiling.",
+      "tier": {
+        "under_20k": "Under $20k",
+        "20k_40k": "$20k to $40k",
+        "40k_75k": "$40k to $75k",
+        "over_75k": "$75k and up"
+      },
+      "exactLabel": "Or enter a number",
+      "plannerLabel": "Are you working with a planner?",
+      "planner": {
+        "full": "Full-service planner",
+        "partial": "Partial planner",
+        "day_of": "Day-of coordinator",
+        "venue_only": "Just the venue coordinator",
+        "none": "No, it's us"
+      },
+      "plannerHint": "A venue coordinator works for the venue, not for you. You still own most of the planning."
+    },
+    "cultures": {
+      "title": "Any traditions you're bringing in?",
+      "help": "About one in four US couples blends two traditions. Pick any that apply and we'll add the right events, vendors, and lead times.",
+      "none": "None of these, or we'll decide later",
+      "option": {
+        "south_asian": "South Asian",
+        "chinese": "Chinese",
+        "jewish": "Jewish",
+        "korean": "Korean",
+        "nigerian": "Nigerian or West African",
+        "mexican": "Mexican or Latin American",
+        "persian": "Persian or Iranian",
+        "filipino": "Filipino",
+        "vietnamese": "Vietnamese",
+        "ethiopian": "Ethiopian",
+        "greek": "Greek",
+        "italian": "Italian",
+        "polish": "Polish",
+        "hmong": "Hmong",
+        "armenian": "Armenian",
+        "arab": "Arab"
+      }
+    }
+  },
+  "generating": {
+    "title": "Building your plan…",
+    "body": "Laying out your quests and working backward from {date}."
+  }
+}

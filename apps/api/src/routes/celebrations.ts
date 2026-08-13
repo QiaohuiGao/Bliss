@@ -1,45 +1,65 @@
 import type { FastifyInstance } from 'fastify'
 import { db } from '../db'
-import { celebrations } from '../db/schema'
-import { eq, and, isNull } from 'drizzle-orm'
+import { moduleCelebrations, milestones } from '../db/schema'
+import { eq, sql } from 'drizzle-orm'
 import { requireAuth, requireWeddingAccess } from '../middleware/auth'
-import celebrationContent from '../content/celebrations.json'
 
 export async function celebrationRoutes(app: FastifyInstance) {
-  // Get pending (unshown) celebrations
-  app.get('/weddings/:weddingId/celebrations', {
+  app.get('/weddings/:weddingId/celebrations/pending', {
     preHandler: [requireAuth, requireWeddingAccess]
   }, async (req, reply) => {
-    const { weddingId } = req.params as any
+    const wedding = (req as any).wedding
 
     const pending = await db
       .select()
-      .from(celebrations)
+      .from(moduleCelebrations)
       .where(
-        and(
-          eq(celebrations.weddingId, weddingId),
-          isNull(celebrations.shownAt)
-        )
+        sql`${moduleCelebrations.weddingId} = ${wedding.id} and ${moduleCelebrations.shownAt} is null`
       )
-      .orderBy(celebrations.createdAt)
+      .orderBy(moduleCelebrations.completedAt)
 
-    const enriched = pending.map((c) => ({
-      ...c,
-      content: (celebrationContent as Record<string, any>)[c.triggerKey] ?? null,
-    }))
-
-    return reply.send(enriched)
+    return reply.send(pending)
   })
 
-  // Dismiss celebration (mark as shown)
-  app.patch('/celebrations/:id/dismiss', { preHandler: requireAuth }, async (req, reply) => {
+  app.patch('/celebrations/:id/dismiss', {
+    preHandler: [requireAuth]
+  }, async (req, reply) => {
     const { id } = req.params as any
-    const userId = (req as any).userId as string
 
     const [updated] = await db
-      .update(celebrations)
+      .update(moduleCelebrations)
       .set({ shownAt: new Date() })
-      .where(eq(celebrations.id, id))
+      .where(eq(moduleCelebrations.id, id))
+      .returning()
+
+    return reply.send(updated)
+  })
+
+  app.get('/weddings/:weddingId/milestones/pending', {
+    preHandler: [requireAuth, requireWeddingAccess]
+  }, async (req, reply) => {
+    const wedding = (req as any).wedding
+
+    const pending = await db
+      .select()
+      .from(milestones)
+      .where(
+        sql`${milestones.weddingId} = ${wedding.id} and ${milestones.shownAt} is null`
+      )
+      .orderBy(milestones.triggeredAt)
+
+    return reply.send(pending)
+  })
+
+  app.patch('/milestones/:id/dismiss', {
+    preHandler: [requireAuth]
+  }, async (req, reply) => {
+    const { id } = req.params as any
+
+    const [updated] = await db
+      .update(milestones)
+      .set({ shownAt: new Date() })
+      .where(eq(milestones.id, id))
       .returning()
 
     return reply.send(updated)

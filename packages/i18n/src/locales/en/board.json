@@ -1,0 +1,65 @@
+{
+  "title": "Your plan",
+  "subtitle": "Every quest is open. Start wherever you like.",
+  "countdown": "{days, plural, =0 {Today's the day!} =1 {Tomorrow!} one {# day to go} other {# days to go}}",
+  "countdownMonths": "{months, plural, one {# month to go} other {# months to go}}",
+  "countdownPast": "Married {days, plural, one {# day} other {# days}} ago",
+  "noDate": "No date set yet",
+  "progress": {
+    "overall": "{percent}% complete",
+    "tasks": "{completed} of {total} done",
+    "quests": "{completed, plural, one {# quest complete} other {# quests complete}}"
+  },
+  "status": {
+    "not_started": "Not started",
+    "active": "In progress",
+    "completed": "Complete"
+  },
+  "pressure": {
+    "ok": "On track",
+    "tight": "Getting tight",
+    "late": "Behind",
+    "startBy": "Start by {date}",
+    "criticalPath": "On the critical path",
+    "leadTimeNote": "{reason} takes {days, plural, one {# day} other {# days}} no matter how fast you move"
+  },
+  "view": {
+    "list": "List",
+    "timeline": "Timeline"
+  },
+  "filter": {
+    "all": "All",
+    "mine": "Mine",
+    "partner": "Partner's",
+    "unassigned": "Unassigned"
+  },
+  "dashboard": {
+    "greeting": "Hi {name}",
+    "nextUp": "Next up",
+    "nextUpEmpty": "Nothing urgent. Enjoy the quiet.",
+    "recentActivity": "Recent activity",
+    "budgetCard": {
+      "title": "Budget",
+      "spent": "{spent} of {total}",
+      "remaining": "{amount} left",
+      "over": "{amount} over budget"
+    }
+  },
+  "milestone": {
+    "quarter": "A quarter of the way. You've already made more decisions than you realize.",
+    "half": "Halfway. Look back at everything you've settled.",
+    "threeQuarter": "Three quarters done. The hard part is behind you.",
+    "complete": "Everything's ready. Tomorrow you only have one job: enjoy it.",
+    "days100": "100 days out.",
+    "days30": "30 days out. Time to lock down numbers.",
+    "days7": "One week. Almost nothing left to decide.",
+    "days1": "Tomorrow."
+  },
+  "activity": {
+    "task_completed": "{name} finished {task}",
+    "photo_added": "{name} added a photo to {task}",
+    "module_completed": "{name} completed {module}",
+    "note_added": "{name} left a note on {task}",
+    "member_joined": "{name} joined the plan"
+  }
+}

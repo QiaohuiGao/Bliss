@@ -1,7 +1,10 @@
 {
   "name": "bliss",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
@@ -9,7 +12,9 @@
     "db:migrate": "cd apps/api && bun run db:migrate",
     "db:seed": "cd apps/api && bun run db:seed",
     "lint": "turbo lint",
-    "type-check": "turbo type-check"
+    "type-check": "turbo type-check",
+    "lint:i18n": "bash scripts/lint-i18n.sh",
+    "verify:generation": "cd apps/api && bun run scripts/verify-generation.ts"
   },
   "devDependencies": {
     "turbo": "^2.0.0",

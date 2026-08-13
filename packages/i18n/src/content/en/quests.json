@@ -1,0 +1,695 @@
+{
+  "quest": {
+    "foundation": {
+      "title": "Foundation",
+      "subtitle": "Decide what this wedding is before you decide what's in it",
+      "celebration": "The hard conversations are done. Everything after this is easier.",
+      "section": {
+        "money": "Money",
+        "shape": "Shape",
+        "support": "Support"
+      },
+      "task": {
+        "set_total_budget": {
+          "title": "Agree on a total number",
+          "description": "The 2026 US average is about $34,200 for around 117 guests, roughly $290 a guest. Yours can be anything. What matters is that you both say the number out loud."
+        },
+        "agree_who_pays": {
+          "title": "Sort out who's contributing",
+          "description": "The old rule about the bride's family paying is mostly gone. Ask directly, and ask whether a contribution comes with expectations attached."
+        },
+        "allocate_categories": {
+          "title": "Split the budget across categories",
+          "description": "A planner-standard split: venue and catering 40-50%, photo and video 10-12%, flowers and decor 8-10%, attire and beauty 5-9%, music 5-10%, rings 4%, stationery 2-3%."
+        },
+        "reserve_buffer": {
+          "title": "Set aside 5-10% for buffer and tips",
+          "description": "Gratuity is expected in the US and is not the same as the service charge on your catering bill. Budget it separately or it will surprise you."
+        },
+        "open_wedding_account": { "title": "Open a separate account for wedding money" },
+        "draft_guest_count": {
+          "title": "Draft a guest count",
+          "description": "Not the list yet, just the number. It drives venue size, catering, and most of your budget."
+        },
+        "pick_three_priorities": {
+          "title": "Each pick your top three",
+          "description": "Compare them. Where you disagree is where the real budget conversation is."
+        },
+        "agree_non_negotiables": { "title": "Write down what you will not compromise on" },
+        "decide_planner_level": {
+          "title": "Decide how much help you want",
+          "description": "Full-service, partial, or a day-of coordinator. Note that a venue coordinator works for the venue, not for you, so it isn't the same thing."
+        },
+        "interview_planners": { "title": "Interview planners or coordinators" },
+        "buy_wedding_insurance": {
+          "title": "Look into wedding insurance",
+          "description": "Liability coverage is required by many venues, and cancellation coverage protects deposits."
+        }
+      }
+    },
+
+    "venue_date": {
+      "title": "Venue and Date",
+      "subtitle": "Lock the stage, and everything else gets a deadline",
+      "celebration": "Date locked, venue booked. Now the rest of the plan has something to hang on.",
+      "section": {
+        "date": "The date",
+        "search": "The search",
+        "tour": "Touring",
+        "book": "Booking"
+      },
+      "task": {
+        "pick_season_and_range": { "title": "Pick a season and a range of dates" },
+        "check_family_conflicts": { "title": "Check the date against both families" },
+        "consider_offpeak_pricing": {
+          "title": "Price out Friday, Sunday, or off-season",
+          "description": "Peak is May through October, Saturdays. Moving off it can cut venue cost meaningfully."
+        },
+        "check_holiday_weekends": {
+          "title": "Check holiday weekends",
+          "description": "They help guests travel and hurt hotel prices. Decide which matters more."
+        },
+        "write_venue_requirements": { "title": "Write down what the venue must have" },
+        "shortlist_venues": { "title": "Shortlist at least five venues" },
+        "check_availability": {
+          "title": "Check availability for your dates",
+          "description": "Popular venues and peak dates book 12 to 18 months out."
+        },
+        "book_tours": { "title": "Book tours at your top three" },
+        "tour_with_checklist": { "title": "Tour with a checklist and take photos" },
+        "ask_fb_minimum": {
+          "title": "Ask about the food and beverage minimum",
+          "description": "This is separate from the site fee and is often the larger number."
+        },
+        "ask_vendor_restrictions": {
+          "title": "Ask whether you must use their vendor list",
+          "description": "An exclusive caterer or a closed vendor list removes choices you may want."
+        },
+        "ask_coi_requirements": {
+          "title": "Ask what insurance certificates they require",
+          "description": "Most venues need each vendor to carry liability coverage and name the venue on the certificate."
+        },
+        "confirm_rain_plan": {
+          "title": "Confirm the rain plan and when the call is made",
+          "description": "Ask to see the backup space. If you would not be happy getting married in it, you do not have a rain plan."
+        },
+        "ask_overtime_rate": { "title": "Ask the overtime rate and hard end time" },
+        "compare_all_in_cost": { "title": "Compare the true all-in cost, not the site fee" },
+        "review_contract": { "title": "Read the contract line by line" },
+        "check_force_majeure": {
+          "title": "Read the force majeure and cancellation clauses",
+          "description": "Know what happens, and what you get back, if the date has to move."
+        },
+        "pay_retainer": {
+          "title": "Pay the retainer",
+          "description": "Usually non-refundable. This is the moment the date becomes real."
+        },
+        "lock_the_date": { "title": "Tell everyone the date is locked" }
+      }
+    },
+
+    "vendor_team": {
+      "title": "Vendor Dream Team",
+      "subtitle": "The people who make the day actually happen",
+      "celebration": "Your team is booked. These are the people who will carry the day.",
+      "section": {
+        "photo": "Photo and video",
+        "music": "Music",
+        "officiant": "Officiant",
+        "coordination": "Coordination"
+      },
+      "task": {
+        "define_photo_style": {
+          "title": "Decide on a photo style",
+          "description": "Documentary, editorial, film, dark and moody, light and airy. Naming it makes shortlisting much faster."
+        },
+        "shortlist_photographers": { "title": "Shortlist at least three photographers" },
+        "review_full_galleries": {
+          "title": "Ask to see full galleries, not portfolios",
+          "description": "A portfolio is the best twenty frames of a career. A full wedding gallery is what you will actually receive."
+        },
+        "book_photographer": {
+          "title": "Book the photographer",
+          "description": "Book 9 to 12 months out. Good photographers go first, often before the venue."
+        },
+        "book_videographer": { "title": "Book a videographer" },
+        "book_content_creator": {
+          "title": "Consider a content creator",
+          "description": "A newer vendor category: someone shooting phone video for social, alongside your photographer."
+        },
+        "decide_dj_or_band": {
+          "title": "Decide between a DJ and a band",
+          "description": "A DJ averages around $1,700, a live band around $4,200. A band needs more space, more power, and more breaks."
+        },
+        "audition_music": { "title": "Watch live footage or attend a showcase" },
+        "book_music": { "title": "Book the DJ or band" },
+        "choose_officiant": { "title": "Choose your officiant" },
+        "verify_officiant_credentials": {
+          "title": "Verify their credentials are valid in your state",
+          "description": "Some jurisdictions, including parts of New York, do not reliably accept online ordinations. Getting this wrong can invalidate the marriage."
+        },
+        "book_officiant": { "title": "Book the officiant and share your ceremony vision" },
+        "book_day_of_coordinator": {
+          "title": "Book a day-of coordinator",
+          "description": "If you have no planner, this is the single highest-value hire. Someone has to run the day, and it should not be you or your mother."
+        },
+        "collect_vendor_cois": { "title": "Collect certificates of insurance from every vendor" },
+        "build_vendor_contact_sheet": { "title": "Build one contact sheet with every vendor on it" }
+      }
+    },
+
+    "wedding_party": {
+      "title": "Wedding Party and VIPs",
+      "subtitle": "The people standing next to you",
+      "celebration": "Your people are in place, and they know what they signed up for.",
+      "section": {
+        "asks": "The asks",
+        "roles": "Roles",
+        "party_attire": "Their attire"
+      },
+      "task": {
+        "decide_party_size": { "title": "Decide how many people you want standing up" },
+        "ask_wedding_party": { "title": "Ask your wedding party" },
+        "choose_honor_attendants": { "title": "Choose a maid or matron of honor and a best man" },
+        "ask_kid_attendants": { "title": "Ask a flower girl and ring bearer" },
+        "explain_duties_and_costs": {
+          "title": "Be upfront about what it costs them",
+          "description": "Attire, travel, showers, and bachelor or bachelorette parties add up fast. Saying the number early is a kindness."
+        },
+        "assign_day_of_jobs": { "title": "Assign specific day-of jobs" },
+        "name_a_point_person": {
+          "title": "Name a point person for vendors",
+          "description": "One name and number every vendor calls on the day, so nobody calls you."
+        },
+        "set_up_group_chat": { "title": "Start a group chat" },
+        "set_party_attire_direction": { "title": "Set the direction for their attire" },
+        "collect_party_sizes": { "title": "Collect everyone's sizes" },
+        "order_party_attire": { "title": "Order or confirm their attire" },
+        "buy_party_gifts": { "title": "Buy thank-you gifts" }
+      }
+    },
+
+    "attire_beauty": {
+      "title": "Attire and Beauty",
+      "subtitle": "Finding the one you'll cry over",
+      "celebration": "Everything fits. You already know how it feels to put it on.",
+      "section": {
+        "gown": "The gown",
+        "suit": "The suit",
+        "shoes": "Shoes",
+        "beauty": "Hair, makeup, and skin"
+      },
+      "task": {
+        "collect_gown_inspiration": { "title": "Collect gown inspiration" },
+        "set_gown_budget": {
+          "title": "Set a gown budget, including alterations",
+          "description": "Alterations typically add several hundred dollars and are almost never included in the ticket price."
+        },
+        "book_salon_appointments": {
+          "title": "Book two or three salon appointments",
+          "description": "Book them close together. Trying on dresses months apart makes comparison impossible."
+        },
+        "go_dress_shopping": { "title": "Go dress shopping" },
+        "order_the_gown": {
+          "title": "Order the gown",
+          "description": "Made-to-order gowns take 6 to 9 months to arrive, before alterations even start. This is the longest lead time in the whole plan."
+        },
+        "first_fitting": {
+          "title": "First fitting",
+          "description": "About 8 weeks out. Bring the shoes and undergarments you will actually wear."
+        },
+        "second_fitting": { "title": "Second fitting" },
+        "final_fitting_and_bustle": { "title": "Final fitting and bustle" },
+        "learn_the_bustle": {
+          "title": "Teach someone how to bustle the dress",
+          "description": "Whoever will do it on the day should practice at the final fitting. Film it on your phone."
+        },
+        "buy_undergarments": { "title": "Buy undergarments before the first fitting" },
+        "decide_suit_or_tux": {
+          "title": "Decide on a suit or a tuxedo",
+          "description": "Match the formality to the dress code you are asking guests to follow."
+        },
+        "order_suit": { "title": "Buy or rent the suit" },
+        "suit_alterations": { "title": "Get the suit altered" },
+        "buy_accessories": { "title": "Sort out shirt, tie, cufflinks, and pocket square" },
+        "buy_shoes": { "title": "Buy your shoes" },
+        "break_in_shoes": {
+          "title": "Break the shoes in",
+          "description": "Wear them around the house. You will be standing for eight hours."
+        },
+        "book_hair_makeup": {
+          "title": "Book hair and makeup",
+          "description": "Book 6 to 9 months out, and confirm they can cover everyone getting ready with you."
+        },
+        "do_hair_makeup_trial": {
+          "title": "Do the trial",
+          "description": "Schedule it near an engagement shoot or an event so you can see the look photograph and last."
+        },
+        "book_party_beauty": { "title": "Arrange hair and makeup for anyone joining you" },
+        "plan_skin_timeline": {
+          "title": "Plan skin treatments backward from the date",
+          "description": "Never try anything new inside a month. Whatever you do, do it early enough to recover from."
+        },
+        "book_nails": { "title": "Book nails for two or three days before" }
+      }
+    },
+
+    "guests_stationery": {
+      "title": "Guest List and Stationery",
+      "subtitle": "Naming the people who will be in the room",
+      "celebration": "Invitations are out. Now you get to watch the yeses come in.",
+      "section": {
+        "list": "The list",
+        "website": "Wedding website",
+        "paper": "Paper"
+      },
+      "task": {
+        "draft_guest_list": { "title": "Draft the guest list" },
+        "set_plus_one_policy": {
+          "title": "Set a plus-one policy and apply it consistently",
+          "description": "Pick a rule you can defend, such as married, engaged, or living together, and hold it. Exceptions are what start arguments."
+        },
+        "set_kids_policy": { "title": "Decide whether kids are invited" },
+        "negotiate_family_additions": {
+          "title": "Negotiate the family additions",
+          "description": "If a parent is contributing money, expect a list. Agree on how many names, not which ones, and let them fill it."
+        },
+        "collect_addresses": {
+          "title": "Collect mailing addresses",
+          "description": "Slower than you expect. Start before you think you need to."
+        },
+        "lock_final_list": { "title": "Lock the final list and count" },
+        "build_wedding_website": { "title": "Build the wedding website" },
+        "add_travel_and_dress_code": {
+          "title": "Add travel, lodging, and dress code",
+          "description": "Spell the dress code out in plain words. Guests search it anyway, and they guess wrong."
+        },
+        "link_registry": { "title": "Link the registry from the website, not the invitation" },
+        "send_save_the_dates": {
+          "title": "Send save-the-dates",
+          "description": "Six to eight months out, or nine to twelve for guests traveling internationally."
+        },
+        "design_invitation_suite": { "title": "Design the invitation suite" },
+        "order_invitations": {
+          "title": "Order invitations",
+          "description": "Printing takes 3 to 6 weeks, and calligraphy adds more. Order enough for reprints and keepsakes."
+        },
+        "address_and_stuff": { "title": "Address, stuff, and stamp" },
+        "mail_invitations": {
+          "title": "Mail the invitations",
+          "description": "Six to eight weeks before the wedding. Weigh a full suite at the post office first."
+        },
+        "set_rsvp_deadline": {
+          "title": "Set an RSVP deadline",
+          "description": "Three to four weeks before, so it lands before your caterer's final headcount."
+        },
+        "chase_rsvps": {
+          "title": "Chase the people who haven't replied",
+          "description": "Roughly a quarter of guests will need a personal nudge. Split the list between you."
+        }
+      }
+    },
+
+    "guest_experience": {
+      "title": "Guest Experience and Travel",
+      "subtitle": "Taking care of the people who traveled for you",
+      "celebration": "Your guests will be looked after before they even arrive.",
+      "section": {
+        "lodging": "Where they sleep",
+        "transport": "Getting around",
+        "welcome": "Welcoming them",
+        "international": "Guests from abroad"
+      },
+      "task": {
+        "block_hotel_rooms": {
+          "title": "Block hotel rooms",
+          "description": "Blocks are usually free to hold. Get two options at different price points."
+        },
+        "share_booking_links": { "title": "Put booking links on the wedding website" },
+        "watch_block_release_date": {
+          "title": "Note when unbooked rooms get released",
+          "description": "Usually about a month out. Remind guests before you lose the rate."
+        },
+        "arrange_shuttles": {
+          "title": "Arrange shuttles",
+          "description": "Worth it whenever there is an open bar and any distance to hotels."
+        },
+        "plan_couple_transport": { "title": "Sort out how the two of you get around" },
+        "plan_late_night_rides": { "title": "Plan how guests get home at the end" },
+        "assemble_welcome_bags": { "title": "Assemble welcome bags" },
+        "write_area_guide": { "title": "Write a short guide to the area" },
+        "plan_welcome_party": { "title": "Plan a welcome party" },
+        "send_early_stds_overseas": {
+          "title": "Send save-the-dates to international guests first",
+          "description": "Nine to twelve months out. They need time for flights, time off, and possibly visas."
+        },
+        "write_visa_invitation_letters": {
+          "title": "Write visa invitation letters",
+          "description": "Some consulates require a formal invitation letter. Ask early, these can take months."
+        },
+        "check_guest_passport_validity": { "title": "Remind traveling guests to check passport validity" }
+      }
+    },
+
+    "food_beverage": {
+      "title": "Food and Beverage",
+      "subtitle": "The part your guests will actually remember",
+      "celebration": "Menu set, bar sorted. Everyone is going to eat well.",
+      "section": {
+        "menu": "The menu",
+        "bar": "The bar",
+        "cake": "Cake and dessert"
+      },
+      "task": {
+        "choose_service_style": {
+          "title": "Choose a service style",
+          "description": "Plated is most formal and needs meal choices in advance. Buffet is usually cheaper but needs floor space. Family-style feels generous and costs closer to plated."
+        },
+        "book_caterer": {
+          "title": "Book the caterer",
+          "description": "Catering averages about $85 a person before service charge and gratuity."
+        },
+        "attend_tasting": { "title": "Go to the tasting" },
+        "finalize_menu": { "title": "Finalize the menu" },
+        "collect_dietary_needs": {
+          "title": "Collect dietary restrictions and allergies",
+          "description": "Ask on the RSVP card. Vegetarian, vegan, gluten-free, kosher, halal, and nut allergies at minimum."
+        },
+        "budget_vendor_meals": {
+          "title": "Budget for vendor meals",
+          "description": "Your contracts almost certainly require you to feed the photographer, band, and planner."
+        },
+        "choose_bar_package": {
+          "title": "Choose a bar package",
+          "description": "Open bar, limited bar, or consumption-based. A cash bar is widely considered poor form in the US."
+        },
+        "check_corkage_and_byob": { "title": "Check corkage fees or whether you can bring your own" },
+        "pick_signature_drinks": { "title": "Pick a signature drink or two" },
+        "confirm_bartender_ratio": {
+          "title": "Confirm the bartender-to-guest ratio",
+          "description": "One bartender per 50 guests keeps the line short."
+        },
+        "book_baker": { "title": "Book the baker" },
+        "cake_tasting": { "title": "Do the cake tasting" },
+        "check_cake_cutting_fee": {
+          "title": "Check the cake-cutting fee",
+          "description": "Many venues charge per slice to serve a cake they did not make. It can rival the cake itself."
+        },
+        "plan_dessert_table": { "title": "Plan a dessert table or late-night snack" }
+      }
+    },
+
+    "design_flowers": {
+      "title": "Design, Flowers, and Rentals",
+      "subtitle": "How the room will feel when they walk in",
+      "celebration": "The look is locked. You already know what it will feel like to stand in it.",
+      "section": {
+        "direction": "Direction",
+        "florals": "Florals",
+        "rentals": "Rentals and lighting",
+        "signage": "Signage and paper goods"
+      },
+      "task": {
+        "build_mood_board": { "title": "Build a mood board" },
+        "choose_palette": { "title": "Choose a palette" },
+        "set_decor_budget": {
+          "title": "Set the decor and floral budget",
+          "description": "Florals average around $2,900 and typically run 8 to 10% of the total."
+        },
+        "book_florist": { "title": "Book the florist" },
+        "confirm_seasonal_availability": {
+          "title": "Confirm your flowers are in season",
+          "description": "Out-of-season stems can cost several times more. A good florist will offer a lookalike."
+        },
+        "finalize_floral_list": {
+          "title": "Finalize the floral list",
+          "description": "Bouquets, boutonnieres, corsages, centerpieces, ceremony arrangements, and any installation."
+        },
+        "plan_flower_reuse": {
+          "title": "Plan to move ceremony flowers to the reception",
+          "description": "The cheapest way to double your florals. Assign someone to actually move them."
+        },
+        "confirm_what_venue_provides": {
+          "title": "Confirm what the venue already provides",
+          "description": "Tables, chairs, linens, and glassware are often included. Do not rent them twice."
+        },
+        "book_rentals": { "title": "Book rentals" },
+        "plan_lighting": {
+          "title": "Plan lighting",
+          "description": "Uplighting and string lights are the cheapest way to change how a room feels."
+        },
+        "confirm_setup_strike_times": {
+          "title": "Confirm setup and strike windows",
+          "description": "Ask when vendors can load in and when everything must be out. A tight strike window can cost you overtime."
+        },
+        "plan_signage": { "title": "Plan signage" },
+        "design_escort_display": {
+          "title": "Design the escort card display",
+          "description": "Escort cards send guests to a table. Place cards assign a specific seat. You may want both."
+        },
+        "plan_guest_book": { "title": "Choose a guest book or alternative" }
+      }
+    },
+
+    "ceremony": {
+      "title": "Ceremony",
+      "subtitle": "The twenty minutes the whole day is built around",
+      "celebration": "The ceremony is written. This is the part you will remember word for word.",
+      "section": {
+        "script": "The script",
+        "ritual": "Rituals",
+        "logistics": "Logistics"
+      },
+      "task": {
+        "choose_ceremony_structure": { "title": "Choose the ceremony structure" },
+        "draft_ceremony_script": { "title": "Draft the script with your officiant" },
+        "write_vows": {
+          "title": "Write your vows",
+          "description": "If you are writing your own, agree on length and tone first so they match on the day."
+        },
+        "choose_readings": { "title": "Choose readings" },
+        "ask_readers": { "title": "Ask your readers, and send them the text" },
+        "choose_unity_ritual": { "title": "Choose a unity ritual" },
+        "plan_interfaith_blend": {
+          "title": "Plan how two traditions fit together",
+          "description": "Decide the order of rituals early. This is usually a family conversation, not a logistics one."
+        },
+        "brief_both_officiants": { "title": "Introduce both officiants to each other" },
+        "set_processional_order": { "title": "Set the processional order" },
+        "choose_ceremony_music": {
+          "title": "Choose ceremony music",
+          "description": "Prelude, processional, recessional. Confirm who is playing it and how it is amplified."
+        },
+        "confirm_ceremony_sound": {
+          "title": "Confirm ceremony sound",
+          "description": "Outdoor ceremonies need microphones. Guests in the back hearing nothing is the most common ceremony regret."
+        },
+        "decide_unplugged": { "title": "Decide whether to ask guests to put phones away" }
+      }
+    },
+
+    "registry_rings_honeymoon": {
+      "title": "Registry, Rings, and Honeymoon",
+      "subtitle": "The parts that are just for the two of you",
+      "celebration": "Rings ordered, registry live, and something to look forward to after.",
+      "section": {
+        "rings": "Rings",
+        "registry": "Registry",
+        "honeymoon": "Honeymoon"
+      },
+      "task": {
+        "set_ring_budget": {
+          "title": "Set a budget for the bands",
+          "description": "Rings typically run about 4% of the total budget."
+        },
+        "try_on_bands": { "title": "Try bands on together" },
+        "order_bands": {
+          "title": "Order the bands",
+          "description": "Custom or engraved bands take 4 to 8 weeks. Resizing adds more."
+        },
+        "engrave_bands": { "title": "Have them engraved" },
+        "insure_rings": { "title": "Add the rings to your insurance" },
+        "open_registry": { "title": "Open a registry" },
+        "add_range_of_price_points": {
+          "title": "Include a range of price points",
+          "description": "Guests want options under $50 and over $200. Leaving out either makes people uncomfortable."
+        },
+        "add_cash_funds": { "title": "Add cash funds or a honeymoon fund" },
+        "choose_destination": { "title": "Choose where you're going" },
+        "check_passport_validity": {
+          "title": "Check passport validity",
+          "description": "Many countries require six months of remaining validity. Renewals take weeks."
+        },
+        "request_time_off": { "title": "Request time off work" },
+        "book_travel": { "title": "Book flights and lodging" },
+        "buy_travel_insurance": { "title": "Buy travel insurance" }
+      }
+    },
+
+    "legal": {
+      "title": "Legal and Paperwork",
+      "subtitle": "The part that makes it a marriage, not just a party",
+      "celebration": "Legally sorted. Everything else is celebration.",
+      "section": {
+        "license": "Marriage license",
+        "ceremony_legal": "On the day",
+        "after": "After the wedding",
+        "immigration": "Immigration"
+      },
+      "task": {
+        "look_up_county_rules": {
+          "title": "Look up your county's rules",
+          "description": "Marriage licenses are issued by the county clerk and the rules are set by the state. Waiting periods, validity windows, and ID requirements all vary."
+        },
+        "gather_license_documents": {
+          "title": "Gather the documents you need",
+          "description": "Usually photo ID and a birth certificate. Divorce decrees or death certificates if either of you was married before."
+        },
+        "translate_foreign_documents": {
+          "title": "Get foreign documents certified and translated",
+          "description": "Foreign birth certificates and divorce decrees generally need certified English translation. Start early."
+        },
+        "book_clerk_appointment": {
+          "title": "Book the clerk appointment",
+          "description": "Many offices require an appointment and both of you in person."
+        },
+        "get_marriage_license": { "title": "Get the license" },
+        "observe_waiting_period": {
+          "title": "Account for the waiting period",
+          "description": "Some states make you wait after issuance before the license is usable, commonly three days. This cannot be waived by planning harder."
+        },
+        "check_license_expiry": {
+          "title": "Check the expiry window",
+          "description": "Licenses typically expire in 30 to 90 days. Get it inside the window, not months ahead."
+        },
+        "verify_officiant_is_valid": {
+          "title": "Verify your officiant can legally marry you here",
+          "description": "Some jurisdictions do not accept online ordinations. Confirm with the county, not with the officiant."
+        },
+        "line_up_witnesses": { "title": "Line up the witnesses your state requires" },
+        "assign_license_carrier": {
+          "title": "Assign one person to bring the license",
+          "description": "Not you. Give it to the person least likely to be distracted."
+        },
+        "confirm_license_return": {
+          "title": "Confirm who files the signed license and by when",
+          "description": "Usually the officiant, usually within days. Follow up until you have confirmation it was filed."
+        },
+        "order_certified_copies": {
+          "title": "Order certified copies of the marriage certificate",
+          "description": "Order three to five. Every name-change step wants one, and some keep it."
+        },
+        "change_name_social_security": {
+          "title": "Update Social Security first",
+          "description": "Order matters. Nothing downstream works until this is done."
+        },
+        "change_name_drivers_license": { "title": "Then the driver's license" },
+        "change_name_passport": { "title": "Then the passport" },
+        "change_name_banks_and_work": { "title": "Then banks, employer, insurance, and everything else" },
+        "note_k1_ninety_day_window": {
+          "title": "Note the 90-day window if you're on a K-1 visa",
+          "description": "Marriage must happen within 90 days of entry. Informational only."
+        },
+        "consult_immigration_attorney": {
+          "title": "Talk to an immigration attorney if status is involved",
+          "description": "Bliss provides general information, never legal advice."
+        }
+      }
+    },
+
+    "pre_wedding_events": {
+      "title": "Pre-Wedding Events",
+      "subtitle": "Everything that happens before the main event",
+      "celebration": "The lead-up is planned. Now you get to enjoy it.",
+      "section": {
+        "parties": "Parties",
+        "rehearsal": "Rehearsal",
+        "after_events": "After the wedding"
+      },
+      "task": {
+        "plan_engagement_party": { "title": "Plan an engagement party" },
+        "coordinate_showers": {
+          "title": "Coordinate with whoever is hosting a shower",
+          "description": "Traditionally you do not host your own. Your job is to supply the guest list and stay out of it."
+        },
+        "coordinate_bachelor_parties": { "title": "Coordinate bachelor and bachelorette plans" },
+        "book_rehearsal_time": {
+          "title": "Book rehearsal time at the venue",
+          "description": "Confirm it in the venue contract. Rehearsal access is not always automatic."
+        },
+        "book_rehearsal_dinner": { "title": "Book the rehearsal dinner" },
+        "decide_rehearsal_guest_list": {
+          "title": "Decide who comes to the rehearsal dinner",
+          "description": "Wedding party, immediate family, officiant, and often out-of-town guests."
+        },
+        "plan_toasts": { "title": "Decide who is speaking, and when" },
+        "plan_after_party": { "title": "Plan an after-party" },
+        "plan_farewell_brunch": { "title": "Plan a farewell brunch" }
+      }
+    },
+
+    "final_30_and_day_of": {
+      "title": "Final 30 Days and Day-Of",
+      "subtitle": "Deep breath. This is the last stretch.",
+      "celebration": "Everything is ready. Tomorrow you only have one job, and it is to enjoy it.",
+      "section": {
+        "numbers": "Final numbers",
+        "run_of_show": "Run of show",
+        "money_close_out": "Closing out the money",
+        "day_of": "The day itself",
+        "after": "Afterward"
+      },
+      "task": {
+        "give_final_headcount": {
+          "title": "Give the caterer your final headcount",
+          "description": "Usually due 7 to 10 days out. You pay for this number whether or not they show up."
+        },
+        "build_seating_chart": {
+          "title": "Build the seating chart",
+          "description": "Start earlier than feels necessary. It takes longer than anyone expects and changes until the last week."
+        },
+        "print_escort_and_place_cards": { "title": "Print escort and place cards" },
+        "confirm_dietary_counts": { "title": "Confirm dietary counts and which seats they belong to" },
+        "build_run_of_show": {
+          "title": "Build the run of show",
+          "description": "A minute-by-minute schedule from hair and makeup to send-off, with names and phone numbers on it."
+        },
+        "send_timeline_to_all_vendors": { "title": "Send the run of show to every vendor" },
+        "confirm_vendor_arrival_times": { "title": "Confirm arrival times with each vendor individually" },
+        "send_shot_list": { "title": "Send the shot list and family photo groupings" },
+        "plan_around_golden_hour": {
+          "title": "Build the timeline around golden hour",
+          "description": "The hour before sunset. Ask your photographer to name the exact time and protect fifteen minutes of it."
+        },
+        "pay_final_balances": { "title": "Pay all final balances" },
+        "prepare_tip_envelopes": {
+          "title": "Prepare tip envelopes",
+          "description": "Label each one. Gratuity is expected in the US and is separate from any service charge."
+        },
+        "assign_someone_to_hand_out_tips": { "title": "Give the envelopes to your point person, not to yourself" },
+        "pack_emergency_kit": {
+          "title": "Pack an emergency kit",
+          "description": "Safety pins, stain remover, blister pads, painkillers, deodorant, sewing kit, phone charger, snacks."
+        },
+        "pack_getting_ready_bag": { "title": "Pack the getting-ready bag" },
+        "assign_item_carriers": {
+          "title": "Assign a person to every item that must arrive",
+          "description": "Rings, license, vows, cards, gifts, and the emergency kit. Each one gets a name."
+        },
+        "run_the_rehearsal": { "title": "Run the rehearsal" },
+        "confirm_weather_backup": { "title": "Confirm the weather backup and when the call gets made" },
+        "hand_off_to_point_person": {
+          "title": "Hand everything to your point person",
+          "description": "The last real task. After this, your only job is to be there."
+        },
+        "return_rentals_and_attire": { "title": "Return rentals and rented attire" },
+        "preserve_the_gown": { "title": "Send the gown for cleaning and preservation" },
+        "write_thank_you_notes": {
+          "title": "Write thank-you notes",
+          "description": "Within about three months. Split the list and do a few at a time."
+        },
+        "order_album": { "title": "Choose photos and order an album" }
+      }
+    }
+  }
+}

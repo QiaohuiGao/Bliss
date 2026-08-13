@@ -9,7 +9,9 @@ const config: Config = {
   ],
   presets: [baseConfig],
   theme: {
-    extend: {},
+    extend: {
+      ...baseConfig.theme.extend,
+    },
   },
   plugins: [],
 }

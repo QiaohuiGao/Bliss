@@ -15,40 +15,50 @@
 }
 
 @layer components {
-  .warm-card {
-    @apply bg-white rounded-warm shadow-warm border border-bliss-border;
-  }
-  .warm-card-lg {
-    @apply bg-white rounded-warm-lg shadow-warm-lg border border-bliss-border;
-  }
   .btn-primary {
-    @apply bg-bliss-rose-dark text-white font-medium px-6 py-3 rounded-warm
-           hover:bg-bliss-rose-dark/90 transition-colors shadow-warm
-           focus:outline-none focus:ring-2 focus:ring-bliss-rose-dark focus:ring-offset-2;
+    @apply bg-bliss-sage-dark text-white font-semibold px-8 py-3.5 rounded-full
+           hover:bg-bliss-sage-deep transition-all duration-300 shadow-warm-md
+           hover:shadow-glow-sage active:scale-[0.97]
+           focus:outline-none focus:ring-2 focus:ring-bliss-sage/50 focus:ring-offset-2;
   }
   .btn-secondary {
-    @apply bg-bliss-petal text-bliss-ink font-medium px-6 py-3 rounded-warm
-           hover:bg-bliss-rose/30 transition-colors border border-bliss-border
-           focus:outline-none focus:ring-2 focus:ring-bliss-rose focus:ring-offset-2;
+    @apply bg-white text-bliss-ink font-medium px-6 py-3 rounded-full
+           hover:bg-bliss-sage-mist transition-all duration-300 border border-bliss-border
+           shadow-warm hover:shadow-warm-md active:scale-[0.98]
+           focus:outline-none focus:ring-2 focus:ring-bliss-sage/30 focus:ring-offset-2;
   }
   .btn-ghost {
-    @apply text-bliss-ink-light font-medium px-4 py-2 rounded-warm
-           hover:bg-bliss-petal transition-colors;
+    @apply text-bliss-ink-light font-medium px-4 py-2 rounded-full
+           hover:bg-bliss-sage-mist/60 transition-all duration-300;
   }
   .input-warm {
-    @apply w-full px-4 py-3 rounded-warm border border-bliss-border bg-white
-           text-bliss-ink placeholder:text-bliss-muted
-           focus:outline-none focus:ring-2 focus:ring-bliss-rose focus:border-transparent
-           transition-shadow;
+    @apply w-full px-5 py-3.5 rounded-warm border border-bliss-border bg-white
+           text-bliss-ink placeholder:text-bliss-muted text-base
+           focus:outline-none focus:ring-2 focus:ring-bliss-sage/40 focus:border-bliss-sage
+           transition-all duration-200;
   }
-  .chip {
-    @apply px-4 py-2 rounded-full border border-bliss-border text-sm font-medium
-           cursor-pointer transition-all select-none;
+  .card {
+    @apply bg-white/90 backdrop-blur-sm rounded-warm-lg shadow-warm border border-bliss-border/50
+           transition-all duration-300;
   }
-  .chip-selected {
-    @apply bg-bliss-rose-dark text-white border-bliss-rose-dark;
+  .card-hover {
+    @apply card hover:shadow-warm-lg hover:-translate-y-0.5;
   }
-  .chip-unselected {
-    @apply bg-white text-bliss-ink-light hover:border-bliss-rose hover:text-bliss-ink;
+  .card-interactive {
+    @apply card-hover cursor-pointer active:scale-[0.99];
   }
+  .glass {
+    @apply bg-white/60 backdrop-blur-xl border border-white/40;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-bliss-sage-dark to-bliss-sage;
+  }
+  .stagger-1 { animation-delay: 0.06s; }
+  .stagger-2 { animation-delay: 0.12s; }
+  .stagger-3 { animation-delay: 0.18s; }
+  .stagger-4 { animation-delay: 0.24s; }
+  .stagger-5 { animation-delay: 0.30s; }
 }

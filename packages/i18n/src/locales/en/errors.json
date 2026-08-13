@@ -1,0 +1,27 @@
+{
+  "generic": "Something went wrong. Try again.",
+  "network": "Can't reach Bliss right now. Check your connection.",
+  "unauthorized": "Please sign in to continue.",
+  "forbidden": "You don't have access to this wedding.",
+  "notFound": "We couldn't find that.",
+  "rateLimited": "Too many requests. Give it a moment.",
+  "validation": {
+    "required": "This one's required.",
+    "invalidDate": "That doesn't look like a valid date.",
+    "dateInPast": "That date has already passed.",
+    "invalidState": "Pick a US state.",
+    "invalidEmail": "That email doesn't look right.",
+    "guestCountRange": "Guest count should be between 1 and 5000.",
+    "budgetRange": "Budget should be a positive number."
+  },
+  "wedding": {
+    "alreadyExists": "You already have a wedding in progress.",
+    "inviteInvalid": "That invite link is invalid or expired.",
+    "inviteAlreadyUsed": "That invite has already been used."
+  },
+  "upload": {
+    "tooLarge": "That file is too large. Keep photos under {maxMb}MB.",
+    "wrongType": "Only images are supported here.",
+    "failed": "Upload failed. Try again."
+  }
+}

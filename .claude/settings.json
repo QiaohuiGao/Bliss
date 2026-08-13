@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(psql -h localhost -U qiaohui -d bliss_dev -c \"DROP SCHEMA public CASCADE; CREATE SCHEMA public;\")",
+      "Bash(bun run *)",
+      "Bash(lsof -ti:3000)",
+      "Bash(npx next *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(curl -s -H \"Authorization: Bearer dev\" http://localhost:3001/me/wedding)",
+      "Bash(curl -s -X POST http://localhost:3001/weddings -H 'Authorization: Bearer dev' -H 'Content-Type: application/json' -d '{\"weddingDate\":\"2027-01-01\",\"guestCountRange\":\"50_100\",\"styles\":[\"western\"],\"budgetMinCents\":5000000,\"budgetMaxCents\":15000000,\"venuePreferences\":[\"hotel\"],\"hasPlanner\":false}')",
+      "Bash(psql -h localhost -U qiaohui -d bliss_dev -c \"DELETE FROM wedding_members; DELETE FROM modules; DELETE FROM weddings; DELETE FROM users;\")",
+      "Bash(psql -h localhost -U qiaohui -d bliss_dev -c \"DELETE FROM users;\")"
+    ]
+  }
+}

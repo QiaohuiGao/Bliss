@@ -1,0 +1,275 @@
+{
+  "culture": {
+    "south_asian": {
+      "name": "South Asian",
+      "quest": {
+        "south_asian_events": {
+          "title": "South Asian Celebrations",
+          "subtitle": "Several days, several outfits, one very large family",
+          "celebration": "Every event is planned. Now the whole week belongs to you."
+        }
+      },
+      "section": {
+        "south_asian_vendors": "South Asian vendors",
+        "south_asian_attire": "South Asian attire",
+        "south_asian_guests": "Guest guidance",
+        "mehndi": "Mehndi",
+        "sangeet": "Sangeet",
+        "haldi": "Haldi",
+        "baraat": "Baraat",
+        "ceremony_rituals": "Ceremony rituals"
+      },
+      "task": {
+        "book_south_asian_caterer": { "title": "Book a South Asian caterer", "description": "Confirm they can cover every event, not just the reception. Guest counts of 300 to 500 are common." },
+        "book_dhol_player": { "title": "Book a dhol player" },
+        "book_pandit_or_imam": { "title": "Book your pandit or imam" },
+        "book_mandap_decorator": { "title": "Book the mandap decorator" },
+        "order_lehenga_or_sari": { "title": "Order the lehenga or sari", "description": "If it is coming from South Asia, allow extra months for shipping and customs on top of tailoring." },
+        "order_sherwani": { "title": "Order the sherwani" },
+        "plan_outfit_per_event": { "title": "Plan an outfit for every event" },
+        "source_wedding_jewelry": { "title": "Source the wedding jewelry" },
+        "explain_multiday_schedule": { "title": "Explain the multi-day schedule to guests", "description": "Guests unfamiliar with the format need to know which events they are invited to and what each one is." },
+        "give_guest_attire_guidance": { "title": "Give guests attire guidance per event" },
+        "book_mehndi_venue": { "title": "Book the mehndi venue" },
+        "book_mehndi_artist": { "title": "Book the mehndi artist", "description": "Bridal mehndi takes several hours. Confirm how many guest hands they can also cover." },
+        "plan_mehndi_decor": { "title": "Plan mehndi decor" },
+        "book_sangeet_venue": { "title": "Book the sangeet venue" },
+        "organize_sangeet_performances": { "title": "Organize the performances" },
+        "schedule_dance_rehearsals": { "title": "Schedule dance rehearsals" },
+        "plan_haldi": { "title": "Plan the haldi" },
+        "buy_haldi_clothes": { "title": "Buy clothes you don't mind staining" },
+        "plan_baraat_route": { "title": "Plan the baraat route" },
+        "arrange_baraat_transport": { "title": "Arrange the horse, car, or procession" },
+        "confirm_venue_allows_baraat": { "title": "Confirm the venue allows a baraat", "description": "Noise rules, street permits, and animal policies all come up. Ask before you book." },
+        "plan_mandap_setup": { "title": "Plan the mandap setup and timing" },
+        "plan_jaimala": { "title": "Plan the jaimala" },
+        "plan_saptapadi": { "title": "Plan the saptapadi" },
+        "plan_vidaai": { "title": "Plan the vidaai" }
+      }
+    },
+
+    "chinese": {
+      "name": "Chinese",
+      "quest": {
+        "chinese_traditions": {
+          "title": "Chinese Traditions",
+          "subtitle": "Two families, formally joined",
+          "celebration": "Tea poured, elders honored. Both families are part of this now."
+        }
+      },
+      "section": {
+        "chinese_vendors": "Chinese vendors",
+        "chinese_attire": "Chinese attire",
+        "chinese_banquet": "Banquet",
+        "chinese_decor": "Decor",
+        "tea_ceremony": "Tea ceremony",
+        "door_games": "Door games",
+        "family_etiquette": "Family etiquette"
+      },
+      "task": {
+        "book_bilingual_mc": { "title": "Book a bilingual MC", "description": "A good bilingual MC keeps both halves of the room in the same moment instead of translating after the fact." },
+        "find_venue_with_chinese_kitchen": { "title": "Confirm the venue can serve a Chinese banquet" },
+        "order_qipao": { "title": "Order the qipao or cheongsam" },
+        "plan_outfit_changes": { "title": "Plan the outfit changes and when they happen" },
+        "plan_banquet_courses": { "title": "Plan the banquet courses", "description": "A traditional banquet runs eight to ten courses and takes longer than a Western dinner. Build the timeline around it." },
+        "decide_roast_pig": { "title": "Decide on the roast pig" },
+        "plan_table_toasting_route": { "title": "Plan the table-by-table toasting route" },
+        "source_double_happiness_decor": { "title": "Source double happiness decor" },
+        "plan_tea_ceremony": { "title": "Plan the tea ceremony" },
+        "confirm_elder_order": { "title": "Confirm the order elders are served in", "description": "Order is by seniority and side. Get it wrong and people notice. Ask a parent to write the list." },
+        "buy_tea_set": { "title": "Buy or borrow the tea set" },
+        "prepare_red_envelopes": { "title": "Prepare red envelopes" },
+        "plan_door_games": { "title": "Plan the door games" },
+        "brief_bridesmaids_on_games": { "title": "Brief the bridesmaids on the games" },
+        "plan_hair_combing": { "title": "Plan the hair-combing ceremony" },
+        "coordinate_betrothal_gifts": { "title": "Coordinate the betrothal gift exchange", "description": "This is a conversation between the two families, and it is worth having early and explicitly." },
+        "check_lucky_date_preferences": { "title": "Check date and number preferences with family" }
+      }
+    },
+
+    "jewish": {
+      "name": "Jewish",
+      "quest": {
+        "jewish_traditions": {
+          "title": "Jewish Traditions",
+          "subtitle": "Under the chuppah, and everything around it",
+          "celebration": "Ketubah signed, chuppah ready, glass waiting. Mazel tov."
+        }
+      },
+      "section": {
+        "jewish_date_rules": "Date constraints",
+        "jewish_catering": "Kosher catering",
+        "jewish_vendors": "Vendors",
+        "before_ceremony": "Before the ceremony",
+        "under_the_chuppah": "Under the chuppah",
+        "after_ceremony": "After the ceremony"
+      },
+      "task": {
+        "avoid_shabbat_and_holidays": { "title": "Check the date against Shabbat and holidays", "description": "Weddings are not held on Shabbat or major holidays. This rules out most Friday evenings and Saturdays before sundown." },
+        "confirm_rabbi_availability": { "title": "Confirm your rabbi is available" },
+        "decide_kosher_level": { "title": "Decide kosher or kosher-style", "description": "Fully kosher means a certified kitchen and supervision, which narrows venue options significantly. Decide before you book one." },
+        "book_kosher_caterer": { "title": "Book the caterer" },
+        "book_rabbi_or_cantor": { "title": "Book the rabbi or cantor" },
+        "commission_ketubah": { "title": "Commission the ketubah", "description": "Custom ketubah artists work months out. Confirm the text version with your officiant before ordering." },
+        "book_klezmer_or_hora_band": { "title": "Book a klezmer band or hora set" },
+        "plan_aufruf": { "title": "Plan the aufruf" },
+        "plan_bedeken": { "title": "Plan the bedeken" },
+        "arrange_chuppah": { "title": "Arrange the chuppah" },
+        "choose_chuppah_holders": { "title": "Choose who holds the chuppah poles" },
+        "sign_ketubah": { "title": "Sign the ketubah" },
+        "choose_ketubah_witnesses": { "title": "Choose the ketubah witnesses" },
+        "plan_circling": { "title": "Decide on circling, and who circles" },
+        "arrange_sheva_brachot_readers": { "title": "Choose the seven blessing readers" },
+        "prepare_glass_to_break": { "title": "Prepare the glass" },
+        "plan_yichud": { "title": "Plan yichud", "description": "Ten to fifteen minutes alone together right after the ceremony. Everyone who has done it says it was the best part." },
+        "plan_hora_and_chairs": { "title": "Plan the hora and chair lift" }
+      }
+    },
+
+    "korean": {
+      "name": "Korean",
+      "quest": {
+        "korean_traditions": {
+          "title": "Korean Traditions",
+          "subtitle": "Paebaek, hanbok, and the family bows",
+          "celebration": "Paebaek done. Both families have welcomed you."
+        }
+      },
+      "section": {
+        "korean_attire": "Hanbok",
+        "korean_venue": "Venue needs",
+        "paebaek": "Paebaek"
+      },
+      "task": {
+        "rent_hanbok": { "title": "Rent or order hanbok" },
+        "book_hanbok_dresser": { "title": "Book someone to dress you", "description": "Hanbok is genuinely hard to put on correctly. Do not plan to do it yourselves." },
+        "confirm_paebaek_room": { "title": "Confirm the venue has a paebaek room" },
+        "plan_paebaek": { "title": "Plan the paebaek" },
+        "prepare_ceremonial_table": { "title": "Prepare the ceremonial table" },
+        "practice_family_bows": { "title": "Practice the bows" },
+        "arrange_jujubes_and_chestnuts": { "title": "Arrange the jujubes and chestnuts" }
+      }
+    },
+
+    "nigerian": {
+      "name": "Nigerian or West African",
+      "quest": {
+        "nigerian_traditions": {
+          "title": "Nigerian Traditions",
+          "subtitle": "Two weddings, and the fabric that ties them together",
+          "celebration": "Both weddings planned. Two celebrations, one marriage."
+        }
+      },
+      "section": {
+        "nigerian_attire": "Aso-ebi and gele",
+        "nigerian_vendors": "Vendors",
+        "traditional_wedding": "Traditional wedding",
+        "reception_customs": "Reception customs"
+      },
+      "task": {
+        "source_aso_ebi_fabric": { "title": "Source the aso-ebi fabric", "description": "Fabric must be chosen, bought in bulk, and distributed months ahead so guests can have it tailored in time." },
+        "distribute_aso_ebi": { "title": "Distribute aso-ebi and collect payments" },
+        "book_gele_tier": { "title": "Book someone to tie gele on the day" },
+        "book_alaga_or_mc": { "title": "Book the alaga or MC" },
+        "book_afrobeat_band": { "title": "Book a live band or Afrobeat DJ" },
+        "plan_traditional_engagement": { "title": "Plan the traditional engagement", "description": "Igba Nkwu, a Yoruba engagement, or the equivalent for your family. Often a full event in its own right." },
+        "agree_family_list_items": { "title": "Agree the family list with both families" },
+        "book_traditional_venue": { "title": "Book the traditional ceremony venue" },
+        "plan_money_spray": { "title": "Plan the money spray" },
+        "arrange_small_bills": { "title": "Arrange small bills in advance", "description": "Ask the bank weeks ahead. Getting several hundred singles the day before does not work." }
+      }
+    },
+
+    "mexican": {
+      "name": "Mexican or Latin American",
+      "section": {
+        "mexican_padrinos": "Padrinos and madrinas",
+        "mexican_vendors": "Mariachi",
+        "mexican_ceremony": "Ceremony traditions",
+        "mexican_reception": "Reception traditions"
+      },
+      "task": {
+        "choose_padrinos": { "title": "Choose your padrinos and madrinas" },
+        "assign_padrino_sponsorships": { "title": "Assign what each one sponsors", "description": "Sponsorship distributes real budget across the community. Assign specific items, not vague amounts." },
+        "book_mariachi": { "title": "Book mariachi" },
+        "complete_pre_cana": { "title": "Complete pre-Cana or marriage prep" },
+        "arrange_lazo": { "title": "Arrange the lazo and choose who places it" },
+        "arrange_arras": { "title": "Arrange the arras, the thirteen coins" },
+        "plan_late_night_second_meal": { "title": "Plan the late-night second meal" },
+        "plan_hora_loca": { "title": "Plan la hora loca" },
+        "plan_vals_and_dollar_dance": { "title": "Plan the vals and the dollar dance" }
+      }
+    },
+
+    "persian": {
+      "name": "Persian or Iranian",
+      "quest": {
+        "persian_traditions": {
+          "title": "Persian Traditions",
+          "subtitle": "The sofreh, and everything laid on it",
+          "celebration": "The sofreh is set. Every object on it means something."
+        }
+      },
+      "section": {
+        "persian_vendors": "Vendors",
+        "persian_timing": "Timing",
+        "sofreh_aghd": "Sofreh Aghd"
+      },
+      "task": {
+        "book_sofreh_designer": { "title": "Book the sofreh designer" },
+        "book_aghd_officiant": { "title": "Book the aghd officiant" },
+        "plan_late_dinner_service": { "title": "Plan for a late dinner service", "description": "Persian receptions often start dinner much later than a US venue expects. Confirm the kitchen and the overtime rate." },
+        "design_sofreh_aghd": { "title": "Design the sofreh aghd" },
+        "gather_sofreh_elements": { "title": "Gather the sofreh elements", "description": "Mirror, candelabras, sweets, herbs, honey, and a book of poetry or scripture. Many families have pieces to lend." },
+        "choose_honored_couple_for_cloth": { "title": "Choose who holds the cloth overhead" },
+        "plan_honey_ritual": { "title": "Plan the honey ritual" },
+        "plan_knife_dance": { "title": "Plan the knife dance" }
+      }
+    },
+
+    "vietnamese": {
+      "name": "Vietnamese",
+      "quest": {
+        "vietnamese_traditions": {
+          "title": "Vietnamese Traditions",
+          "subtitle": "Honoring the ancestors before anything else",
+          "celebration": "The ancestral ceremony is planned. Both families are joined."
+        }
+      },
+      "section": {
+        "vietnamese_attire": "Áo dài",
+        "le_gia_tien": "Lễ Gia Tiên"
+      },
+      "task": {
+        "order_ao_dai": { "title": "Order the áo dài" },
+        "plan_ancestral_altar": { "title": "Plan the ancestral altar" },
+        "coordinate_family_procession": { "title": "Coordinate the family procession" },
+        "prepare_gift_trays": { "title": "Prepare the gift trays", "description": "The number of trays is traditionally odd, and each is carried by an unmarried member of the family. Assign carriers early." }
+      }
+    },
+
+    "filipino": {
+      "name": "Filipino",
+      "section": { "filipino_ceremony": "Sponsors" },
+      "task": {
+        "choose_cord_and_veil_sponsors": { "title": "Choose cord and veil sponsors" },
+        "choose_candle_sponsors": { "title": "Choose candle sponsors" },
+        "choose_principal_sponsors": { "title": "Choose principal sponsors", "description": "Principal sponsors are an honor and often a form of support. The list can get long, so decide the number first." }
+      }
+    },
+
+    "greek": {
+      "name": "Greek",
+      "section": {
+        "greek_ceremony": "Ceremony",
+        "greek_reception": "Reception"
+      },
+      "task": {
+        "choose_koumbaro": { "title": "Choose your koumbaro or koumbara" },
+        "order_stefana": { "title": "Order the stefana" },
+        "prepare_koufeta": { "title": "Prepare koufeta favors" },
+        "plan_money_dance": { "title": "Plan the money dance" }
+      }
+    }
+  }
+}
