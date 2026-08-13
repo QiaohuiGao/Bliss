@@ -1,0 +1,63 @@
+{
+  "_comment": "Definitions surfaced as inline tooltips. Terms must be used verbatim in UI copy. See docs/GLOSSARY.md.",
+
+  "day_of_coordinator": "Someone who handles final-weeks logistics and runs the wedding day itself. Cheaper than a full planner, and the most common choice.",
+  "venue_coordinator": "Works for the venue, not for you. They make sure the venue's obligations happen, not that your whole day does.",
+  "officiant": "The person who legally performs the ceremony. Their credentials have to be valid in the state where you marry.",
+  "point_person": "The friend or family member vendors call on the day so nobody calls you.",
+
+  "save_the_date": "An early heads-up sent 6 to 12 months out so guests can book travel. Not the invitation.",
+  "invitation_suite": "The full mailed set: invitation, RSVP card, details card, envelopes.",
+  "response_deadline": "The date RSVPs are due, usually 3 to 4 weeks before the wedding so you can give the caterer a final headcount.",
+  "escort_card": "Tells a guest which table they're at.",
+  "place_card": "Tells a guest which seat is theirs.",
+  "plus_one": "A guest's guest. Whether to offer one is a budget decision as much as a social one.",
+
+  "first_look": "A private moment where you see each other before the ceremony. It buys back an hour of photo time.",
+  "cocktail_hour": "The hour between ceremony and reception, usually while you're taking photos.",
+  "grand_entrance": "Your introduction into the reception.",
+  "send_off": "The exit at the end of the night: sparklers, bubbles, or a getaway car.",
+  "rehearsal_dinner": "Dinner the night before, after walking through the ceremony. Traditionally hosted by the groom's family, though that's loosening.",
+
+  "coi": "Certificate of insurance. Most venues require your vendors to carry liability coverage and name the venue on the certificate.",
+  "force_majeure": "The contract clause covering events outside anyone's control. Read this one.",
+  "retainer": "The deposit that reserves a vendor's date. Usually non-refundable.",
+  "service_charge": "A mandatory fee, often 20 to 25%, that is not a tip and usually does not go to the staff.",
+  "gratuity": "The actual tip. Budget for it separately from the service charge.",
+  "corkage_fee": "What a venue charges to serve wine you supplied.",
+  "cake_cutting_fee": "What a venue charges per slice to cut and serve a cake you didn't buy from them.",
+  "fb_minimum": "Food and beverage minimum. The amount you must spend on food and drink, separate from the site fee.",
+  "final_headcount": "The guest number you commit to, usually 7 to 10 days out. You pay for it whether they come or not.",
+  "overtime_rate": "The hourly rate if the party runs past contracted end time. Agree on it in advance.",
+  "vendor_meal": "A meal you're contractually required to feed to photographers, the band, and the planner.",
+
+  "plated": "Servers bring each guest a chosen dish. Most formal, needs meal choices collected in advance.",
+  "buffet": "Guests serve themselves from stations. Usually cheaper, needs more floor space.",
+  "family_style": "Large shared platters on each table. Feels generous, costs closer to plated.",
+  "open_bar": "You cover all drinks.",
+  "consumption_bar": "You pay for what's actually poured, tallied at the end.",
+  "cash_bar": "Guests pay for their own drinks. Widely considered poor form in the US.",
+
+  "tablescape": "The full look of a set table: linens, centerpiece, chargers, glassware.",
+  "sweetheart_table": "A table for just the two of you, instead of a head table with the wedding party.",
+  "installation": "A large floral or decor piece, like a hanging arrangement or a full arch.",
+  "uplighting": "Lights placed on the floor pointing up walls. The cheapest way to change how a room feels.",
+  "run_of_show": "The minute-by-minute schedule for the wedding day, shared with every vendor.",
+  "shot_list": "The specific photos you want. Give it to your photographer at least two weeks out.",
+  "golden_hour": "The hour before sunset, when outdoor photos look best. Plan the timeline around it.",
+
+  "alterations": "Fitting a gown to your body. Takes 6 to 8 weeks and 2 to 3 appointments. This is the single most underestimated lead time in wedding planning.",
+  "bustle": "The set of hooks or ties that lifts a train off the floor for the reception. Added during alterations, and someone needs to be taught how to do it.",
+  "silhouette": "The overall shape of a gown: A-line, ball gown, mermaid, sheath.",
+  "black_tie": "Tuxedos and floor-length gowns.",
+  "cocktail_attire": "Suits and knee-length dresses.",
+
+  "elopement": "Marrying with few or no guests, by choice.",
+  "micro_wedding": "A full wedding at small scale, usually 50 guests or fewer.",
+  "unplugged_ceremony": "Guests are asked to put phones away so your photographer gets clean shots.",
+  "content_creator": "A newer vendor category: someone capturing phone-shot video for social, alongside your photographer.",
+
+  "marriage_license": "The legal permit to marry, issued by a county clerk. Distinct from the marriage certificate you get afterward.",
+  "waiting_period": "Time you must wait between getting the license and using it. Set by state law, and it cannot be waived by planning harder.",
+  "name_change": "Not automatic. Order matters: Social Security first, then driver's license, then passport, then banks."
+}

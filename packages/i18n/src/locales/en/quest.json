@@ -1,0 +1,69 @@
+{
+  "detail": {
+    "estimatedTime": "About {days, plural, one {# day} other {# days}}",
+    "targetDate": "Target {date}",
+    "taskCount": "{count, plural, one {# task} other {# tasks}}",
+    "optionalCount": "{count, plural, one {# optional} other {# optional}}",
+    "start": "Start this quest",
+    "resume": "Pick up where you left off",
+    "addTask": "Add a task",
+    "addSection": "Add a section",
+    "showOptional": "Show optional tasks",
+    "hideOptional": "Hide optional tasks",
+    "emptySection": "Nothing in this section yet"
+  },
+  "task": {
+    "notes": "Notes",
+    "notesPlaceholder": "Quotes, impressions, anything worth remembering",
+    "rating": "Your rating",
+    "photos": "Photos",
+    "addPhoto": "Add photo",
+    "cost": "What it cost",
+    "costCategory": "Category",
+    "vendor": "Vendor",
+    "vendorName": "Name",
+    "vendorContact": "Contact",
+    "vendorQuote": "Quote",
+    "vendorWebsite": "Website",
+    "dueDate": "Due",
+    "assignee": "Who's doing this",
+    "markDone": "Mark done",
+    "markUndone": "Not done after all",
+    "optional": "Optional",
+    "leadTime": "Lead time: {days, plural, one {# day} other {# days}}"
+  },
+  "celebration": {
+    "title": "{quest} complete",
+    "stats": "{days, plural, one {# day} other {# days}} · {tasks, plural, one {# task} other {# tasks}} · {photos, plural, one {# photo} other {# photos}}",
+    "share": "Save this card",
+    "nextUp": "Up next: {quest}",
+    "close": "Keep going"
+  },
+  "budget": {
+    "category": {
+      "venue_catering": "Venue and catering",
+      "photo_video": "Photo and video",
+      "flowers_decor": "Flowers and decor",
+      "attire_beauty": "Attire and beauty",
+      "music_entertainment": "Music and entertainment",
+      "rings": "Rings",
+      "stationery": "Stationery",
+      "transportation": "Transportation",
+      "favors_gifts": "Favors and gifts",
+      "buffer_tips": "Buffer and tips"
+    },
+    "typicalShare": "Typically {min}-{max}% of budget"
+  },
+  "legal": {
+    "disclaimer": "This is general information, not legal advice. County rules vary. Confirm with your county clerk.",
+    "waitingPeriod": "{hours, plural, =0 {No waiting period} other {# hour waiting period}}",
+    "validity": "License valid for {days, plural, one {# day} other {# days}}",
+    "witnesses": "{count, plural, =0 {No witnesses required} one {# witness required} other {# witnesses required}}",
+    "bothMustAppear": "Both of you must appear in person",
+    "onlineOrdination": {
+      "yes": "Online ordinations are generally accepted",
+      "no": "Online ordinations are not accepted here",
+      "varies_by_county": "Online ordinations vary by county. Confirm before you book an officiant."
+    }
+  }
+}

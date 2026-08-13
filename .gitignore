@@ -12,8 +12,12 @@ apps/api/.env
 apps/web/.env.local
 apps/mobile/.env
 
+# Machine-local Claude Code settings
+.claude/settings.local.json
+
 # OS
 .DS_Store
 
 # TypeScript
 *.tsbuildinfo
+.gstack/

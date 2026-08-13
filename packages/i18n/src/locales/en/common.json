@@ -1,0 +1,80 @@
+{
+  "app": {
+    "name": "Bliss",
+    "tagline": "Wedding planning, naturally.",
+    "description": "A warm, nature-inspired wedding planning companion. Step by step through the garden."
+  },
+  "nav": {
+    "dashboard": "Home",
+    "board": "Plan",
+    "timeline": "Timeline",
+    "budget": "Budget",
+    "guests": "Guests",
+    "settings": "Settings",
+    "signIn": "Sign in",
+    "signUp": "Start planning",
+    "signOut": "Sign out"
+  },
+  "action": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "skip": "Skip",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "confirm": "Confirm",
+    "retry": "Try again",
+    "close": "Close",
+    "seeAll": "See all",
+    "getStarted": "Start your wedding plan"
+  },
+  "state": {
+    "loading": "Loading\u2026",
+    "empty": "Nothing here yet",
+    "saving": "Saving\u2026",
+    "saved": "Saved"
+  },
+  "marketing": {
+    "eyebrow": "Wedding planning, reimagined",
+    "headlineTop": "Never overwhelming.",
+    "headlineBottom": "Always one clear next step.",
+    "subhead": "Bliss guides you through every stage of planning, from first vision to wedding day, like a calm friend who has done this before.",
+    "ctaNote": "Free to start. No credit card required.",
+    "feature": {
+      "dreamFirst": {
+        "title": "Dream first, budget later",
+        "body": "We start with your vision. Budget comes after, framed as how to make it happen, not a ceiling."
+      },
+      "oneStep": {
+        "title": "{count} quests, one step at a time",
+        "body": "Every quest is open from day one. You always know what to do next, and what can wait."
+      },
+      "multicultural": {
+        "title": "Built for two families",
+        "body": "Blending traditions? Pick your heritages and Bliss adds the right events, vendors, and lead times."
+      }
+    },
+    "quote": {
+      "text": "Bliss feels like a friend who has already been through it.",
+      "attribution": "Alex and Jordan, married June 2025"
+    }
+  },
+  "money": {
+    "regionalNote": "Costs vary a lot by region. Expect higher in NY, CA, and NJ, lower in the Midwest and South.",
+    "perGuest": "{amount} per guest",
+    "ofBudget": "{percent}% of budget"
+  },
+  "time": {
+    "estimatedDays": "{days, plural, one {# day} other {# days}}",
+    "leadTime": "Book {months, plural, one {# month} other {# months}} out",
+    "leadTimeRange": "Book {min}-{max} months out"
+  },
+  "join": {
+    "title": "Joining your wedding plan",
+    "success": "You're in",
+    "redirecting": "Taking you to your shared plan."
+  }
+}
