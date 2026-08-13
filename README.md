@@ -3,7 +3,7 @@
 A wedding planning companion for US couples that gives you one clear next step
 at a time, and is built from the ground up for couples blending two traditions.
 
-Full-stack monorepo: web app, mobile app, and API.
+Monorepo: a Next.js web app and a Fastify API.
 
 ## What it does
 
@@ -28,7 +28,6 @@ Full-stack monorepo: web app, mobile app, and API.
 |-------|------|
 | API | Fastify + Bun + PostgreSQL + Drizzle ORM |
 | Web | Next.js 14 (App Router) + Tailwind CSS + next-intl |
-| Mobile | Expo (React Native) + NativeWind |
 | i18n | Shared ICU catalogs in `packages/i18n` |
 | Auth | Clerk |
 | Deployment | API → Railway, Web → Vercel |
@@ -39,7 +38,6 @@ Full-stack monorepo: web app, mobile app, and API.
 apps/
   api/        Fastify REST API, quest generator, content templates
   web/        Next.js web app
-  mobile/     Expo React Native app
 packages/
   types/      Shared TypeScript types
   i18n/       Locale catalogs, content catalogs, formatters

@@ -45,7 +45,8 @@ job. The agent exists for questions with no correct answer, only a fitting one.
 | `weddings`, `users`, `wedding_members` | **Extend** — new columns, no rebuild |
 | `modules` → `quests`, `sub_modules`, `tasks` | **Rewrite** — new fields, drop the lock state |
 | `quest-templates.ts` (Chinese, China-market) | **Replace** — structural keys in code, copy in `packages/i18n` |
-| Web pages, mobile screens | **Rewrite** — English via catalogs, new scoping surface |
+| Web pages | **Rewrite** — English via catalogs, new scoping surface |
+| `apps/mobile` | **Deleted** — its screens targeted a removed data model. A native client, if it returns, is a rebuild against the quest API |
 | `stress`, `budget`, `guests` as standalone modules | **Remove** — folded into quests / cross-cutting |
 
 Database has no real users. Migration strategy is a **hard cut**: drop and regenerate rather
@@ -517,7 +518,7 @@ Then the proposal:
 
 ### 6.4 Motion
 
-Framer Motion on web, Reanimated on mobile. Restrained: celebration on quest completion,
+Framer Motion on web. Restrained: celebration on quest completion,
 milestone moments, and the transition from proposal to committed list. No animation on the
 scoping path — it must feel fast, not decorative.
 
@@ -527,7 +528,7 @@ scoping path — it must feel fast, not decorative.
 
 | Sprint | Scope | Exit criterion |
 |---|---|---|
-| **1** Foundation | Schema hard cut, types, `packages/i18n` wired (web + mobile + API), CI i18n gates | Pseudo-locale `en-XA` walk passes |
+| **1** Foundation | Schema hard cut, types, `packages/i18n` wired (web + API), CI i18n gates | Pseudo-locale `en-XA` walk passes |
 | **2** Content | 14 quests: structure, scenarios, scoping questions, tagged task pools. Culture packs for the top 3 heritages | Attire & Beauty complete end to end |
 | **3** Resolver | Predicate evaluator + resolver + unit tests | **"rent" and "custom" produce two different, good lists — no AI in the codebase yet** |
 | **4** Scheduler | CPM backward/forward pass, slack, capacity dial, infeasibility events | 12-month and 6-month plans differ correctly; negative slack surfaces |

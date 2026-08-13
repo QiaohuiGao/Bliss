@@ -1,11 +1,35 @@
 # Bliss → US Market: Research & Localization Plan
 
-**Status:** Proposed plan (no code changed yet)
+**Status:** Implemented, except where noted below (see the status box after Part 1)
 **Date:** 2026-08-12
 **Goal:** Convert Bliss from a Chinese-language, China-market wedding quest planner into an
 English-only product built for US couples, with first-class support for multicultural /
 immigrant-family weddings. Every artifact in the repo (code, content, docs, seeds, UI copy)
 must end up in English.
+
+---
+
+## Implementation status (updated 2026-08-13)
+
+Phases 0, 1, 1b, 2, 3, 5, and 6 are implemented and verified on branch
+`us-market-migration`. Verify with `bun run lint:i18n` and
+`bun run verify:generation`.
+
+**Phase 4 changed.** `apps/mobile` has been **deleted** rather than localized:
+its screens targeted a data model that no longer exists, so a localization pass
+would have been applied to code slated for rewrite. A native client, if it
+returns, is a rebuild against the quest API. Every mobile reference below is
+retained as a record of the original plan, not as pending work. The API half of
+Phase 4 stands.
+
+**Phase 0 open questions, resolved:** cultural packs ship in v1; USD is a hard
+cut; the default locale is prefix-less; `es` is the intended second locale;
+mobile is out of scope permanently.
+
+**One item is not done and blocks launch.** `validityDays` and
+`witnessesRequired` in `apps/api/src/content/marriage-license.ts` are national
+defaults, not per-state sourced values. Waiting periods are sourced. See the
+`verifyWithCounty` flag and the TODO in that file.
 
 ---
 

@@ -502,9 +502,8 @@ exceptionally well**, which is precisely what Phase 3 delivers.
 ## 12. Open Questions
 
 1. Cultural packs in v1, or base US tree first and packs in v1.1?
-2. Mobile in scope for the v2 rewrite, or web + API only?
-3. Does the Companion Loop get a persistent chat surface, or does conversation only exist
+2. Does the Companion Loop get a persistent chat surface, or does conversation only exist
    inside quest scoping? (Recommendation: scoping-only in v1 — a general chat box invites
    questions the system cannot yet answer well.)
-4. Who is the assistant, in voice terms — a planner, a friend who has done this, or a
+3. Who is the assistant, in voice terms — a planner, a friend who has done this, or a
    neutral tool? This drives every piece of copy and should be locked before Phase 2.

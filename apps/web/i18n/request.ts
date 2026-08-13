@@ -4,7 +4,7 @@ import { loadAllMessages, DEFAULT_LOCALE, isSupportedLocale } from '@bliss/i18n'
 
 /**
  * Server-side message loading. Catalogs live in `packages/i18n` and are shared
- * with the mobile app and the API, so there is exactly one source of truth for
+ * with the API, so there is exactly one source of truth for
  * every string.
  */
 export default getRequestConfig(async ({ requestLocale }) => {
