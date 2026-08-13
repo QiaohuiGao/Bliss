@@ -3,7 +3,7 @@
 **Status:** Draft v2 · Supersedes v1 ("闯关式婚礼任务规划器")
 **Date:** 2026-08-12
 **Market:** United States, English-only ship, multicultural-first (see [docs/US-MARKET-PLAN.md](docs/US-MARKET-PLAN.md))
-**Architecture reference:** [docs/AGENTIC-SYSTEM-REFERENCE.md](docs/AGENTIC-SYSTEM-REFERENCE.md)
+**Architecture reference:** [docs/other/AGENTIC-SYSTEM-REFERENCE.md](docs/other/AGENTIC-SYSTEM-REFERENCE.md)
 
 ---
 
@@ -479,7 +479,7 @@ and the AI arrives late on purpose.**
 | **8** | Eval suite promoted to a CI release gate | |
 
 **Maturity target: L3** (an agent with memory) per
-[docs/AGENTIC-SYSTEM-REFERENCE.md](docs/AGENTIC-SYSTEM-REFERENCE.md) §成熟度分级.
+[docs/other/AGENTIC-SYSTEM-REFERENCE.md](docs/other/AGENTIC-SYSTEM-REFERENCE.md) §成熟度分级.
 Today the codebase is L0. The prerequisite for L3 is not L2 — it is **doing L1
 exceptionally well**, which is precisely what Phase 3 delivers.
 

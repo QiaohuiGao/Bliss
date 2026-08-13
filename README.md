@@ -82,7 +82,7 @@ diff instead of a surprise.
 | [docs/I18N.md](docs/I18N.md) | How to add a locale, key naming, what must never be translated |
 | [docs/GLOSSARY.md](docs/GLOSSARY.md) | US wedding terminology used verbatim in UI copy |
 | [docs/CULTURAL-TRADITIONS.md](docs/CULTURAL-TRADITIONS.md) | How cultural packs work, and how to add one |
-| [docs/AGENTIC-SYSTEM-REFERENCE.md](docs/AGENTIC-SYSTEM-REFERENCE.md) | Agent architecture reference |
+| [docs/other/AGENTIC-SYSTEM-REFERENCE.md](docs/other/AGENTIC-SYSTEM-REFERENCE.md) | Agent architecture reference |
 
 ## Conventions
 

@@ -3,7 +3,7 @@
 **Status:** Draft v2 · Supersedes v1
 **Date:** 2026-08-12
 **Implements:** [PRD.md](PRD.md) · [docs/US-MARKET-PLAN.md](docs/US-MARKET-PLAN.md)
-**Concepts:** [docs/AGENTIC-SYSTEM-REFERENCE.md](docs/AGENTIC-SYSTEM-REFERENCE.md)
+**Concepts:** [docs/other/AGENTIC-SYSTEM-REFERENCE.md](docs/other/AGENTIC-SYSTEM-REFERENCE.md)
 
 ---
 
