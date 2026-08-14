@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { db } from '../db'
 import { modules, subModules, tasks, taskPhotos, moduleCelebrations } from '../db/schema'
 import { eq, and, sql } from 'drizzle-orm'
-import { requireAuth, requireWeddingAccess } from '../middleware/auth'
+import { requireAuth, requireModuleAccess, requireWeddingAccess } from '../middleware/auth'
 import { differenceInDays } from 'date-fns'
 
 export async function moduleRoutes(app: FastifyInstance) {
@@ -82,7 +82,7 @@ export async function moduleRoutes(app: FastifyInstance) {
 
   // Get module detail
   app.get('/modules/:moduleId', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireModuleAccess]
   }, async (req, reply) => {
     const { moduleId } = req.params as any
 
@@ -153,7 +153,7 @@ export async function moduleRoutes(app: FastifyInstance) {
 
   // Update module (deadline, status, order)
   app.patch('/modules/:moduleId', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireModuleAccess]
   }, async (req, reply) => {
     const { moduleId } = req.params as any
     const body = req.body as any
@@ -175,7 +175,7 @@ export async function moduleRoutes(app: FastifyInstance) {
 
   // Unlock module manually
   app.patch('/modules/:moduleId/unlock', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireModuleAccess]
   }, async (req, reply) => {
     const { moduleId } = req.params as any
 
@@ -190,7 +190,7 @@ export async function moduleRoutes(app: FastifyInstance) {
 
   // Start module
   app.patch('/modules/:moduleId/start', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireModuleAccess]
   }, async (req, reply) => {
     const { moduleId } = req.params as any
 
@@ -234,7 +234,7 @@ export async function moduleRoutes(app: FastifyInstance) {
 
   // Delete module
   app.delete('/modules/:moduleId', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireModuleAccess]
   }, async (req, reply) => {
     const { moduleId } = req.params as any
     await db.delete(modules).where(eq(modules.id, moduleId))

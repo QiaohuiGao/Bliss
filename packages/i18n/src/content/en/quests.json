@@ -27,6 +27,22 @@
           "description": "Gratuity is expected in the US and is not the same as the service charge on your catering bill. Budget it separately or it will surprise you."
         },
         "open_wedding_account": { "title": "Open a separate account for wedding money" },
+        "write_couple_funded_guardrails": {
+          "title": "Write the guardrails for funding this yourselves",
+          "description": "Agree on the maximum total, what savings are protected, whether debt is off the table, and the amount either person can commit without another conversation."
+        },
+        "confirm_family_gift_boundaries": {
+          "title": "Confirm that family contributions are gifts, not decision rights",
+          "description": "Thank each contributor and say clearly whether the money changes the guest list, ceremony, vendors, or other decisions before accepting it."
+        },
+        "write_family_input_boundaries": {
+          "title": "Write down what family funding can and cannot influence",
+          "description": "Name the decisions contributors may join, the decisions that remain yours, and what happens if expectations grow after money is committed."
+        },
+        "clarify_family_contributions": {
+          "title": "Have the unfinished family contribution conversations",
+          "description": "Ask for an amount, timing, and attached expectations. Build the plan only after an unclear promise becomes a clear yes, no, or number."
+        },
         "draft_guest_count": {
           "title": "Draft a guest count",
           "description": "Not the list yet, just the number. It drives venue size, catering, and most of your budget."
@@ -36,6 +52,26 @@
           "description": "Compare them. Where you disagree is where the real budget conversation is."
         },
         "agree_non_negotiables": { "title": "Write down what you will not compromise on" },
+        "define_guest_experience_anchor": {
+          "title": "Define what a cared-for guest should experience",
+          "description": "Write one sentence Bliss can use when choices compete: what should guests feel, and which practical details make that feeling real?"
+        },
+        "define_atmosphere_anchor": {
+          "title": "Define the atmosphere worth protecting",
+          "description": "Name the visual and emotional qualities that matter. This becomes a filter for venue, design, flowers, lighting, and rentals."
+        },
+        "define_food_party_anchor": {
+          "title": "Define what makes the meal and party successful",
+          "description": "Name the energy, hospitality, food quality, music, and dancing experience you would protect before decorative extras."
+        },
+        "define_meaning_tradition_anchor": {
+          "title": "Define the meaning and traditions worth protecting",
+          "description": "Name the rituals, people, or cultural details that make this wedding yours rather than interchangeable."
+        },
+        "define_low_stress_anchor": {
+          "title": "Define what a low-stress wedding means to you",
+          "description": "Name the complexity, spending, or obligations you are willing to remove so the process and the day still feel like yours."
+        },
         "decide_planner_level": {
           "title": "Decide how much help you want",
           "description": "Full-service, partial, or a day-of coordinator. Note that a venue coordinator works for the venue, not for you, so it isn't the same thing."
@@ -44,6 +80,55 @@
         "buy_wedding_insurance": {
           "title": "Look into wedding insurance",
           "description": "Liability coverage is required by many venues, and cancellation coverage protects deposits."
+        },
+        "map_domain_owners": {
+          "title": "Choose an owner for each planning domain",
+          "description": "Ownership means doing the research and bringing back a recommendation. It does not mean hiding the decision or carrying the whole wedding alone."
+        },
+        "define_two_yes_decisions": {
+          "title": "Name the decisions that require two yeses",
+          "description": "Choose the budget, guest, tradition, contract, and schedule decisions neither person should finalize alone."
+        },
+        "schedule_weekly_planning_checkin": {
+          "title": "Schedule one short weekly planning check-in",
+          "description": "Keep it bounded: review decisions, blockers, and the next few actions, then stop talking about the wedding for the night."
+        },
+        "write_decision_protocol": {
+          "title": "Write a simple rule for decisions that get stuck",
+          "description": "Each person states the need underneath their position, you name the shared constraint, and you compare one or two options against it before pausing."
+        }
+      },
+      "question": {
+        "funding_boundaries": {
+          "prompt": "What does family money mean in this wedding?",
+          "help": "Money becomes conflict when the amount is clear but the expectations are not. Bliss will keep funding and decision rights separate unless you explicitly connect them.",
+          "option": {
+            "couple_funded": "We are funding it ourselves",
+            "family_gift": "Family is contributing without decision rights",
+            "family_with_input": "Family contributions come with agreed input",
+            "still_unclear": "The amount or expectations are still unclear"
+          }
+        },
+        "tradeoff_anchor": {
+          "prompt": "When money or time forces a tradeoff, what should Bliss protect first?",
+          "help": "This is not the only thing that matters. It is the anchor Bliss should return to when two good choices cannot both survive.",
+          "option": {
+            "guest_experience": "Guests feeling cared for",
+            "atmosphere_design": "The atmosphere and visual world",
+            "food_celebration": "The meal, music, and party",
+            "meaning_tradition": "Meaning, ritual, and tradition",
+            "low_stress": "A calm process and uncomplicated day"
+          }
+        },
+        "decision_rhythm": {
+          "prompt": "How do you want to make planning decisions together?",
+          "help": "The goal is not equal labor on every task. It is visible ownership, known shared decisions, and a way to slow down when either person does not feel heard.",
+          "option": {
+            "domain_owners": "Each person leads different domains",
+            "shared_big_decisions": "We divide the work but make big decisions together",
+            "weekly_checkin": "We decide during one weekly check-in",
+            "needs_structure": "We need a clearer decision method"
+          }
         }
       }
     },
@@ -69,11 +154,39 @@
           "title": "Check holiday weekends",
           "description": "They help guests travel and hurt hotel prices. Decide which matters more."
         },
+        "confirm_fixed_date_constraints": {
+          "title": "Write down what the fixed date rules out",
+          "description": "A fixed date narrows the venue pool immediately. Name the date constraint so you do not keep falling for places that cannot host it."
+        },
+        "compare_date_options": {
+          "title": "Compare two or three real date options",
+          "description": "Compare availability, price, travel impact, and the people who matter most before one date becomes emotionally fixed."
+        },
+        "rank_venue_before_date": {
+          "title": "Agree that the right venue chooses the date",
+          "description": "Set the season and hard conflicts, then let the best venue's availability decide the exact day."
+        },
         "write_venue_requirements": { "title": "Write down what the venue must have" },
         "shortlist_venues": { "title": "Shortlist at least five venues" },
         "check_availability": {
           "title": "Check availability for your dates",
           "description": "Popular venues and peak dates book 12 to 18 months out."
+        },
+        "audit_full_service_inclusions": {
+          "title": "Audit what the full-service package actually includes",
+          "description": "List tables, chairs, linens, staffing, setup, cleanup, catering, and service charges. An inclusion only saves money if it is something you would otherwise rent or hire."
+        },
+        "build_blank_canvas_cost_model": {
+          "title": "Price the blank canvas before falling in love with it",
+          "description": "Add rentals, power, lighting, restrooms, staffing, delivery, setup, and teardown to the site fee before comparing it with a full-service venue."
+        },
+        "confirm_restaurant_buyout_terms": {
+          "title": "Confirm the restaurant or hotel buyout terms",
+          "description": "Ask about the food minimum, private-room boundaries, service hours, sound limits, and what other guests can access."
+        },
+        "verify_outdoor_infrastructure": {
+          "title": "Verify the outdoor site's weather and infrastructure plan",
+          "description": "Confirm the backup space, power, lighting, restrooms, accessibility, parking, permits, and the exact weather decision deadline."
         },
         "book_tours": { "title": "Book tours at your top three" },
         "tour_with_checklist": { "title": "Tour with a checklist and take photos" },
@@ -94,6 +207,18 @@
           "description": "Ask to see the backup space. If you would not be happy getting married in it, you do not have a rain plan."
         },
         "ask_overtime_rate": { "title": "Ask the overtime rate and hard end time" },
+        "confirm_room_flip_and_guest_flow": {
+          "title": "Map the ceremony-to-reception room flip and guest flow",
+          "description": "Know where guests go, who moves furniture, how long the flip takes, and what happens if weather removes the holding space."
+        },
+        "measure_transfer_time_and_transport": {
+          "title": "Measure the real transfer between ceremony and reception",
+          "description": "Drive it at the right time of day, add parking and loading time, and decide whether guests need shared transportation."
+        },
+        "compare_one_site_vs_two": {
+          "title": "Compare one site with separate ceremony and reception sites",
+          "description": "Compare meaning, guest friction, transportation, setup duplication, and cost before shortlisting venues."
+        },
         "compare_all_in_cost": { "title": "Compare the true all-in cost, not the site fee" },
         "review_contract": { "title": "Read the contract line by line" },
         "check_force_majeure": {
@@ -105,6 +230,36 @@
           "description": "Usually non-refundable. This is the moment the date becomes real."
         },
         "lock_the_date": { "title": "Tell everyone the date is locked" }
+      },
+      "question": {
+        "date_flexibility": {
+          "prompt": "Which comes first: the date or the venue?",
+          "help": "A fixed date sharply narrows availability. A flexible window gives you leverage, while venue-first protects the place you care about most.",
+          "option": {
+            "fixed_date": "The exact date is fixed",
+            "preferred_window": "We have a preferred window",
+            "venue_first": "The right venue can choose the date"
+          }
+        },
+        "venue_style": {
+          "prompt": "What kind of venue work feels right?",
+          "help": "A lower site fee can hide rentals, staffing, power, and setup. This choice changes what you must price and verify.",
+          "option": {
+            "full_service": "A full-service venue",
+            "blank_canvas": "A blank canvas we build ourselves",
+            "restaurant_hotel": "A restaurant or hotel",
+            "outdoor": "A primarily outdoor setting"
+          }
+        },
+        "site_plan": {
+          "prompt": "Ceremony and reception in one place or two?",
+          "help": "Two meaningful locations can be worth it, but they add guest movement, transportation, and duplicated setup.",
+          "option": {
+            "same_site": "One site for both",
+            "separate_sites": "Separate ceremony and reception sites",
+            "undecided": "We need to compare"
+          }
+        }
       }
     },
 
@@ -172,6 +327,22 @@
         "ask_wedding_party": { "title": "Ask your wedding party" },
         "choose_honor_attendants": { "title": "Choose a maid or matron of honor and a best man" },
         "ask_kid_attendants": { "title": "Ask a flower girl and ring bearer" },
+        "map_traditional_party_sides": {
+          "title": "Map each partner's wedding party",
+          "description": "Choose each side without forcing equal numbers. The people should fit the relationships, not a photograph."
+        },
+        "build_one_shared_circle": {
+          "title": "Build one shared wedding-party circle",
+          "description": "Choose people across friendships and families, then decide where everyone stands without labeling them by gender or partner."
+        },
+        "name_small_vip_circle": {
+          "title": "Name the small circle you want closest",
+          "description": "Keep the role meaningful and light: identify the few people you want beside you without building a large formal party."
+        },
+        "define_vip_roles_without_a_party": {
+          "title": "Honor your VIPs without creating a formal party",
+          "description": "Name the people who matter and choose optional moments for them, without attire rules, standing positions, or bundled obligations."
+        },
         "explain_duties_and_costs": {
           "title": "Be upfront about what it costs them",
           "description": "Attire, travel, showers, and bachelor or bachelorette parties add up fast. Saying the number early is a kindness."
@@ -182,10 +353,65 @@
           "description": "One name and number every vendor calls on the day, so nobody calls you."
         },
         "set_up_group_chat": { "title": "Start a group chat" },
+        "tell_party_presence_is_enough": {
+          "title": "Tell them their presence is enough",
+          "description": "Say explicitly that the role is celebratory, not unpaid labor, and that extra events or spending are optional."
+        },
+        "agree_light_support_requests": {
+          "title": "Agree on the few ways you may ask for help",
+          "description": "Name two or three bounded requests in advance so support feels chosen instead of expanding quietly."
+        },
+        "confirm_active_team_responsibilities": {
+          "title": "Confirm responsibilities with each person",
+          "description": "Match every concrete job to willingness, availability, and cost. A title is not consent to an unlimited workload."
+        },
         "set_party_attire_direction": { "title": "Set the direction for their attire" },
         "collect_party_sizes": { "title": "Collect everyone's sizes" },
         "order_party_attire": { "title": "Order or confirm their attire" },
+        "share_palette_and_fit_guardrails": {
+          "title": "Share a palette and a few fit guardrails",
+          "description": "Give enough direction for the group to feel connected while leaving room for bodies, budgets, identities, and personal style."
+        },
+        "review_existing_outfits_for_comfort": {
+          "title": "Review the outfits people already own",
+          "description": "Check comfort, weather, formality, and how the group works together before asking anyone to buy something new."
+        },
+        "confirm_no_required_outfit_purchase": {
+          "title": "Confirm that no matching purchase is required",
+          "description": "Tell the group what the venue and weather require, then let each person dress as themselves within those practical limits."
+        },
         "buy_party_gifts": { "title": "Buy thank-you gifts" }
+      },
+      "question": {
+        "structure": {
+          "prompt": "Who, if anyone, should have a formal wedding-party role?",
+          "help": "Start with the relationships you want close, not symmetry, gender, or inherited labels.",
+          "option": {
+            "traditional_sides": "Each partner chooses a side",
+            "shared_circle": "One mixed, shared circle",
+            "small_vips": "A very small VIP group",
+            "no_formal_party": "No formal wedding party"
+          }
+        },
+        "support_level": {
+          "prompt": "How much responsibility should come with the role?",
+          "help": "Clear, voluntary expectations protect the friendship. Bliss will not treat a title as consent to labor or spending.",
+          "option": {
+            "celebratory_only": "Celebrate with us; no jobs expected",
+            "light_support": "A few small, agreed requests",
+            "active_team": "An active team with named responsibilities"
+          }
+        },
+        "attire_direction": {
+          "prompt": "How coordinated should wedding-party attire feel?",
+          "help": "Choose the amount of visual consistency that still respects budget, comfort, bodies, identity, and personal style.",
+          "option": {
+            "matching_look": "One matching look",
+            "palette_guided": "A palette with flexible styles",
+            "wear_what_you_own": "Use outfits people already own",
+            "no_group_attire": "No group attire requirement"
+          }
+        }
       }
     },
 
@@ -250,7 +476,87 @@
           "title": "Plan skin treatments backward from the date",
           "description": "Never try anything new inside a month. Whatever you do, do it early enough to recover from."
         },
-        "book_nails": { "title": "Book nails for two or three days before" }
+        "book_nails": { "title": "Book nails for two or three days before" },
+        "book_rental_appointments": {
+          "title": "Book a rental try-on appointment",
+          "description": "Rental houses hold a limited number of each size. Go early enough that your first choice is still available in your size."
+        },
+        "reserve_rental_gown": {
+          "title": "Reserve the gown and lock the delivery date",
+          "description": "Ask for delivery a week before the wedding, not two days. It leaves room for the small fixes a rental still needs."
+        },
+        "confirm_rental_window_and_return": {
+          "title": "Confirm the return window and who returns it",
+          "description": "Late fees on rentals are steep, and you will be on a plane. Assign this to someone who is not you."
+        },
+        "buy_the_gown_offrack": {
+          "title": "Buy the gown off the rack",
+          "description": "You are walking out with it, so budget for alterations separately. Off-the-rack still usually needs two fittings."
+        },
+        "choose_second_look": {
+          "title": "Choose the second look",
+          "description": "Decide it alongside the first, in the same light. Two outfits chosen months apart tend to fight each other in photos."
+        },
+        "arrange_quick_change_help": {
+          "title": "Plan the quick change: where, when, and who helps",
+          "description": "A change takes ten to twenty minutes and a private room with a mirror. Put it in the run of show or it eats your reception."
+        },
+        "reserve_suit_rental": {
+          "title": "Reserve the suit or tux rental",
+          "description": "Rentals need measurements a month out. Book the whole party at the same shop so the fabrics actually match."
+        },
+        "rental_pickup_and_try_on": {
+          "title": "Pick up the rental and try it on immediately",
+          "description": "Try it on at the shop, not at home. A wrong size discovered in the store is fixable that day."
+        },
+        "custom_suit_measurements": {
+          "title": "Sit for made-to-measure measurements",
+          "description": "Made to measure takes three to four months and one round of adjustments. Book the fitting before you order the fabric."
+        },
+        "book_a_makeup_lesson": {
+          "title": "Book one lesson with a makeup artist",
+          "description": "A single paid lesson is the cheapest insurance for doing your own face. You learn what photographs well, which is not what looks good in a mirror."
+        },
+        "practice_the_diy_look": {
+          "title": "Practice the full look, photographed",
+          "description": "Do it once, in daylight and in flash, and look at the photos. Camera flash finds every product a mirror hides."
+        }
+      },
+      "question": {
+        "dress_acquisition": {
+          "prompt": "Renting, buying off the rack, or having one made?",
+          "help": "This one question changes the rest of this quest more than any other. Renting is a three-week commitment; a custom gown is six months.",
+          "option": {
+            "rent": "Renting",
+            "buy_offrack": "Buying off the rack",
+            "buy_custom": "Having one made"
+          }
+        },
+        "suit_acquisition": {
+          "prompt": "And the suit or tux — rent, buy, or tailor-made?",
+          "option": {
+            "rent": "Renting",
+            "buy_offrack": "Buying, then altering",
+            "custom_tailor": "Made to measure"
+          }
+        },
+        "beauty_approach": {
+          "prompt": "Who is doing hair and makeup on the day?",
+          "help": "Artists for the whole wedding party book up first and cost per head. Deciding now is what keeps this from becoming a scramble in the final month.",
+          "option": {
+            "pro_team": "A pro team for us and the wedding party",
+            "pro_for_couple_only": "A pro for us two only",
+            "diy": "Doing it ourselves"
+          }
+        },
+        "second_look": {
+          "prompt": "Planning to change into a second look?",
+          "help": "Common for a reception entrance or a cultural ceremony. It needs a plan for where and who helps, not just the outfit.",
+          "option": {
+            "yes": "Yes, a second look",
+            "no": "One outfit all day"
+          }
+        }
       }
     },
 
@@ -279,6 +585,38 @@
           "description": "Slower than you expect. Start before you think you need to."
         },
         "lock_final_list": { "title": "Lock the final list and count" },
+        "budget_open_plus_ones": {
+          "title": "Add every open plus-one seat to the working count",
+          "description": "Treat each invitation as two seats until the RSVP says otherwise. Open plus-ones are generous only when their cost and capacity are real in the plan."
+        },
+        "name_established_partners": {
+          "title": "Name every established partner on the invitation",
+          "description": "A known partner is a guest, not an unnamed plus-one. Check names and spelling instead of writing 'and guest.'"
+        },
+        "review_plus_one_exceptions": {
+          "title": "Review plus-one exceptions against one written rule",
+          "description": "Check travel, social comfort, relationship context, and capacity. Write the reason so similar guests are treated consistently."
+        },
+        "word_no_plus_one_invitations": {
+          "title": "Word named-guest invitations consistently",
+          "description": "List only invited names and make RSVP capacity match. Prepare one kind response for guests who ask to add someone."
+        },
+        "count_children_and_plan_seating": {
+          "title": "Count children by age and plan where they sit",
+          "description": "Ask the caterer about meals and high chairs, keep young children with caregivers, and include them in venue capacity."
+        },
+        "list_kid_exceptions_by_household": {
+          "title": "List immediate-family child exceptions by household",
+          "description": "Name the invited children rather than relying on guests to infer the exception. Use the same explanation with every household."
+        },
+        "set_and_publish_age_cutoff": {
+          "title": "Choose one age cutoff and publish it clearly",
+          "description": "Apply the cutoff by age on the wedding date, then name invited teens or children on each invitation."
+        },
+        "word_adults_only_consistently": {
+          "title": "Use one clear adults-only message everywhere",
+          "description": "Address only invited adults, match RSVP capacity, and repeat the policy on the website without blaming the venue unless that is true."
+        },
         "build_wedding_website": { "title": "Build the wedding website" },
         "add_travel_and_dress_code": {
           "title": "Add travel, lodging, and dress code",
@@ -299,6 +637,22 @@
           "title": "Mail the invitations",
           "description": "Six to eight weeks before the wedding. Weigh a full suite at the post office first."
         },
+        "choose_digital_invitation_platform": {
+          "title": "Choose the digital invitation and RSVP platform",
+          "description": "Check mobile usability, household grouping, meal questions, reminders, exports, privacy, and whether you can correct a guest record without starting over."
+        },
+        "test_digital_delivery_and_rsvp": {
+          "title": "Test the full digital invitation and RSVP flow",
+          "description": "Send it to both of yourselves on different devices, complete every guest path, and confirm the answers export correctly."
+        },
+        "plan_offline_guest_backup": {
+          "title": "Plan a personal backup for guests who will miss a digital invitation",
+          "description": "Identify guests without reliable email or internet access and assign someone to call them and record the RSVP."
+        },
+        "build_digital_rsvp_flow": {
+          "title": "Connect the paper invitation to a tested digital RSVP",
+          "description": "Use a short URL and optional QR code, test household lookup, and include a phone or mail alternative for guests who need it."
+        },
         "set_rsvp_deadline": {
           "title": "Set an RSVP deadline",
           "description": "Three to four weeks before, so it lands before your caterer's final headcount."
@@ -306,6 +660,37 @@
         "chase_rsvps": {
           "title": "Chase the people who haven't replied",
           "description": "Roughly a quarter of guests will need a personal nudge. Split the list between you."
+        }
+      },
+      "question": {
+        "plus_one_policy": {
+          "prompt": "Who receives a plus-one?",
+          "help": "The kindest policy is one you can afford, explain, and apply consistently. Known partners should be invited by name rather than treated as interchangeable guests.",
+          "option": {
+            "all_adults": "Every adult guest may bring someone",
+            "named_partners": "Named established partners only",
+            "case_by_case": "We will decide by guest circumstance",
+            "no_plus_ones": "Only the people named are invited"
+          }
+        },
+        "kids_policy": {
+          "prompt": "Which children are invited?",
+          "help": "A clear household or age rule is easier for guests than exceptions they discover later. Immediate-family children can be an explicit exception.",
+          "option": {
+            "all_kids": "Children are welcome",
+            "immediate_family_only": "Immediate-family children only",
+            "age_cutoff": "Children above one age cutoff",
+            "adults_only": "Adults only"
+          }
+        },
+        "invitation_format": {
+          "prompt": "How do you want invitations and RSVPs to work?",
+          "help": "Paper carries ceremony and keepsake value. Digital reduces printing and makes corrections easier. A hybrid uses paper for the invitation and the website for RSVP data.",
+          "option": {
+            "paper_suite": "Paper invitation and paper RSVP",
+            "digital_first": "Digital invitation and RSVP",
+            "hybrid": "Paper invitation with digital RSVP"
+          }
         }
       }
     },
@@ -316,6 +701,7 @@
       "celebration": "Your guests will be looked after before they even arrive.",
       "section": {
         "lodging": "Where they sleep",
+        "local": "Local guests",
         "transport": "Getting around",
         "welcome": "Welcoming them",
         "international": "Guests from abroad"
@@ -330,15 +716,51 @@
           "title": "Note when unbooked rooms get released",
           "description": "Usually about a month out. Remind guests before you lose the rate."
         },
+        "estimate_domestic_room_demand": {
+          "title": "Estimate room demand by household",
+          "description": "Ask likely travelers about dates, room count, accessibility, and price range before signing a block that does not fit them."
+        },
+        "map_international_arrival_needs": {
+          "title": "Map international arrivals and extra-night needs",
+          "description": "Record airports, likely arrival days, time zones, room nights, language needs, and which households may need personal help."
+        },
+        "confirm_lodging_help_not_needed": {
+          "title": "Confirm that guests do not need hosted lodging help",
+          "description": "Check for the few exceptions before skipping hotel blocks, then share a short list of nearby options only if someone asks."
+        },
         "arrange_shuttles": {
           "title": "Arrange shuttles",
           "description": "Worth it whenever there is an open bar and any distance to hotels."
         },
         "plan_couple_transport": { "title": "Sort out how the two of you get around" },
         "plan_late_night_rides": { "title": "Plan how guests get home at the end" },
+        "publish_walkable_route_and_accessibility": {
+          "title": "Publish the walkable route and accessibility details",
+          "description": "Test the route yourself and share distance, surfaces, lighting, weather backup, transit hours, and an accessible alternative."
+        },
+        "publish_parking_and_ride_details": {
+          "title": "Publish parking, rideshare, and designated-driver details",
+          "description": "Give exact addresses, parking cost and capacity, pickup zones, closing times, and a safe late-night option."
+        },
+        "set_shuttle_schedule_and_capacity": {
+          "title": "Set the shuttle schedule, stops, and capacity",
+          "description": "Match seats to hotel demand, leave buffer for loading, and publish a final departure guests cannot misread."
+        },
+        "map_transport_by_guest_need": {
+          "title": "Map transport by guest need",
+          "description": "Separate guests who can walk or drive from those who need an accessible ride, a hotel shuttle, or late-night support."
+        },
         "assemble_welcome_bags": { "title": "Assemble welcome bags" },
         "write_area_guide": { "title": "Write a short guide to the area" },
         "plan_welcome_party": { "title": "Plan a welcome party" },
+        "send_concise_arrival_guide": {
+          "title": "Send one concise arrival guide",
+          "description": "Put the timeline, addresses, transport, weather, food nearby, and one contact in a mobile-friendly page instead of creating another event."
+        },
+        "plan_drop_in_welcome": {
+          "title": "Plan a low-pressure drop-in welcome",
+          "description": "Choose a clear window and easy location, keep attendance optional, and avoid turning arrival day into another formal obligation."
+        },
         "send_early_stds_overseas": {
           "title": "Send save-the-dates to international guests first",
           "description": "Nine to twelve months out. They need time for flights, time off, and possibly visas."
@@ -348,6 +770,36 @@
           "description": "Some consulates require a formal invitation letter. Ask early, these can take months."
         },
         "check_guest_passport_validity": { "title": "Remind traveling guests to check passport validity" }
+      },
+      "question": {
+        "guest_mix": {
+          "prompt": "How much travel support will your guests actually need?",
+          "help": "Bliss will add lodging and international logistics only when the guest mix creates them.",
+          "option": {
+            "mostly_local": "Almost everyone is local",
+            "domestic_travelers": "Many guests are traveling domestically",
+            "international_travelers": "Some guests are traveling internationally"
+          }
+        },
+        "mobility_plan": {
+          "prompt": "How should guests move between lodging and the celebration?",
+          "help": "Choose the real access model. Safety, accessibility, parking, alcohol service, and the last trip of the night matter more than appearances.",
+          "option": {
+            "walkable_transit": "The route is walkable or transit-friendly",
+            "guest_self_transport": "Guests will drive or use rideshare",
+            "hosted_shuttles": "We will provide shuttles",
+            "mixed_access": "Different guests need different options"
+          }
+        },
+        "welcome_level": {
+          "prompt": "What kind of welcome feels generous without over-scheduling everyone?",
+          "help": "Hospitality can be excellent information, an optional hello, or a hosted event. More events are not automatically more caring.",
+          "option": {
+            "guide_only": "A thoughtful guide, no extra event",
+            "casual_gathering": "An optional casual drop-in",
+            "hosted_event": "A hosted welcome event"
+          }
+        }
       }
     },
 
@@ -395,7 +847,66 @@
           "title": "Check the cake-cutting fee",
           "description": "Many venues charge per slice to serve a cake they did not make. It can rival the cake itself."
         },
-        "plan_dessert_table": { "title": "Plan a dessert table or late-night snack" }
+        "plan_dessert_table": { "title": "Plan a dessert table or late-night snack" },
+        "collect_meal_choices_with_rsvp": {
+          "title": "Collect meal choices with the RSVPs",
+          "description": "A plated dinner needs every guest's selection before the caterer's deadline. Put the choices on the RSVP card and in the website form."
+        },
+        "build_meal_key_for_place_cards": {
+          "title": "Build the meal key for the place cards",
+          "description": "Servers need to know who gets what without asking. A small symbol or colored dot on each place card is the standard answer."
+        },
+        "confirm_line_count_and_flow": {
+          "title": "Confirm how many serving lines and where they go",
+          "description": "One line for 150 guests means people eating forty minutes apart. Two lines, entered from both sides, is usually the fix."
+        },
+        "confirm_platters_per_table": {
+          "title": "Confirm the number of platters per table",
+          "description": "Family style is priced per platter, not per plate, and tables of ten need more than tables of eight. Confirm it against the final floor plan."
+        },
+        "plan_nonalcoholic_menu": {
+          "title": "Plan drinks for the people not drinking",
+          "description": "Pregnant guests, sober guests, kids, and drivers are a real share of the room. Two good non-alcoholic options beat soda from a gun."
+        },
+        "buy_alcohol_and_estimate_quantities": {
+          "title": "Buy the alcohol and estimate quantities",
+          "description": "Plan on roughly one drink per guest per hour, heavier in the first hour. Buy on a return policy if the store offers one."
+        },
+        "hire_licensed_bartender": {
+          "title": "Hire a licensed, insured bartender",
+          "description": "Most venues require it even when you supply the alcohol, and it is what keeps liability off you if a guest overdoes it."
+        }
+      },
+      "question": {
+        "service_style": {
+          "prompt": "How is dinner being served?",
+          "help": "This decides whether your RSVP card needs a meal choice and whether your place cards need a meal indicator. Getting it wrong means reprinting stationery.",
+          "option": {
+            "plated": "Plated, served to each seat",
+            "buffet": "Buffet",
+            "family_style": "Family style, platters per table",
+            "stations": "Stations"
+          }
+        },
+        "bar_package": {
+          "prompt": "What is the bar?",
+          "help": "BYOB looks cheaper and is more work: you buy, transport, chill, and staff it, and most venues still require a licensed bartender.",
+          "option": {
+            "open_bar": "Open bar",
+            "limited_bar": "Beer, wine, and a signature drink",
+            "byob": "We supply the alcohol",
+            "dry": "No alcohol"
+          }
+        },
+        "dessert": {
+          "prompt": "Cake, a dessert table, or both?",
+          "option": {
+            "cake": "A cake",
+            "dessert_table": "A dessert table",
+            "both": "Both",
+            "none": "Neither"
+          }
+        }
       }
     },
 
@@ -416,6 +927,18 @@
           "title": "Set the decor and floral budget",
           "description": "Florals average around $2,900 and typically run 8 to 10% of the total."
         },
+        "map_immersive_design_zones": {
+          "title": "Map the full guest journey into design zones",
+          "description": "Prioritize arrival, ceremony, cocktails, dinner, and dancing as one atmosphere, then assign budget and one visual job to each zone."
+        },
+        "choose_focal_design_moments": {
+          "title": "Choose the few design moments worth concentrating on",
+          "description": "Name two or three places guests will notice or photographs will preserve, and let the rest of the venue breathe."
+        },
+        "write_minimal_design_rules": {
+          "title": "Write the rules for a deliberately minimal look",
+          "description": "Choose what stays, what disappears, and which venue features do the visual work so simplicity feels intentional rather than unfinished."
+        },
         "book_florist": { "title": "Book the florist" },
         "confirm_seasonal_availability": {
           "title": "Confirm your flowers are in season",
@@ -428,6 +951,22 @@
         "plan_flower_reuse": {
           "title": "Plan to move ceremony flowers to the reception",
           "description": "The cheapest way to double your florals. Assign someone to actually move them."
+        },
+        "write_fresh_floral_brief": {
+          "title": "Write the full fresh-floral brief",
+          "description": "List every personal flower, arrangement, installation, vessel, delivery, move, and strike responsibility before comparing proposals."
+        },
+        "approve_seasonal_substitution_rules": {
+          "title": "Approve seasonal substitution rules",
+          "description": "Define the color, texture, shape, and overall feeling the florist must preserve when a named stem is unavailable or unusually expensive."
+        },
+        "design_low_flower_reuse_plan": {
+          "title": "Design a low-flower plan around reusable elements",
+          "description": "Use greenery, plants, candles, vessels, produce, fabric, or rented objects where they create more impact and less waste than cut flowers."
+        },
+        "design_non_floral_tablescape": {
+          "title": "Design the atmosphere without cut flowers",
+          "description": "Build the visual system from lighting, linens, candles, objects, plants, paper, or venue architecture and check every open-flame rule."
         },
         "confirm_what_venue_provides": {
           "title": "Confirm what the venue already provides",
@@ -442,12 +981,66 @@
           "title": "Confirm setup and strike windows",
           "description": "Ask when vendors can load in and when everything must be out. A tight strike window can cost you overtime."
         },
+        "confirm_full_service_install_plan": {
+          "title": "Confirm one full-service install and strike plan",
+          "description": "Name who owns delivery, placement, room flips, repacking, damage checks, and the last pickup so the couple is never the default crew."
+        },
+        "write_vendor_diy_responsibility_matrix": {
+          "title": "Write the vendor and DIY responsibility matrix",
+          "description": "Assign every object and every setup step to one owner. Anything with two assumed owners usually has no owner."
+        },
+        "pack_and_label_diy_decor": {
+          "title": "Pack and label every DIY decor zone",
+          "description": "Use room-and-surface labels, a reference photo, inventory, and repacking instructions so helpers do not need to call you."
+        },
+        "build_full_diy_setup_plan": {
+          "title": "Build the full DIY load-in, setup, and strike plan",
+          "description": "Time the work, vehicle loads, access windows, tools, ladders, storage, cleanup, and return trips before deciding the savings are real."
+        },
+        "recruit_diy_setup_and_strike_crew": {
+          "title": "Recruit a willing DIY setup and strike crew",
+          "description": "Ask named people for bounded shifts and get a clear yes. Wedding-party titles do not automatically make anyone the decor crew."
+        },
+        "mock_up_and_inventory_diy_decor": {
+          "title": "Mock up and inventory every DIY decor element",
+          "description": "Build one complete sample, photograph it, count every component, and confirm the design works at venue scale before producing the rest."
+        },
         "plan_signage": { "title": "Plan signage" },
         "design_escort_display": {
           "title": "Design the escort card display",
           "description": "Escort cards send guests to a table. Place cards assign a specific seat. You may want both."
         },
         "plan_guest_book": { "title": "Choose a guest book or alternative" }
+      },
+      "question": {
+        "scope": {
+          "prompt": "How much of the space should design transform?",
+          "help": "Choose where atmosphere earns its budget. A few concentrated moments can feel more intentional than decorating every available surface.",
+          "option": {
+            "immersive": "An immersive atmosphere across the whole guest journey",
+            "focal_moments": "A few concentrated focal moments",
+            "minimal": "A deliberately minimal look"
+          }
+        },
+        "floral_approach": {
+          "prompt": "What role should flowers play in the design?",
+          "help": "Bliss will separate the feeling you want from any specific stem, then add the sourcing and reuse work that choice creates.",
+          "option": {
+            "fresh_full_service": "Fresh flowers are a major design element",
+            "seasonal_flexible": "Fresh flowers, flexible and seasonal",
+            "low_flower_reusable": "Low-flower with reusable elements",
+            "non_floral": "A non-floral design"
+          }
+        },
+        "production_owner": {
+          "prompt": "Who owns setup and strike?",
+          "help": "DIY changes labor, transport, storage, access, and cleanup. Bliss will count that work instead of treating it as free.",
+          "option": {
+            "full_service_team": "A full-service vendor team",
+            "split_vendor_diy": "Vendors plus a bounded DIY portion",
+            "couple_diy": "Mostly us and our chosen helpers"
+          }
+        }
       }
     },
 
@@ -467,6 +1060,30 @@
           "title": "Write your vows",
           "description": "If you are writing your own, agree on length and tone first so they match on the day."
         },
+        "confirm_traditional_ceremony_elements": {
+          "title": "Confirm the traditional ceremony elements you want to keep",
+          "description": "List the required words, order, people, symbols, and permissions, then distinguish meaningful tradition from habit you do not need."
+        },
+        "interview_each_other_for_ceremony_story": {
+          "title": "Give the officiant the stories only the two of you can tell",
+          "description": "Answer the same prompts separately so the ceremony reflects specific moments, values, and humor instead of a generic love story."
+        },
+        "map_blended_ceremony_elements": {
+          "title": "Map both traditions into one coherent ceremony",
+          "description": "Name the meaning, owner, order, language, objects, and family expectations for each element before deciding how they meet."
+        },
+        "share_public_vows_for_timing": {
+          "title": "Share public vows for length and tone, not approval",
+          "description": "Use a trusted reader or officiant to check timing and accidental mismatch while preserving the words as each person's own."
+        },
+        "plan_private_vow_exchange": {
+          "title": "Plan a private vow exchange",
+          "description": "Choose the time, place, privacy, photography boundary, and what simple promise will still be spoken during the ceremony."
+        },
+        "select_guided_vow_language": {
+          "title": "Select guided or traditional vow language together",
+          "description": "Read every line aloud, remove language that does not fit your relationship, and confirm whether you repeat or answer."
+        },
         "choose_readings": { "title": "Choose readings" },
         "ask_readers": { "title": "Ask your readers, and send them the text" },
         "choose_unity_ritual": { "title": "Choose a unity ritual" },
@@ -484,7 +1101,48 @@
           "title": "Confirm ceremony sound",
           "description": "Outdoor ceremonies need microphones. Guests in the back hearing nothing is the most common ceremony regret."
         },
-        "decide_unplugged": { "title": "Decide whether to ask guests to put phones away" }
+        "decide_unplugged": { "title": "Decide whether to ask guests to put phones away" },
+        "communicate_phone_free_ceremony": {
+          "title": "Communicate a fully phone-free ceremony",
+          "description": "Put the request before guests arrive, repeat it once warmly, and let the officiant say when phones can come back out."
+        },
+        "designate_vow_photo_boundary": {
+          "title": "Ask guests to put phones away for the vows",
+          "description": "Give one clear start and end to the private part so guests can participate without wondering whether the rule lasts all ceremony."
+        },
+        "publish_respectful_guest_photo_rules": {
+          "title": "Publish respectful guest-photo boundaries",
+          "description": "Welcome photos while protecting aisles, professional sightlines, private moments, and the couple's choice about social posting."
+        }
+      },
+      "question": {
+        "structure": {
+          "prompt": "What should hold the ceremony together?",
+          "help": "Bliss will protect the meaning you choose, whether that comes from a known tradition, your shared story, or a careful blend of both.",
+          "option": {
+            "traditional": "A traditional structure",
+            "personal_story_led": "Our relationship story and values",
+            "blended_traditions": "A deliberate blend of traditions"
+          }
+        },
+        "vow_format": {
+          "prompt": "Where should your most personal vows live?",
+          "help": "Private is not less meaningful, and guided language is not less sincere. Choose the setting where both people can be fully present.",
+          "option": {
+            "personal_in_ceremony": "Personal vows during the ceremony",
+            "private_before": "Private vows before the ceremony",
+            "guided_or_standard": "Guided or traditional vows"
+          }
+        },
+        "guest_photos": {
+          "prompt": "When should guests be invited to take photos?",
+          "help": "A precise boundary is kinder than a vague unplugged sign. Bliss will turn the choice into consistent wording and timing.",
+          "option": {
+            "fully_unplugged": "After the ceremony only",
+            "vows_unplugged": "Any time except the vows",
+            "photos_welcome": "Photos are welcome throughout"
+          }
+        }
       }
     },
 
@@ -509,12 +1167,40 @@
         },
         "engrave_bands": { "title": "Have them engraved" },
         "insure_rings": { "title": "Add the rings to your insurance" },
+        "confirm_ready_made_stock_and_sizing": {
+          "title": "Confirm stock, sizing, and the return window",
+          "description": "Try the exact width and profile, confirm whether the size is stocked or ordered, and leave time for one adjustment."
+        },
+        "approve_custom_ring_design": {
+          "title": "Approve the custom ring design and production milestones",
+          "description": "Confirm dimensions, metal, stones, comfort, finish, engraving, resize limits, deposit, wax or CAD review, and final delivery date."
+        },
+        "assess_heirloom_resize_and_restoration": {
+          "title": "Assess the heirloom rings for resizing and restoration",
+          "description": "Ask a qualified jeweler about metal condition, stone security, sizing limits, repairs, cleaning, insurance value, and how alterations affect history."
+        },
+        "record_heirloom_ring_story": {
+          "title": "Record the story carried by the heirloom rings",
+          "description": "Save who wore them, what they meant, what changed, and why the two of you chose to carry them forward."
+        },
         "open_registry": { "title": "Open a registry" },
         "add_range_of_price_points": {
           "title": "Include a range of price points",
           "description": "Guests want options under $50 and over $200. Leaving out either makes people uncomfortable."
         },
         "add_cash_funds": { "title": "Add cash funds or a honeymoon fund" },
+        "audit_home_and_life_needs": {
+          "title": "Audit what your home and shared life actually need",
+          "description": "Replace the inherited checklist with items you will use, upgrades worth making, experiences you value, and things you already have enough of."
+        },
+        "write_specific_fund_descriptions": {
+          "title": "Write specific, warm fund descriptions",
+          "description": "Explain what each contribution supports without pretending cash is an object. Keep amounts varied and make every gift optional."
+        },
+        "publish_no_gifts_message": {
+          "title": "Publish a clear no-gifts message",
+          "description": "Say that their presence is enough, avoid adding a hidden alternative, and give close family the same answer so guests hear one consistent message."
+        },
         "choose_destination": { "title": "Choose where you're going" },
         "check_passport_validity": {
           "title": "Check passport validity",
@@ -522,7 +1208,54 @@
         },
         "request_time_off": { "title": "Request time off work" },
         "book_travel": { "title": "Book flights and lodging" },
-        "buy_travel_insurance": { "title": "Buy travel insurance" }
+        "buy_travel_insurance": { "title": "Buy travel insurance" },
+        "protect_post_wedding_departure_buffer": {
+          "title": "Protect a realistic buffer before departure",
+          "description": "Leave time for sleep, returns, documents, luggage, weather, and one delayed flight instead of turning the wedding night into an airport deadline."
+        },
+        "set_delayed_trip_savings_timeline": {
+          "title": "Set the delayed honeymoon date and savings timeline",
+          "description": "Give the later trip a real month, budget, savings cadence, and booking checkpoint so delayed does not quietly become never."
+        },
+        "plan_simple_mini_moon": {
+          "title": "Plan a simple mini-moon",
+          "description": "Choose recovery and time together over itinerary density, with travel short enough that the trip still feels restful."
+        },
+        "park_honeymoon_without_pressure": {
+          "title": "Park the honeymoon without creating another deadline",
+          "description": "Record what is unresolved and choose one future month to revisit it. The marriage does not need a trip attached to the wedding."
+        }
+      },
+      "question": {
+        "ring_plan": {
+          "prompt": "What should your wedding rings carry: a new choice, a custom design, or an existing story?",
+          "help": "Bliss will add only the sourcing, lead time, restoration, and story work your choice creates.",
+          "option": {
+            "ready_made": "New, ready-made bands",
+            "custom_made": "Custom-made rings",
+            "heirloom_existing": "Heirloom or existing rings"
+          }
+        },
+        "registry_style": {
+          "prompt": "What kind of gifting, if any, feels right?",
+          "help": "A registry is guest guidance, not an obligation. Choose objects, funds, both, or a consistent no-gifts message.",
+          "option": {
+            "objects": "Objects for our home and life",
+            "objects_and_funds": "A mix of objects and funds",
+            "funds_only": "Funds and experiences only",
+            "no_registry": "No registry and no gifts"
+          }
+        },
+        "honeymoon_timing": {
+          "prompt": "What should happen after the wedding?",
+          "help": "A delayed trip, a small nearby break, or no current plan can be a better fit than leaving exhausted the next morning.",
+          "option": {
+            "immediate_trip": "Leave for a honeymoon soon after",
+            "delayed_trip": "Take the main trip later",
+            "mini_moon": "Take a simple mini-moon",
+            "later_undecided": "Decide later without pressure"
+          }
+        }
       }
     },
 
@@ -538,61 +1271,121 @@
       },
       "task": {
         "look_up_county_rules": {
-          "title": "Look up your county's rules",
-          "description": "Marriage licenses are issued by the county clerk and the rules are set by the state. Waiting periods, validity windows, and ID requirements all vary."
+          "title": "Find the official office that issues your license",
+          "description": "Use the government source for the ceremony jurisdiction. The issuing office, process, waiting period, validity window, and document requirements can vary."
         },
         "gather_license_documents": {
           "title": "Gather the documents you need",
-          "description": "Usually photo ID and a birth certificate. Divorce decrees or death certificates if either of you was married before."
+          "description": "Use the current checklist published by the issuing clerk. Do not rely on a generic document list, because requirements vary by jurisdiction and personal history."
         },
         "translate_foreign_documents": {
-          "title": "Get foreign documents certified and translated",
-          "description": "Foreign birth certificates and divorce decrees generally need certified English translation. Start early."
+          "title": "Arrange any translation or certification the clerk confirms",
+          "description": "Ask the issuing clerk which foreign documents they accept, whether translation must be certified, and whether originals or apostilles are required before paying a provider."
         },
         "book_clerk_appointment": {
-          "title": "Book the clerk appointment",
-          "description": "Many offices require an appointment and both of you in person."
+          "title": "Follow the clerk's current application and appointment process",
+          "description": "Confirm online and in-person steps, who must appear, fees, accepted payment, office hours, and appointment availability on the official clerk site."
         },
         "get_marriage_license": { "title": "Get the license" },
         "observe_waiting_period": {
           "title": "Account for the waiting period",
-          "description": "Some states make you wait after issuance before the license is usable, commonly three days. This cannot be waived by planning harder."
+          "description": "Use a verified state or county rule to calculate the earliest valid ceremony time and confirm whether any exception applies to you."
         },
         "check_license_expiry": {
           "title": "Check the expiry window",
-          "description": "Licenses typically expire in 30 to 90 days. Get it inside the window, not months ahead."
+          "description": "Confirm the current validity window with the issuing clerk and obtain the license only when it will still be valid on the ceremony date."
+        },
+        "confirm_standard_document_set_with_clerk": {
+          "title": "Confirm the standard document set with the issuing clerk",
+          "description": "Save the official checklist and verify every person's identification, age, residency, and prior-name requirements before the appointment."
+        },
+        "collect_prior_marriage_records_for_clerk": {
+          "title": "Confirm and collect any prior-marriage records",
+          "description": "Ask the issuing clerk exactly which decrees, dates, certified copies, or death records apply to your circumstances and how recent copies must be."
+        },
+        "confirm_foreign_document_acceptance_with_clerk": {
+          "title": "Confirm how the clerk accepts foreign documents",
+          "description": "Get the answer from the issuing office in writing when possible, including originals, translation, certification, apostille, name matching, and return of documents."
         },
         "verify_officiant_is_valid": {
           "title": "Verify your officiant can legally marry you here",
-          "description": "Some jurisdictions do not accept online ordinations. Confirm with the county, not with the officiant."
+          "description": "Use the current government rule for the ceremony jurisdiction. Do not rely only on the officiant's assurance or a generic ordination website."
         },
-        "line_up_witnesses": { "title": "Line up the witnesses your state requires" },
+        "line_up_witnesses": {
+          "title": "Confirm and line up the required witnesses",
+          "description": "Use the issuing office's current instructions for the exact number, eligibility, and signing requirements."
+        },
         "assign_license_carrier": {
           "title": "Assign one person to bring the license",
           "description": "Not you. Give it to the person least likely to be distracted."
         },
         "confirm_license_return": {
           "title": "Confirm who files the signed license and by when",
-          "description": "Usually the officiant, usually within days. Follow up until you have confirmation it was filed."
+          "description": "Follow the issuing office's current return instructions, assign the responsible person explicitly, and keep proof of timely filing."
         },
         "order_certified_copies": {
           "title": "Order certified copies of the marriage certificate",
-          "description": "Order three to five. Every name-change step wants one, and some keep it."
+          "description": "Estimate the copies required by your actual name, benefits, immigration, insurance, or records plan, then use the official ordering process."
         },
         "change_name_social_security": {
-          "title": "Update Social Security first",
-          "description": "Order matters. Nothing downstream works until this is done."
+          "title": "Update the Social Security record if your plan requires it",
+          "description": "Check the current Social Security Administration process, evidence, timing, and whether an appointment is required before changing downstream records."
         },
-        "change_name_drivers_license": { "title": "Then the driver's license" },
-        "change_name_passport": { "title": "Then the passport" },
-        "change_name_banks_and_work": { "title": "Then banks, employer, insurance, and everything else" },
+        "change_name_drivers_license": { "title": "Update the driver's license or state ID" },
+        "change_name_passport": { "title": "Update the passport and trusted-traveler records" },
+        "change_name_banks_and_work": { "title": "Update employer, banks, insurance, and other accounts" },
+        "confirm_no_name_change_workflow": {
+          "title": "Confirm that neither partner wants a legal name-change workflow",
+          "description": "Keep certified-copy and benefits tasks that still apply, but remove the assumption that marriage requires either person to change a name."
+        },
+        "map_one_partner_name_change_accounts": {
+          "title": "Map one partner's name-change records and dependencies",
+          "description": "List government identity, work, travel, financial, health, property, professional, and digital records before starting so timing conflicts are visible."
+        },
+        "map_both_partner_name_change_accounts": {
+          "title": "Map both partners' name-change paths separately",
+          "description": "Confirm that the chosen name is legally available in your jurisdiction, then track each person's evidence, agencies, accounts, and travel timing independently."
+        },
         "note_k1_ninety_day_window": {
-          "title": "Note the 90-day window if you're on a K-1 visa",
-          "description": "Marriage must happen within 90 days of entry. Informational only."
+          "title": "Verify the current K-1 marriage deadline",
+          "description": "Use current USCIS instructions and qualified immigration counsel to confirm which deadline and evidence apply to the actual entry and status."
         },
         "consult_immigration_attorney": {
           "title": "Talk to an immigration attorney if status is involved",
           "description": "Bliss provides general information, never legal advice."
+        },
+        "prepare_questions_for_immigration_counsel": {
+          "title": "Prepare a dated timeline and questions for immigration counsel",
+          "description": "Bring entry, status, filing, travel, employment, prior-marriage, ceremony, and document facts without uploading sensitive identifiers into Bliss."
+        }
+      },
+      "question": {
+        "document_context": {
+          "prompt": "Which document path should the official clerk checklist cover?",
+          "help": "This only organizes verification work. Bliss will not infer requirements; the issuing clerk's current rules remain the source of truth.",
+          "option": {
+            "standard_documents": "Standard identity documents",
+            "prior_marriage_records": "A prior marriage may require records",
+            "foreign_documents": "One or more documents were issued abroad"
+          }
+        },
+        "name_plan": {
+          "prompt": "Is either partner choosing a legal name change?",
+          "help": "Marriage does not require a name change. Bliss will create separate record workflows only for the people who choose one.",
+          "option": {
+            "keep_names": "Neither of us is changing a legal name",
+            "one_partner_changes": "One partner plans to change a name",
+            "both_change_or_new_name": "Both partners may change or create a new name"
+          }
+        },
+        "immigration_context": {
+          "prompt": "Does immigration status affect the timing or paperwork?",
+          "help": "This shared workspace is not a place for passport numbers, receipt numbers, or case details. Bliss will only add a counsel workflow and never provide immigration advice.",
+          "option": {
+            "none": "No known immigration context",
+            "k1_or_fiance_visa": "A K-1 or fiancé-visa timeline may apply",
+            "other_status_or_unsure": "Another status is involved, or we are unsure"
+          }
         }
       }
     },
@@ -613,6 +1406,22 @@
           "description": "Traditionally you do not host your own. Your job is to supply the guest list and stay out of it."
         },
         "coordinate_bachelor_parties": { "title": "Coordinate bachelor and bachelorette plans" },
+        "protect_no_extra_events_boundary": {
+          "title": "Tell family and friends you are not adding pre-wedding events",
+          "description": "Use one warm, consistent answer and protect time, travel, spending, and attention for the wedding and the life around it."
+        },
+        "set_boundaries_for_events_others_host": {
+          "title": "Set boundaries for events other people offer to host",
+          "description": "Agree on availability, guest-list control, cost expectations, gifts, accessibility, surprises, and what the couple is not taking on."
+        },
+        "plan_one_joint_pre_wedding_gathering": {
+          "title": "Plan one shared pre-wedding gathering",
+          "description": "Bring the people and purposes together in one event instead of inheriting separate gendered or family-specific obligations."
+        },
+        "map_event_calendar_and_guest_overlap": {
+          "title": "Map the event calendar, travel, gifts, and guest overlap",
+          "description": "Check who is repeatedly invited to spend, travel, or take time off, then remove or combine events before invitations go out."
+        },
         "book_rehearsal_time": {
           "title": "Book rehearsal time at the venue",
           "description": "Confirm it in the venue contract. Rehearsal access is not always automatic."
@@ -623,11 +1432,57 @@
           "description": "Wedding party, immediate family, officiant, and often out-of-town guests."
         },
         "plan_toasts": { "title": "Decide who is speaking, and when" },
+        "plan_casual_post_rehearsal_meal": {
+          "title": "Plan a casual meal after the rehearsal",
+          "description": "Choose an easy format, clear host, bounded guest list, and finish time without making the night before another reception."
+        },
+        "communicate_rehearsal_only_plan": {
+          "title": "Communicate that the rehearsal has no hosted meal",
+          "description": "Give the rehearsal time and finish time early so participants can make their own dinner plans without an awkward surprise."
+        },
         "plan_after_party": { "title": "Plan an after-party" },
-        "plan_farewell_brunch": { "title": "Plan a farewell brunch" }
+        "plan_farewell_brunch": { "title": "Plan a farewell brunch" },
+        "protect_unstructured_post_wedding_time": {
+          "title": "Protect unstructured time after the wedding",
+          "description": "Tell guests there is no hosted closing event and leave the couple room to sleep, say goodbye naturally, return items, or simply be together."
+        },
+        "coordinate_two_closing_events_without_overlap": {
+          "title": "Coordinate the after-party and brunch as two distinct invitations",
+          "description": "Set hosts, budgets, access, transportation, finish and start times, and attendance expectations so nobody is silently committed to both."
+        }
+      },
+      "question": {
+        "lead_up": {
+          "prompt": "How much celebration should happen before the wedding?",
+          "help": "Every event adds guest spending, travel, attention, and coordination. Choose the amount that adds joy instead of obligation.",
+          "option": {
+            "none": "No additional pre-wedding events",
+            "hosted_by_others": "Only events other people freely host",
+            "one_joint_gathering": "One shared gathering",
+            "several_events": "Several distinct events"
+          }
+        },
+        "rehearsal_hospitality": {
+          "prompt": "What should follow the ceremony rehearsal?",
+          "help": "The rehearsal is the required logistics. The hospitality around it can be formal, casual, or omitted with clear notice.",
+          "option": {
+            "formal_dinner": "A hosted rehearsal dinner",
+            "casual_meal": "A casual meal or drop-in",
+            "rehearsal_only": "The rehearsal only"
+          }
+        },
+        "closing_events": {
+          "prompt": "Should the wedding have a hosted closing event?",
+          "help": "Protect sleep, travel, hosting energy, and budgets. Guests do not need another event in order to feel welcomed.",
+          "option": {
+            "none": "No hosted closing event",
+            "after_party": "An after-party",
+            "farewell_brunch": "A farewell brunch",
+            "both": "Both, with separate expectations"
+          }
+        }
       }
     },
-
     "final_30_and_day_of": {
       "title": "Final 30 Days and Day-Of",
       "subtitle": "Deep breath. This is the last stretch.",
@@ -661,6 +1516,18 @@
           "title": "Build the timeline around golden hour",
           "description": "The hour before sunset. Ask your photographer to name the exact time and protect fifteen minutes of it."
         },
+        "confirm_professional_command_chain": {
+          "title": "Confirm the professional day-of command chain",
+          "description": "Name who makes schedule, vendor, setup, guest, weather, and emergency calls, then route every vendor and family contact through that chain."
+        },
+        "brief_trusted_day_of_lead": {
+          "title": "Brief the trusted day-of lead and protect their boundaries",
+          "description": "Give one willing person the timeline, contacts, authority, escalation rules, breaks, and a backup without making them responsible for every task."
+        },
+        "reduce_and_assign_couple_led_decisions": {
+          "title": "Reduce and assign every remaining couple-led decision",
+          "description": "Pre-decide what you can, split the rest, write who interrupts whom for what, and delegate anything that does not genuinely require the couple."
+        },
         "pay_final_balances": { "title": "Pay all final balances" },
         "prepare_tip_envelopes": {
           "title": "Prepare tip envelopes",
@@ -682,13 +1549,66 @@
           "title": "Hand everything to your point person",
           "description": "The last real task. After this, your only job is to be there."
         },
+        "confirm_indoor_access_and_climate": {
+          "title": "Confirm indoor access, climate, and emergency egress",
+          "description": "Check opening times, loading routes, heating or cooling, coat storage, elevators, accessibility, power, and who unlocks every space."
+        },
+        "set_outdoor_weather_decision_deadline": {
+          "title": "Set the outdoor weather decision deadline and owner",
+          "description": "Name the forecast source, exact threshold, decision time, decision-maker, vendor notification tree, and guest communication channel."
+        },
+        "map_weather_plan_by_space": {
+          "title": "Map the weather plan for each indoor and outdoor space",
+          "description": "Decide separately for arrivals, ceremony, cocktails, portraits, dinner, and departure so one rain plan does not hide six different transitions."
+        },
         "return_rentals_and_attire": { "title": "Return rentals and rented attire" },
         "preserve_the_gown": { "title": "Send the gown for cleaning and preservation" },
         "write_thank_you_notes": {
           "title": "Write thank-you notes",
           "description": "Within about three months. Split the list and do a few at a time."
         },
-        "order_album": { "title": "Choose photos and order an album" }
+        "order_album": { "title": "Choose photos and order an album" },
+        "confirm_delegated_closeout_manifest": {
+          "title": "Confirm the delegated closeout manifest",
+          "description": "List every card, gift, rental, outfit, personal item, leftover, key, tip, vehicle, return deadline, storage location, and named recipient."
+        },
+        "split_closeout_shifts_with_helpers": {
+          "title": "Split closeout into bounded shifts with willing helpers",
+          "description": "Assign pickup, venue sweep, hotel delivery, returns, and next-day storage as separate jobs with clear finish points."
+        },
+        "protect_couple_managed_closeout_buffer": {
+          "title": "Protect time and transport for couple-managed closeout",
+          "description": "Reserve vehicles, storage, return windows, sleep, and a next-day work block before accepting a plan that makes the couple the final cleanup crew."
+        }
+      },
+      "question": {
+        "coordination_handoff": {
+          "prompt": "Who runs the day once the timeline starts?",
+          "help": "A real handoff means vendors and family stop treating the couple as the default decision desk.",
+          "option": {
+            "professional": "A professional planner or coordinator",
+            "trusted_person": "A willing, trusted person with a backup",
+            "couple_led": "The two of us, with tightly reduced decisions"
+          }
+        },
+        "weather_exposure": {
+          "prompt": "How many parts of the day depend on outdoor conditions?",
+          "help": "Bliss will create a decision deadline and owner only where weather can change the actual plan.",
+          "option": {
+            "indoors": "The event is fully indoors",
+            "outdoor_with_backup": "A main outdoor plan with an indoor backup",
+            "mixed_spaces": "Different parts use indoor and outdoor spaces"
+          }
+        },
+        "closeout_owner": {
+          "prompt": "Who owns the objects, returns, and cleanup after the celebration?",
+          "help": "The wedding is not over when the music stops. Make the final load, storage, keys, cards, gifts, and returns visible before assigning them.",
+          "option": {
+            "delegated": "A coordinator or vendor team",
+            "shared_with_helpers": "A few bounded helper shifts",
+            "couple_managed": "The two of us will manage closeout"
+          }
+        }
       }
     }
   }

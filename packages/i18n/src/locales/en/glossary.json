@@ -57,7 +57,7 @@
   "unplugged_ceremony": "Guests are asked to put phones away so your photographer gets clean shots.",
   "content_creator": "A newer vendor category: someone capturing phone-shot video for social, alongside your photographer.",
 
-  "marriage_license": "The legal permit to marry, issued by a county clerk. Distinct from the marriage certificate you get afterward.",
-  "waiting_period": "Time you must wait between getting the license and using it. Set by state law, and it cannot be waived by planning harder.",
-  "name_change": "Not automatic. Order matters: Social Security first, then driver's license, then passport, then banks."
+  "marriage_license": "The legal authorization used for a marriage ceremony. The issuing office and process depend on the jurisdiction; it is distinct from the record created afterward.",
+  "waiting_period": "Any required time between license issuance and when the ceremony may legally occur. Use the current rule from the issuing authority.",
+  "name_change": "A separate, optional legal-record process. Confirm the current sequence with each government agency before changing downstream records."
 }

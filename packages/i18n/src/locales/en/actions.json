@@ -1,0 +1,69 @@
+{
+  "eyebrow": "Prepared, never assumed",
+  "title": "Action Center",
+  "subtitle": "Bliss can prepare the next move. You always see the exact details before anything is scheduled, saved, or sent.",
+  "empty": {
+    "title": "Nothing waiting on you",
+    "body": "When a decision needs a reminder, calendar hold, email, or vendor brief, it will appear here.",
+    "action": "Make a decision with Bliss"
+  },
+  "dashboard": {
+    "title": "A gentle nudge",
+    "viewAll": "Open Action Center"
+  },
+  "kind": {
+    "reminder": "Reminder",
+    "calendar_event": "Calendar event",
+    "draft_email": "Email draft",
+    "send_email": "Email to send",
+    "vendor_shortlist": "Vendor search brief"
+  },
+  "status": {
+    "draft": "Needs your approval",
+    "pending_approval": "Waiting for approval",
+    "approved": "Approved",
+    "executing": "Preparing",
+    "succeeded": "Complete",
+    "failed": "Needs attention",
+    "cancelled": "Cancelled"
+  },
+  "approval": {
+    "title": "Approve these exact details",
+    "button": "Approve and prepare",
+    "send": "Approve and send",
+    "retry": "Retry safely",
+    "working": "Preparing…",
+    "cancel": "Not now",
+    "boundary": "This does not send an email, make a payment, or contact a vendor.",
+    "sendBoundary": "This sends the exact recipients, subject, and body shown above. Provider retries use one stable action ID to prevent duplicate delivery."
+  },
+  "result": {
+    "reminder": "Reminder scheduled for {date}",
+    "calendar": "Your calendar file is ready",
+    "download": "Download .ics",
+    "email": "Email draft ready to copy",
+    "copy": "Copy draft",
+    "copied": "Copied",
+    "shortlist": "Vendor search brief saved",
+    "queued": "Approved and queued safely",
+    "sent": "Email accepted by the delivery provider"
+  },
+  "field": {
+    "title": "Title",
+    "triggerAt": "When",
+    "startsAt": "Starts",
+    "endsAt": "Ends",
+    "location": "Location",
+    "note": "Note",
+    "subject": "Subject",
+    "body": "Draft",
+    "recipients": "Recipients",
+    "replyTo": "Replies go to",
+    "criteria": "Criteria",
+    "maxResults": "Maximum results"
+  },
+  "state": {
+    "loading": "Opening your Action Center…",
+    "error": "That action couldn't be prepared yet."
+  }
+}

@@ -8,6 +8,83 @@
       "when": 1786570980884,
       "tag": "0000_thin_champions",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786653152245,
+      "tag": "0001_wet_prodigy",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786653245837,
+      "tag": "0002_sour_odin",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786654141994,
+      "tag": "0003_flat_micromacro",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786654538369,
+      "tag": "0004_adorable_scrambler",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786655267842,
+      "tag": "0005_classy_spencer_smythe",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1786656188549,
+      "tag": "0006_mushy_dexter_bennett",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1786656500128,
+      "tag": "0007_lying_jetstream",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786657064936,
+      "tag": "0008_overconfident_enchantress",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1786663187126,
+      "tag": "0009_brief_sumo",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1786663856735,
+      "tag": "0010_unique_quicksilver",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1786664451717,
+      "tag": "0011_skinny_korath",
+      "breakpoints": true
     }
   ]
 }

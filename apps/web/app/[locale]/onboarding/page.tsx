@@ -66,6 +66,7 @@ interface State {
   styles: WeddingStyle[]
   venuePreferences: VenuePreference[]
   budgetTier: BudgetTier | null
+  weeklyCapacityHours: number
   plannerType: PlannerType | null
   cultures: Culture[]
 }
@@ -92,6 +93,7 @@ export default function OnboardingPage() {
     styles: [],
     venuePreferences: [],
     budgetTier: null,
+    weeklyCapacityHours: 5,
     plannerType: null,
     cultures: [],
   })
@@ -140,6 +142,7 @@ export default function OnboardingPage() {
         guestCountExact: s.guestCountExact ? Number(s.guestCountExact) : undefined,
         styles: s.styles,
         budgetTier: s.budgetTier ?? undefined,
+        weeklyCapacityHours: s.weeklyCapacityHours,
         venuePreferences: s.venuePreferences,
         hasPlanner: s.plannerType !== null && s.plannerType !== 'none',
         plannerType: s.plannerType ?? undefined,
@@ -346,6 +349,30 @@ export default function OnboardingPage() {
               <p className="text-xs text-bliss-muted text-center px-4">
                 {tCommon('money.regionalNote')}
               </p>
+              <div className="rounded-warm-lg border border-bliss-border/60 bg-white/80 px-5 py-4">
+                <div className="flex items-center justify-between gap-4 mb-3">
+                  <div>
+                    <p className="text-sm font-medium text-bliss-ink">{t('step.budget.capacityLabel')}</p>
+                    <p className="text-xs text-bliss-muted mt-1">{t('step.budget.capacityHint')}</p>
+                  </div>
+                  <span className="font-serif text-2xl text-bliss-sage-dark shrink-0">
+                    {t('step.budget.capacityValue', { hours: s.weeklyCapacityHours })}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={20}
+                  step={1}
+                  value={s.weeklyCapacityHours}
+                  aria-label={t('step.budget.capacityLabel')}
+                  onChange={event => setS(previous => ({
+                    ...previous,
+                    weeklyCapacityHours: Number(event.target.value),
+                  }))}
+                  className="w-full accent-bliss-sage-dark"
+                />
+              </div>
               <div>
                 <p className="text-sm font-medium text-bliss-ink mb-3">
                   {t('step.budget.plannerLabel')}

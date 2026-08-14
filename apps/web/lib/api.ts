@@ -2,6 +2,13 @@ import type {
   Wedding, Module, Task, ModulesResponse, ModuleDetailResponse,
   DashboardResponse, OnboardingPayload, ModuleCelebration, Milestone,
   TaskPhoto, TaskVendor,
+  PlanningThread, ThreadMessage, DecisionProposal, AttireAgentRunResult,
+  QuestScopingOverview,
+  ConfirmDecisionResult,
+  MemoryProfile, MemoryProfileClaim, BlissMoment, MomentAsset,
+  ExternalAction, ApprovedActionResult, AgentFeedback,
+  MarriageLicenseLookupResponse,
+  MediaUploadIntent,
 } from '@bliss/types'
 
 const API_URL = process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:3001'
@@ -47,9 +54,9 @@ export const api = {
   joinWedding: (inviteToken: string, token: string) =>
     apiFetch<Wedding>('/weddings/join', { method: 'POST', body: JSON.stringify({ token: inviteToken }), token }),
 
-  invitePartner: (weddingId: string, email: string, token: string) =>
+  createPartnerInvite: (weddingId: string, token: string) =>
     apiFetch<{ inviteUrl: string }>(`/weddings/${weddingId}/invite`, {
-      method: 'POST', body: JSON.stringify({ email }), token
+      method: 'POST', token
     }),
 
   // Modules
@@ -113,4 +120,171 @@ export const api = {
 
   dismissMilestone: (id: string, token: string) =>
     apiFetch<Milestone>(`/milestones/${id}/dismiss`, { method: 'PATCH', token }),
+
+  // Agent planning
+  createPlanningThread: (
+    weddingId: string,
+    token: string,
+    questKey: 'attire_beauty' | 'vendor_team' | 'foundation' | 'venue_date' | 'wedding_party' | 'guests_stationery' | 'guest_experience' | 'food_beverage' | 'design_flowers' | 'ceremony' | 'registry_rings_honeymoon' | 'legal' | 'pre_wedding_events' | 'final_30_and_day_of' = 'attire_beauty',
+  ) =>
+    apiFetch<PlanningThread>(`/weddings/${weddingId}/threads`, {
+      method: 'POST',
+      body: JSON.stringify({ questKey }),
+      token,
+    }),
+
+  getPlanningThreads: (weddingId: string, token: string) =>
+    apiFetch<PlanningThread[]>(`/weddings/${weddingId}/threads`, { token }),
+
+  getQuestScoping: (weddingId: string, questKey: string, token: string) =>
+    apiFetch<QuestScopingOverview>(`/weddings/${weddingId}/quests/${questKey}/scoping`, { token }),
+
+  getMarriageLicense: (weddingId: string, token: string, county?: string) =>
+    apiFetch<MarriageLicenseLookupResponse>(
+      `/weddings/${weddingId}/legal/marriage-license${county ? `?county=${encodeURIComponent(county)}` : ''}`,
+      { token },
+    ),
+
+  getThreadMessages: (weddingId: string, threadId: string, token: string) =>
+    apiFetch<ThreadMessage[]>(`/weddings/${weddingId}/threads/${threadId}/messages`, { token }),
+
+  createThreadMessage: (weddingId: string, threadId: string, content: string, token: string) =>
+    apiFetch<ThreadMessage>(`/weddings/${weddingId}/threads/${threadId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+      token,
+    }),
+
+  runAttireAgent: (weddingId: string, threadId: string, token: string) =>
+    apiFetch<AttireAgentRunResult>(`/weddings/${weddingId}/threads/${threadId}/attire/run`, {
+      method: 'POST',
+      token,
+    }),
+
+  runPhotographerAgent: (weddingId: string, threadId: string, token: string) =>
+    apiFetch<AttireAgentRunResult>(`/weddings/${weddingId}/threads/${threadId}/photographer/run`, {
+      method: 'POST',
+      token,
+    }),
+
+  runQuestScopingAgent: (weddingId: string, threadId: string, token: string) =>
+    apiFetch<AttireAgentRunResult>(`/weddings/${weddingId}/threads/${threadId}/scoping/run`, {
+      method: 'POST',
+      token,
+    }),
+
+  getLatestDecisionProposal: (weddingId: string, threadId: string, token: string) =>
+    apiFetch<DecisionProposal>(
+      `/weddings/${weddingId}/threads/${threadId}/decision-proposals/latest`,
+      { token },
+    ),
+
+  confirmDecisionProposal: (
+    weddingId: string,
+    proposalId: string,
+    idempotencyKey: string,
+    token: string,
+  ) => apiFetch<ConfirmDecisionResult>(
+    `/weddings/${weddingId}/decision-proposals/${proposalId}/confirm`,
+    {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+      token,
+    },
+  ),
+
+  // Memory and Moments
+  getMemoryProfile: (weddingId: string, token: string) =>
+    apiFetch<MemoryProfile>(`/weddings/${weddingId}/memory`, { token }),
+
+  correctMemoryClaim: (
+    weddingId: string,
+    claimId: string,
+    value: unknown,
+    reason: string,
+    token: string,
+  ) => apiFetch<MemoryProfileClaim>(`/weddings/${weddingId}/memory/${claimId}/correct`, {
+    method: 'POST',
+    body: JSON.stringify({ value, reason }),
+    token,
+  }),
+
+  getMoments: (weddingId: string, token: string) =>
+    apiFetch<BlissMoment[]>(`/weddings/${weddingId}/moments`, { token }),
+
+  createMediaUploadIntent: (
+    weddingId: string,
+    data: {
+      purpose: 'moment'
+      contentType: MediaUploadIntent['contentType']
+      sizeBytes: number
+      originalFilename: string
+    },
+    token: string,
+  ) => apiFetch<MediaUploadIntent>(`/weddings/${weddingId}/uploads/intents`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    token,
+  }),
+
+  updateMoment: (
+    weddingId: string,
+    momentId: string,
+    status: BlissMoment['status'],
+    token: string,
+  ) => apiFetch<BlissMoment>(`/weddings/${weddingId}/moments/${momentId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+    token,
+  }),
+
+  addMomentAsset: (
+    weddingId: string,
+    momentId: string,
+    data: { kind?: MomentAsset['kind']; uploadIntentId: string; caption?: string | null },
+    token: string,
+  ) => apiFetch<MomentAsset>(`/weddings/${weddingId}/moments/${momentId}/assets`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    token,
+  }),
+
+  deleteMomentAsset: (weddingId: string, assetId: string, token: string) =>
+    apiFetch<void>(`/weddings/${weddingId}/moment-assets/${assetId}`, {
+      method: 'DELETE',
+      token,
+    }),
+
+  // Approved actions
+  getActions: (weddingId: string, token: string) =>
+    apiFetch<ExternalAction[]>(`/weddings/${weddingId}/actions`, { token }),
+
+  approveAction: (
+    weddingId: string,
+    actionId: string,
+    idempotencyKey: string,
+    token: string,
+  ) => apiFetch<ApprovedActionResult>(`/weddings/${weddingId}/actions/${actionId}/approve`, {
+    method: 'POST',
+    headers: { 'Idempotency-Key': idempotencyKey },
+    token,
+  }),
+
+  cancelAction: (weddingId: string, actionId: string, token: string) =>
+    apiFetch<ExternalAction>(`/weddings/${weddingId}/actions/${actionId}/cancel`, {
+      method: 'POST',
+      token,
+    }),
+
+  submitAgentFeedback: (
+    weddingId: string,
+    runId: string,
+    dimension: AgentFeedback['dimension'],
+    rating: AgentFeedback['rating'],
+    token: string,
+  ) => apiFetch<AgentFeedback>(`/weddings/${weddingId}/agent-feedback`, {
+    method: 'POST',
+    body: JSON.stringify({ runId, dimension, rating }),
+    token,
+  }),
 }

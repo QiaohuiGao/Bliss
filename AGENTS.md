@@ -25,3 +25,5 @@
   (`apps/api/src/content/marriage-license.ts`), never from prose or model
   knowledge. A wrong waiting period can make a wedding legally impossible.
 - After changing quest content or culture packs, run `bun run verify:generation`.
+
+## Imported Claude Cowork project instructions

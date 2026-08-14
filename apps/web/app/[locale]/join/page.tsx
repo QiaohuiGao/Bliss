@@ -21,13 +21,14 @@ export default function JoinPage() {
 
   useEffect(() => {
     if (!isLoaded) return
-    if (!isSignedIn) {
-      router.push(`/sign-up?redirect_url=/join?token=${inviteToken}`)
-      return
-    }
     if (!inviteToken) {
       setError(tErrors('wedding.inviteInvalid'))
       setStatus('error')
+      return
+    }
+    if (!isSignedIn) {
+      const redirectUrl = encodeURIComponent(`/join?token=${inviteToken}`)
+      router.push(`/sign-up?redirect_url=${redirectUrl}`)
       return
     }
     joinWedding()
@@ -40,8 +41,15 @@ export default function JoinPage() {
       await api.joinWedding(inviteToken!, token!)
       setStatus('success')
       setTimeout(() => router.push('/dashboard'), 2000)
-    } catch (e: any) {
-      setError(tErrors('generic'))
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : ''
+      setError(message.includes('already has two') || message.includes('could not be used')
+        ? tErrors('wedding.inviteAlreadyUsed')
+        : message.includes('Invalid or expired')
+          ? tErrors('wedding.inviteInvalid')
+          : message.includes('already belong')
+            ? tErrors('wedding.alreadyInPlan')
+            : tErrors('generic'))
       setStatus('error')
     }
   }

@@ -30,10 +30,13 @@ Selecting two heritages merges both. Verified output:
 
 | Selection | Quests | Sections | Tasks |
 |---|---|---|---|
-| Base (traditional) | 14 | 50 | 208 |
-| + South Asian | 15 | 58 | 233 |
-| + Chinese | 15 | 57 | 225 |
-| + Chinese + Jewish | 16 | 63 | 243 |
+| Base (traditional) | 14 | 50 | 207 |
+| + South Asian | 15 | 58 | 232 |
+| + Chinese | 15 | 57 | 224 |
+| + Chinese + Jewish | 16 | 63 | 242 |
+
+Task counts are for a couple who has answered no scoping questions, so every
+answer sits at its default. A real couple's counts move with their decisions.
 
 Regenerate with `bun run verify:generation`.
 

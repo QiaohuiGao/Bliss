@@ -1,0 +1,59 @@
+{
+  "eyebrow": "Photographer search",
+  "title": "Find the person who sees you",
+  "subtitle": "Tell Bliss what you want the day to feel like in photos. We'll turn that into a small, sourced shortlist—not an endless directory.",
+  "dashboard": {
+    "title": "Find your photographer",
+    "body": "Shape your style and coverage, compare a focused shortlist, then prepare outreach and calendar holds.",
+    "action": "Start the search"
+  },
+  "intro": {
+    "title": "What should the photos feel like?",
+    "body": "A mood is enough. Bliss will ask only what changes the search.",
+    "promptDocumentary": "We want honest, candid photos that let us stay present instead of posing all day.",
+    "promptEditorial": "We love an editorial look, but we still want the day to feel relaxed and like us.",
+    "promptClassic": "We want timeless photos our families will love, with dependable coverage and a clear budget."
+  },
+  "speaker": {
+    "bliss": "Bliss",
+    "you": "You",
+    "partner": "Your partner"
+  },
+  "composer": {
+    "placeholder": "What matters in your photos?",
+    "send": "Send",
+    "thinking": "Bliss is searching and comparing…",
+    "privacy": "Shared with the two people in this wedding."
+  },
+  "decision": {
+    "ready": "A shortlist is ready",
+    "contested": "Two valid priorities need more room",
+    "coverage": "Recommended coverage",
+    "vendors": "Photographers worth a closer look",
+    "pros": "Why they may fit",
+    "concerns": "What to verify",
+    "source": "View source",
+    "tasks": "What this adds to your plan",
+    "confirm": "Save coverage and shortlist",
+    "confirming": "Saving your shortlist…",
+    "confirmed": "Shortlist saved",
+    "confirmedBody": "Tasks and prepared actions now carry the reasons behind this choice.",
+    "actions": "Open prepared actions",
+    "keepTalking": "Keep talking until both priorities are represented"
+  },
+  "feedback": {
+    "question": "Did Bliss represent both of you fairly?",
+    "yes": "Yes",
+    "notQuite": "Not quite",
+    "thanks": "Thank you — this helps Bliss get better."
+  },
+  "coverage": {
+    "photo_only": "Photography only",
+    "photo_video": "Photography and video",
+    "photo_video_content": "Photography, video, and content creator"
+  },
+  "state": {
+    "loading": "Opening your photographer conversation…",
+    "error": "Bliss couldn't finish the search. Your message is safe."
+  }
+}

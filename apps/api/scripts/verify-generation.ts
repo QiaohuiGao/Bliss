@@ -11,6 +11,7 @@
 import { db } from '../src/db'
 import { modules, subModules, tasks, weddings } from '../src/db/schema'
 import { generateQuestsForWedding } from '../src/services/quest-generator'
+import { validateContent } from '../src/content/validate-content'
 import { eq, inArray } from 'drizzle-orm'
 import type { Culture, WeddingType } from '@bliss/types'
 
@@ -20,6 +21,8 @@ interface Variant {
   cultures: Culture[]
   plannerType?: 'full' | 'none'
   monthsOut: number
+  /** Scoping answers, to show decision-driven divergence in the real tree. */
+  answers?: Record<string, string>
 }
 
 const VARIANTS: Variant[] = [
@@ -32,6 +35,29 @@ const VARIANTS: Variant[] = [
   { name: 'micro wedding', weddingType: 'micro', cultures: [], monthsOut: 14 },
   { name: 'elopement', weddingType: 'elopement', cultures: [], monthsOut: 14 },
   { name: 'courthouse', weddingType: 'courthouse', cultures: [], monthsOut: 14 },
+  // Same wedding, one different answer. The task counts must differ.
+  // One answer apart each time, so the effect is readable as a diff.
+  {
+    name: 'answer: rented gown',
+    weddingType: 'traditional',
+    cultures: [],
+    monthsOut: 14,
+    answers: { 'attire.dress_acquisition': 'rent' },
+  },
+  {
+    name: 'answer: custom gown',
+    weddingType: 'traditional',
+    cultures: [],
+    monthsOut: 14,
+    answers: { 'attire.dress_acquisition': 'buy_custom' },
+  },
+  {
+    name: 'answer: BYOB bar',
+    weddingType: 'traditional',
+    cultures: [],
+    monthsOut: 14,
+    answers: { 'food.bar_package': 'byob' },
+  },
 ]
 
 function dateMonthsOut(months: number): string {
@@ -44,6 +70,16 @@ const createdIds: string[] = []
 
 async function run() {
   console.log('\nQuest generation verification\n')
+
+  // Cheap and first: a predicate typo drops tasks silently, so fail before
+  // touching the database.
+  const problems = validateContent()
+  if (problems.length) {
+    console.error('FAIL: content self-check')
+    for (const p of problems) console.error(`      ${p.where}: ${p.problem}`)
+    process.exit(1)
+  }
+  console.log('content self-check: ok\n')
   console.log(
     'variant'.padEnd(38) +
       'quests'.padStart(8) +
@@ -77,6 +113,7 @@ async function run() {
       weddingType: v.weddingType,
       cultures: v.cultures,
       plannerType: v.plannerType ?? 'none',
+      answers: v.answers,
       locale: 'en',
     })
 

@@ -18,7 +18,7 @@ PRD and does not re-argue them.
 │  CPM Scheduler        effort/lead-time, backward pass, slack   │
 │  Progress Engine      completion, milestones, celebrations     │
 │  Budget Engine        rollups, category allocation, alerts     │
-│  Legal Rules          state-level marriage license lookup      │
+│  Legal Window         computes only from fresh sourced rules    │
 └──────────────────────────────────────────────────────────────┘
                             ▲ tools
 ┌──────────────────────────────────────────────────────────────┐
@@ -241,13 +241,18 @@ CREATE INDEX agent_runs_eval_idx         ON agent_runs(outcome, started_at DESC)
 
 ```
 apps/api/src/content/
-  quests/
-    index.ts                  QUEST_TEMPLATES: QuestTemplate[]
-    foundation.ts  venue.ts  vendors.ts  attire.ts  … (14)
-  culturePacks/
-    index.ts  southAsian.ts  chinese.ts  jewish.ts  korean.ts  …
-  predicates.ts               appliesWhen evaluator
-  legal/marriageLicense.ts    state lookup table
+  quest-templates.ts          QUEST_TEMPLATES: QuestTemplate[] — the 14 quests
+  culture-packs.ts            CULTURE_PACKS — grafts and standalone quests
+  predicates.ts               appliesWhen grammar and evaluator
+  validate-content.ts         static self-check, run by tests and CI
+  marriage-license.ts         verified-rule window calculation; no defaults
+
+apps/api/src/agent/providers/
+  legal-authority.ts          fresh, field-sourced government-rule gateway
+
+apps/api/src/services/
+  quest-resolver.ts           the pure resolver
+  quest-generator.ts          resolver output → database rows
 
 packages/i18n/src/content/en/quests.json    all human-readable copy
 ```
@@ -296,41 +301,57 @@ labels are translated.
 ### 3.2 The Resolver — pure, deterministic, no model
 
 This is the heart of the system and it contains no AI.
+`apps/api/src/services/quest-resolver.ts`:
 
 ```ts
-export function resolveQuestTasks(
-  template: QuestTemplate,
-  ctx: { profile: CoupleProfile; decisions: Decision[]; wedding: Wedding },
-): ResolvedTask[] {
-  const answers = indexAnswers(ctx.decisions)          // questionKey → choice
-
-  return template.taskPool
-    .filter(t => t.appliesWhen.every(p => evalPredicate(p, answers, ctx)))
-    .filter(t => !isRuledOut(t, ctx.profile.ruledOut))
-    .filter(t => matchesWeddingType(t, ctx.wedding.weddingType))
-    .concat(culturePackTasks(ctx.wedding.cultures, template.key))
-    .sort(byDependencyThenOrder)
-}
+resolveTree(input: ResolverInput): { quests: ResolvedQuest[]; answers: ResolvedAnswer[] }
 ```
+
+Three passes, in order:
+
+1. **Fill the answers.** Every scoping question in play gets a value: the
+   couple's choice if they made one, otherwise the question's `defaultValue`,
+   marked `assumed`. An option value the resolver does not recognize is treated
+   as absent, so a stale client cannot poison the tree.
+2. **Prune.** Quests and tasks drop out by wedding type, by planner strength, and
+   by `appliesWhen` predicates evaluated against the answers and the wedding's
+   facts. A section with no surviving tasks is not a section.
+3. **Graft.** Cultural packs contribute sections into existing quests and whole
+   standalone quests, then everything sorts by quest order.
 
 **Properties this buys:**
 
-- Same input ⇒ byte-identical output. Unit-testable without a model.
+- Same input ⇒ byte-identical output. Unit-testable without a model, and tested
+  in `quest-resolver.test.ts`.
 - The rent-vs-custom divergence is demonstrable with zero AI code — the Sprint 3
   checkpoint in §7 below.
-- Every task carries the predicate that admitted it, which becomes the user-visible
-  `rationale`.
+- **The list is never empty and never gated.** Step 1 is what makes a couple who
+  answers nothing still get a coherent plan rather than a union of every branch.
+- Every task carries the predicate that admitted it, which becomes the
+  user-visible `rationale`.
 
-Predicate grammar, kept intentionally small:
+Predicate grammar, kept intentionally small. A left operand containing a dot is
+an answer key; anything else is a fact about the wedding:
 
 ```
+attire.dress_acquisition == rent
+attire.dress_acquisition != rent
 attire.dress_acquisition in (buy_offrack, buy_custom)
 guest_count > 150
-state == 'WA'
-cultures includes 'chinese'
+state == WA
+cultures includes chinese
 has_planner == false
-NOT venue.type == 'all_inclusive'
+NOT wedding_type == elopement
 ```
+
+Values are bare slugs — the same identifiers the database stores. Two evaluation
+rules matter more than they look:
+
+- **An unknown number never matches.** A wedding with no guest count must not
+  silently qualify as `guest_count < 50`.
+- **An unknown fact throws.** Silently returning false would hide a typo forever.
+  Answer keys are validated statically instead, by `validate-content.ts`, which
+  also fails a question that no task depends on.
 
 ### 3.3 CPM Scheduler — backward pass from a fixed date
 
@@ -490,7 +511,8 @@ PATCH  /tasks/:id                         complete, note, rating, cost, assignee
 POST   /tasks/:id/photos
 GET    /weddings/:id/decisions            the decision trail
 GET    /weddings/:id/moments
-GET    /legal/marriage-license?state=WA   lookup table
+GET    /weddings/:id/legal/marriage-license?county=…
+                                             verified authority lookup; no fallback
 ```
 
 **Response shape — every task carries provenance:**
@@ -586,19 +608,26 @@ scoping path — it must feel fast, not decorative.
 
 ## 7. Sprints
 
-| Sprint | Scope | Exit criterion |
-|---|---|---|
-| **1** Foundation | Schema hard cut, types, `packages/i18n` wired (web + API), CI i18n gates | Pseudo-locale `en-XA` walk passes |
-| **2** Content | 14 quests: structure, scenarios, scoping questions, tagged task pools. Culture packs for the top 3 heritages | Attire & Beauty complete end to end |
-| **3** Resolver | Predicate evaluator + resolver + unit tests | **"rent" and "custom" produce two different, good lists — no AI in the codebase yet** |
-| **4** Scheduler | CPM backward/forward pass, slack, capacity dial, infeasibility events | 12-month and 6-month plans differ correctly; negative slack surfaces |
-| **5** Board & Quest UI | Onboarding, board, quest detail, task detail, timeline view | Full flow usable with hardcoded answers |
-| **6** Agent | Harness, tools, scoping loop, two-phase writes, traces | Scoping conversation replaces hardcoded answers |
-| **7** Memory & Moments | Profile write-back, decision trail UI, moment generation, celebrations | Decision trail readable as a story |
-| **8** Eval & Release | Golden-path suite, LLM-as-judge for voice, CI release gate, canary | Prompt changes cannot ship without passing |
+| Sprint | Scope | Exit criterion | Status |
+|---|---|---|---|
+| **1** Foundation | Schema hard cut, types, `packages/i18n` wired (web + API), CI i18n gates | Pseudo-locale `en-XA` walk passes | done |
+| **2** Content | 14 quests: structure, scenarios, scoping questions, tagged task pools. Culture packs for the top 3 heritages | Attire & Beauty complete end to end | **done for the base journey** — all 14 quests have authored decision branches and 10 cultural packs add deterministic work |
+| **3** Resolver | Predicate evaluator + resolver + unit tests | **"rent" and "custom" produce two different, good lists — no AI in the codebase yet** | **done** — deterministic resolver and content invariants are covered by the 172-test suite |
+| **4** Scheduler | CPM backward/forward pass, slack, capacity dial, infeasibility events | 12-month and 6-month plans differ correctly; negative slack surfaces | **done** — lead time, effort, dependencies, weekly capacity, slack, and decision-linked infeasibility |
+| **5** Board & Quest UI | Onboarding, board, quest detail, task detail, timeline view | Full flow usable with hardcoded answers | core flow done; richer task-detail and timeline polish remain |
+| **6** Agent | Harness, tools, scoping loop, two-phase writes, traces | Scoping conversation replaces hardcoded answers | **done for all 14 base quests** — Attire and Photographer use specialized packs; 12 quests share the exact-preview generic engine |
+| **7** Memory & Moments | Profile write-back, decision trail UI, moment generation, celebrations | Decision trail readable as a story | active memory, corrections, Moments, private single-use photo uploads, and superseding decision history done; combined story polish remains |
+| **8** Eval & Release | Golden-path suite, LLM-as-judge for voice, CI release gate, canary | Prompt changes cannot ship without passing | deterministic and trajectory gates, registry, sticky canary, kill switch, rollback, and Ops metrics done; calibrated voice judge pending |
 
 Sprint 3 is the go/no-go checkpoint for the entire product thesis, and it arrives before a
-single model call is written.
+single model call is written. It passes: renting a gown yields 213 tasks and a
+three-week gown lead time, commissioning one yields 216 tasks, three fittings, and
+a 180-day lead time, and neither list mentions the other's work.
+
+Sprint 2's base-quest branch work is complete. Further content expansion now means
+adding depth from real couple feedback, vendor integrations, and verified local authority
+sources—not manufacturing more generic checklist volume. `validate-content.ts` still
+fails a question that no task reads, which keeps future additions honest.
 
 ---
 
@@ -607,12 +636,12 @@ single model call is written.
 | Risk | Mitigation |
 |---|---|
 | Users won't answer scoping questions | Binary choices; "you decide"; list never gated. Golden-path test #5 enforces it |
-| The agent produces a wall of tasks | Hard cap of 15 per proposal; pool authored so lists stay short |
+| The agent produces a wall of tasks | Hard cap of 8 proposal highlights; deterministic code completes the exact valid branch |
 | Generated lists feel generic | `rationale` on every task makes the personalization visible, not just present |
 | Inconsistent advice across quests | Single agent, shared memory, serialized writes (PRD §5.3) |
-| Legal errors (license waiting periods) | Lookup tables only, never model knowledge; disclaimers |
+| Legal errors (license waiting periods) | Fresh official-source provider data only; no fallback values; disclaimers |
 | Cost/latency of scoping | Static scenario screen; cached stable prefix; 8-step budget cap |
-| Content authoring is the bottleneck | It is — Sprint 2 is the largest. Start with one quest, prove the shape, then parallelize |
+| Content quality drifts as branches expand | Static predicate checks, branch resolver tests, and versioned eval suites for all 14 quests |
 
 ---
 

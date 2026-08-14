@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "wedding_members_user_unique" ON "wedding_members" USING btree ("user_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "wedding_members_wedding_user_unique" ON "wedding_members" USING btree ("wedding_id","user_id");

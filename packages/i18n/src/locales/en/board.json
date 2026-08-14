@@ -23,6 +23,15 @@
     "criticalPath": "On the critical path",
     "leadTimeNote": "{reason} takes {days, plural, one {# day} other {# days}} no matter how fast you move"
   },
+  "schedule": {
+    "decisionTitle": "This choice no longer fits the date",
+    "decisionBody": "{task} needed to start {days, plural, one {# day} other {# days}} ago. Let's change the choice instead of pretending the calendar can stretch.",
+    "workloadTitle": "This week is carrying too much",
+    "workloadBody": "Your plan needs {hours} more planning hours than your weekly capacity. Bliss can help you choose what moves.",
+    "reopen": "Reopen this decision",
+    "review": "Review the plan",
+    "startBy": "Start by {date}"
+  },
   "view": {
     "list": "List",
     "timeline": "Timeline"
@@ -44,6 +53,19 @@
       "remaining": "{amount} left",
       "over": "{amount} over budget"
     }
+  },
+  "couple": {
+    "inviteTitle": "Plan this together",
+    "inviteBody": "Invite your partner into this shared wedding space. You will see the same plan, while Bliss keeps each person's voice attributed.",
+    "copyInvite": "Copy partner invite",
+    "creating": "Creating invite…",
+    "copied": "Invite copied",
+    "inviteLink": "Partner invite link",
+    "inviteError": "That invite could not be created. Try once more.",
+    "togetherTitle": "Your shared wedding space",
+    "togetherBody": "{names} are planning here together.",
+    "you": "You",
+    "partner": "Your partner"
   },
   "milestone": {
     "quarter": "A quarter of the way. You've already made more decisions than you realize.",

@@ -87,10 +87,11 @@ the list — *"included because you chose a custom gown."* A user who can see wh
 correct the underlying decision instead of silently deleting a row, and that
 correction is worth far more to the system than the deletion.
 
-**2. Lead time is modeled as a constraint, not as advice.** Alterations take 6–8
-weeks whether or not you are motivated. A license waiting period is 3 days by law
-in 17 states. Bliss knows when a plan is physically impossible and says so early
-enough to matter.
+**2. Lead time is modeled as a constraint, not as advice.** Authored production
+lead times and fresh, jurisdiction-specific license rules become hard scheduling
+constraints. Bliss knows when a plan is physically impossible and says so early
+enough to matter; if an authoritative legal rule is unavailable, it refuses to
+estimate.
 
 **3. Culture changes the plan, not the copy.** Selecting two heritages changes
 which events exist, which vendors are needed, and when fabric has to be sourced.
@@ -285,10 +286,10 @@ These are product promises, not implementation details. Enforcement is in
    pool. A wrong task in a one-shot, high-stakes event is far more costly than a
    missing one. Free generation is allowed only where the pool genuinely cannot
    reach ("we want our dog as ring bearer"), and is labeled as such.
-3. **Legal and lead-time facts come from lookup tables, never from the model.** A
-   three-day waiting period computed wrong means the wedding cannot legally
-   happen. Everything legal is informational and ships with a "consult an
-   attorney" disclaimer.
+3. **Legal facts require fresh official-source data; lead times use authored
+   deterministic data. Never model memory.** A waiting period computed wrong can
+   make the ceremony invalid. Everything legal is informational, source-linked,
+   and ships with an issuing-office or qualified-counsel disclaimer.
 4. **Determinism.** Same profile plus same answers produces the same list.
 5. **A wall of tasks is a failure.** Proposals are capped. If a quest needs 30
    tasks, the content is wrong.
@@ -310,10 +311,10 @@ These are product promises, not implementation details. Enforcement is in
 | Not doing | Why, and what would change our mind |
 |---|---|
 | **Native mobile app** | The previous one was deleted rather than localized; it targeted a data model that no longer exists. A native client is a rebuild against the quest API, and the shared ICU catalogs make it cheap when the web product is proven |
-| **MCP integrations** (calendar, vendor directories, contract email ingestion) | The bottleneck is the mechanism, not the data. Strong additions once lists and memory are trustworthy |
+| **User-managed MCP connections and contract-email ingestion** | Provider adapters already sit behind stable Bliss contracts. Exposing arbitrary user-managed connections waits until permissions, consent, and support are proven |
 | **Vector-store memory** | Structured tables are more accurate, cheaper, and debuggable at this scale. Revisit if episodic history outgrows the context window |
 | **Multi-agent orchestration** | Parallel read-only subagents for vendor search may arrive under parallelize-reads/serialize-writes. The write path stays single |
-| **Vendor CRM, gantt UI, partner collaboration** | Real value, but they multiply surface area before the core thesis is proven |
+| **Vendor CRM, gantt UI, planner/family roles** | Real value, but they multiply surface area before the core thesis is proven. The two authenticated partners already share one attributed wedding workspace |
 | **Legal guarantees** | Informational with disclaimers, permanently. Bliss is not a law firm |
 
 ## 11. Success criteria
@@ -326,7 +327,7 @@ filtering is deterministic and decisions are structured (see
 |---|---|
 | 12 months · rented gown · no planner | No alterations or final-fitting tasks; includes "break in the shoes" |
 | 6 months · custom gown | Attire slack goes negative; the agent proposes rental or off-the-rack |
-| Chinese + American, venue in WA | Tea ceremony tasks appear; license follows the WA 3-day waiting period |
+| Chinese + American, ceremony in WA | Tea ceremony tasks appear; the license window is calculated only when a fresh, source-complete WA authority result is available |
 | Destination wedding previously ruled out | No destination tasks in any quest, ever again |
 | **The user answers "you decide" to everything** | Still produces a complete, usable plan, entirely `assumed` |
 | Elopement | Guest-logistics quests pruned; Legal promoted to first |
@@ -340,13 +341,13 @@ almost nothing now, and it cannot be reconstructed later.
 
 ## 12. Open questions
 
-1. **Who is the assistant, in voice terms** — a planner, a friend who has done
-   this, or a neutral tool? This drives every piece of copy and should be locked
-   before more content is authored.
-2. **Does the Companion Loop get a persistent chat surface**, or does conversation
-   exist only inside quest scoping? Recommendation: scoping-only in v1 — a general
-   chat box invites questions the system cannot yet answer well.
-3. **Launch blocker, not a question:** `validityDays` and `witnessesRequired` in
-   `apps/api/src/content/marriage-license.ts` are national defaults rather than
-   per-state sourced values. Waiting periods are sourced. This must be resolved
-   before anyone relies on the Legal quest.
+1. **Launch blocker, not a question:** Bliss now refuses to fill any marriage-license
+   field from a national default or model knowledge. The authority gateway requires
+   fresh `.gov` sources with field-level provenance and returns
+   `verification_required` when a jurisdiction is not covered. Launch still requires
+   reviewed provider coverage for every supported jurisdiction before anyone relies
+   on the calculated license window.
+
+Voice and surface decisions are now locked: Bliss is the warm, capable companion in
+[docs/VOICE.md](docs/VOICE.md), and v1 conversation lives inside a specific Quest decision
+instead of an unbounded general-advice chat.

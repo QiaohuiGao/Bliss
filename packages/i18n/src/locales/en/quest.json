@@ -55,7 +55,7 @@
     "typicalShare": "Typically {min}-{max}% of budget"
   },
   "legal": {
-    "disclaimer": "This is general information, not legal advice. County rules vary. Confirm with your county clerk.",
+    "disclaimer": "This is general information, not legal advice. State and local rules vary. Confirm with the official office that will issue your license.",
     "waitingPeriod": "{hours, plural, =0 {No waiting period} other {# hour waiting period}}",
     "validity": "License valid for {days, plural, one {# day} other {# days}}",
     "witnesses": "{count, plural, =0 {No witnesses required} one {# witness required} other {# witnesses required}}",

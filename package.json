@@ -15,7 +15,15 @@
     "lint": "turbo lint",
     "type-check": "turbo type-check",
     "lint:i18n": "bash scripts/lint-i18n.sh",
-    "verify:generation": "cd apps/api && bun run scripts/verify-generation.ts"
+    "verify:generation": "cd apps/api && bun run scripts/verify-generation.ts",
+    "test": "turbo test",
+    "eval:agent": "cd apps/api && bun run eval:agent",
+    "smoke:agent": "cd apps/api && bun run smoke:agent",
+    "smoke:photographer": "cd apps/api && bun run smoke:photographer",
+    "smoke:scoping": "cd apps/api && bun run smoke:scoping",
+    "smoke:release": "cd apps/api && bun run smoke:release",
+    "smoke:couple": "cd apps/api && bun run smoke:couple",
+    "ops:agent": "cd apps/api && bun run ops:agent --"
   },
   "devDependencies": {
     "turbo": "^2.0.0",

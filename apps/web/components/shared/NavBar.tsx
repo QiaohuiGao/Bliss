@@ -2,13 +2,16 @@
 
 import { UserButton } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
-import { Home, Map, Heart } from 'lucide-react'
+import { Home, Map, Heart, MessageCircleHeart, BookHeart, Bell } from 'lucide-react'
 import { Link, usePathname } from '@/i18n/routing'
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
   { href: '/dashboard', labelKey: 'dashboard', icon: Home },
   { href: '/board', labelKey: 'board', icon: Map },
+  { href: '/assistant', labelKey: 'companion', icon: MessageCircleHeart },
+  { href: '/moments', labelKey: 'moments', icon: BookHeart },
+  { href: '/actions', labelKey: 'actions', icon: Bell },
 ] as const
 
 export function NavBar() {

@@ -15,6 +15,9 @@
     "type-check": {
       "dependsOn": ["^type-check"]
     },
+    "test": {
+      "outputs": []
+    },
     "db:generate": { "cache": false },
     "db:migrate": { "cache": false },
     "db:seed": { "cache": false }

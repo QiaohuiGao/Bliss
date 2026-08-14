@@ -16,6 +16,7 @@
   },
   "wedding": {
     "alreadyExists": "You already have a wedding in progress.",
+    "alreadyInPlan": "You're already part of a wedding plan.",
     "inviteInvalid": "That invite link is invalid or expired.",
     "inviteAlreadyUsed": "That invite has already been used."
   },

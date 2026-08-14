@@ -1,12 +1,14 @@
 import type { FastifyInstance } from 'fastify'
 import { db } from '../db'
-import { users, weddings, weddingMembers, modules, tasks } from '../db/schema'
-import { eq, or, and, sql } from 'drizzle-orm'
+import { users, weddings, weddingMembers, modules, tasks, activityFeed, scheduleIssues } from '../db/schema'
+import { eq, or, and, sql, desc } from 'drizzle-orm'
 import { requireAuth, requireWeddingAccess } from '../middleware/auth'
 import { generateQuestsForWedding } from '../services/quest-generator'
 import { z } from 'zod'
 import { differenceInDays } from 'date-fns'
 import crypto from 'crypto'
+import { recomputeWeddingSchedule } from '../services/schedule-store'
+import { createPartnerInvite, joinWeddingByInvite } from '../services/couple-workspace'
 
 const CULTURES = [
   'south_asian', 'chinese', 'jewish', 'korean', 'nigerian', 'mexican',
@@ -22,6 +24,7 @@ const onboardingSchema = z.object({
   weddingType: z
     .enum(['traditional', 'micro', 'elopement', 'destination', 'courthouse'])
     .optional(),
+  weeklyCapacityHours: z.number().int().min(1).max(40).optional(),
   cultures: z.array(z.enum(CULTURES)).optional(),
   guestCountRange: z
     .enum(['under_50', '50_100', '100_150', '150_250', 'over_250'])
@@ -61,6 +64,7 @@ export async function weddingRoutes(app: FastifyInstance) {
         city: body.city ?? null,
         currency: 'USD',
         weddingType: body.weddingType ?? 'traditional',
+        weeklyCapacityHours: body.weeklyCapacityHours ?? 5,
         cultures: body.cultures ?? [],
         guestCountRange: body.guestCountRange ?? null,
         guestCountExact: body.guestCountExact ?? null,
@@ -111,6 +115,10 @@ export async function weddingRoutes(app: FastifyInstance) {
       .where(eq(weddings.id, weddingId))
       .returning()
 
+    if (body.weddingDate !== undefined || body.weeklyCapacityHours !== undefined) {
+      await recomputeWeddingSchedule(weddingId)
+    }
+
     return reply.send(updated)
   })
 
@@ -118,6 +126,7 @@ export async function weddingRoutes(app: FastifyInstance) {
     preHandler: [requireAuth, requireWeddingAccess]
   }, async (req, reply) => {
     const wedding = (req as any).wedding
+    const userId = (req as any).userId as string
 
     const allModules = await db
       .select()
@@ -149,7 +158,7 @@ export async function weddingRoutes(app: FastifyInstance) {
         eq(tasks.weddingId, wedding.id),
         eq(tasks.status, 'todo'),
       ))
-      .orderBy(tasks.dueDate, tasks.sortOrder)
+      .orderBy(tasks.slackDays, tasks.plannedWeekStart, tasks.dueDate, tasks.sortOrder)
       .limit(5)
 
     const activeModules = allModules.filter(m => m.status === 'active')
@@ -164,6 +173,51 @@ export async function weddingRoutes(app: FastifyInstance) {
         sql`${tasks.costCents} is not null`,
       ))
 
+    const reminders = await db
+      .select()
+      .from(activityFeed)
+      .where(and(
+        eq(activityFeed.weddingId, wedding.id),
+        eq(activityFeed.action, 'reminder_due'),
+      ))
+      .orderBy(desc(activityFeed.createdAt))
+      .limit(3)
+
+    const allScheduleIssues = await db.select({
+      id: scheduleIssues.id,
+      weddingId: scheduleIssues.weddingId,
+      type: scheduleIssues.type,
+      severity: scheduleIssues.severity,
+      taskId: scheduleIssues.taskId,
+      decisionId: scheduleIssues.decisionId,
+      questKey: scheduleIssues.questKey,
+      weekStart: scheduleIssues.weekStart,
+      slackDays: scheduleIssues.slackDays,
+      overloadMinutes: scheduleIssues.overloadMinutes,
+      createdAt: scheduleIssues.createdAt,
+      taskTitle: tasks.title,
+    }).from(scheduleIssues)
+      .leftJoin(tasks, eq(tasks.id, scheduleIssues.taskId))
+      .where(eq(scheduleIssues.weddingId, wedding.id))
+      .orderBy(scheduleIssues.severity, scheduleIssues.slackDays)
+    const issues = allScheduleIssues.slice(0, 5)
+
+    const memberRows = await db
+      .select({
+        id: weddingMembers.id,
+        weddingId: weddingMembers.weddingId,
+        userId: weddingMembers.userId,
+        role: weddingMembers.role,
+        joinedAt: weddingMembers.joinedAt,
+        displayName: users.displayName,
+        avatarUrl: users.avatarUrl,
+      })
+      .from(weddingMembers)
+      .innerJoin(users, eq(users.id, weddingMembers.userId))
+      .where(eq(weddingMembers.weddingId, wedding.id))
+      .orderBy(weddingMembers.joinedAt)
+    const currentMembership = memberRows.find(member => member.userId === userId)
+
     return reply.send({
       wedding: {
         ...wedding,
@@ -176,54 +230,65 @@ export async function weddingRoutes(app: FastifyInstance) {
         totalBudgetCents: (wedding.budgetMaxCents ?? 0),
         spentCents: budgetResult[0]?.spent ?? 0,
       },
+      reminders,
+      schedule: {
+        blockingCount: allScheduleIssues.filter(issue => issue.severity === 'blocking').length,
+        warningCount: allScheduleIssues.filter(issue => issue.severity === 'warning').length,
+        issues,
+      },
+      couple: {
+        members: memberRows.map(member => ({
+          ...member,
+          isCurrentUser: member.userId === userId,
+        })),
+        canInvitePartner: currentMembership?.role === 'owner' && memberRows.length < 2,
+      },
     })
   })
 
   app.post('/weddings/:weddingId/invite', {
     preHandler: [requireAuth, requireWeddingAccess]
   }, async (req, reply) => {
+    const userId = (req as any).userId as string
     const wedding = (req as any).wedding
-    const { email } = req.body as { email: string }
-    const inviteUrl = `${process.env['WEB_URL'] ?? 'http://localhost:3000'}/join?token=${wedding.inviteToken}`
-    return reply.send({ inviteUrl })
+    const result = await createPartnerInvite({
+      weddingId: wedding.id,
+      userId,
+      webUrl: process.env['WEB_URL'] ?? 'http://localhost:3000',
+    })
+    if (result.status === 'forbidden') {
+      return reply.status(403).send({ error: 'Only the wedding owner can invite a partner' })
+    }
+    if (result.status === 'full') {
+      return reply.status(409).send({ error: 'This wedding already has two partners' })
+    }
+    return reply.send({ inviteUrl: result.inviteUrl })
   })
 
   app.post('/weddings/join', { preHandler: requireAuth }, async (req, reply) => {
     const userId = (req as any).userId as string
-    const { token } = req.body as { token: string }
-
-    const [wedding] = await db
-      .select()
-      .from(weddings)
-      .where(eq(weddings.inviteToken, token))
-      .limit(1)
-
-    if (!wedding) {
-      return reply.status(404).send({ error: 'Invalid or expired invite link' })
+    const body = z.object({ token: z.string().trim().min(32).max(256) }).safeParse(req.body)
+    if (!body.success) {
+      return reply.status(400).send({ error: 'Invalid or expired invite link' })
     }
 
-    const existingMembers = await db
-      .select()
-      .from(weddingMembers)
-      .where(eq(weddingMembers.weddingId, wedding.id))
+    try {
+      const result = await joinWeddingByInvite({ userId, token: body.data.token })
 
-    if (existingMembers.length >= 2) {
-      return reply.status(409).send({ error: 'This wedding already has two partners' })
+      if (result.status === 'invalid') {
+        return reply.status(404).send({ error: 'Invalid or expired invite link' })
+      }
+      if (result.status === 'already_has_wedding') {
+        return reply.status(409).send({ error: 'You already belong to a wedding plan' })
+      }
+      if (result.status === 'full') {
+        return reply.status(409).send({ error: 'This wedding already has two partners' })
+      }
+      return reply.send(result.wedding)
+    } catch (error) {
+      req.log.error({ error }, 'Partner join failed')
+      return reply.status(409).send({ error: 'This invite could not be used' })
     }
-
-    await db.insert(weddingMembers).values({
-      weddingId: wedding.id,
-      userId,
-      role: 'partner',
-    })
-
-    const [updated] = await db
-      .update(weddings)
-      .set({ inviteToken: null, updatedAt: new Date() })
-      .where(eq(weddings.id, wedding.id))
-      .returning()
-
-    return reply.send(updated)
   })
 
   app.get('/me/wedding', { preHandler: requireAuth }, async (req, reply) => {

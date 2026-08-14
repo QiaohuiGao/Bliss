@@ -1,112 +1,21 @@
 import { db } from '../db'
 import { modules, subModules, tasks } from '../db/schema'
 import {
-  QUEST_TEMPLATES,
   questI18nKey,
   sectionI18nKey,
   taskI18nKey,
-  type QuestTemplate,
-  type SectionTemplate,
 } from '../content/quest-templates'
-import { CULTURE_PACK_BY_KEY, culturePackI18nKey } from '../content/culture-packs'
+import { culturePackI18nKey } from '../content/culture-packs'
+import { resolveTree, type ResolvedQuest, type ResolverInput } from './quest-resolver'
 import { translate } from '@bliss/i18n'
-import type { Culture, PlannerType, WeddingType } from '@bliss/types'
+import type { Culture } from '@bliss/types'
 import { addDays, differenceInDays, format } from 'date-fns'
+import { recomputeWeddingSchedule } from './schedule-store'
 
-interface GeneratorInput {
+interface GeneratorInput extends ResolverInput {
   weddingDate?: string
-  weddingType?: WeddingType
-  cultures?: Culture[]
-  plannerType?: PlannerType
   /** Locale used only to fill the `title` fallback columns. Display uses i18nKey. */
   locale?: string
-}
-
-/**
- * Resolved quest, after cultural grafts and wedding-type pruning. Copy is still
- * key-only at this point; strings are rendered once, at the end, purely to
- * populate the fallback/search columns.
- */
-interface ResolvedQuest {
-  template: QuestTemplate
-  /** Culture that contributed this quest, if it came from a pack. */
-  culture: Culture | null
-  sections: { section: SectionTemplate; culture: Culture | null }[]
-}
-
-// ─── Pruning ──────────────────────────────────────────────────────────────────
-
-function appliesToWeddingType(
-  allowed: WeddingType[] | undefined,
-  actual: WeddingType,
-): boolean {
-  return !allowed || allowed.includes(actual)
-}
-
-/**
- * A day-of coordinator is only worth suggesting to couples who have no planner.
- * A venue coordinator does not count: they work for the venue, not the couple.
- */
-function needsSelfCoordination(plannerType: PlannerType): boolean {
-  return plannerType === 'none' || plannerType === 'venue_only'
-}
-
-// ─── Resolution ───────────────────────────────────────────────────────────────
-
-function resolveQuests(input: GeneratorInput): ResolvedQuest[] {
-  const weddingType = input.weddingType ?? 'traditional'
-  const cultures = input.cultures ?? []
-  const plannerType = input.plannerType ?? 'none'
-  const packs = cultures.map(c => CULTURE_PACK_BY_KEY.get(c)).filter(Boolean)
-
-  const keepTask = (t: { weddingTypes?: WeddingType[]; requiresNoPlanner?: boolean }) =>
-    appliesToWeddingType(t.weddingTypes, weddingType) &&
-    (!t.requiresNoPlanner || needsSelfCoordination(plannerType))
-
-  const pruneSection = (section: SectionTemplate): SectionTemplate | null => {
-    const kept = section.tasks.filter(keepTask)
-    return kept.length ? { ...section, tasks: kept } : null
-  }
-
-  const resolved: ResolvedQuest[] = []
-
-  // Base tree, pruned by wedding type, with cultural sections grafted on.
-  for (const template of QUEST_TEMPLATES) {
-    if (!appliesToWeddingType(template.weddingTypes, weddingType)) continue
-
-    const sections: ResolvedQuest['sections'] = []
-
-    for (const section of template.sections) {
-      const pruned = pruneSection(section)
-      if (pruned) sections.push({ section: pruned, culture: null })
-    }
-
-    for (const pack of packs) {
-      for (const graft of pack!.grafts) {
-        if (graft.questKey !== template.key) continue
-        const pruned = pruneSection(graft.section)
-        if (pruned) sections.push({ section: pruned, culture: pack!.culture })
-      }
-    }
-
-    if (sections.length) resolved.push({ template, culture: null, sections })
-  }
-
-  // Standalone quests contributed by cultural packs.
-  for (const pack of packs) {
-    for (const template of pack!.quests) {
-      if (!appliesToWeddingType(template.weddingTypes, weddingType)) continue
-      const sections = template.sections
-        .map(pruneSection)
-        .filter((s): s is SectionTemplate => s !== null)
-        .map(section => ({ section, culture: pack!.culture }))
-      if (sections.length) {
-        resolved.push({ template, culture: pack!.culture, sections })
-      }
-    }
-  }
-
-  return resolved.sort((a, b) => a.template.order - b.template.order)
 }
 
 // ─── Scheduling ───────────────────────────────────────────────────────────────
@@ -126,7 +35,6 @@ function interpolateEstimatedDays(totalDays: number, range: [number, number]): n
 interface ScheduledQuest extends ResolvedQuest {
   estimatedDays: number
   suggestedDeadline: string
-  status: 'locked' | 'active'
 }
 
 function scheduleQuests(
@@ -161,7 +69,6 @@ function scheduleQuests(
       ...item,
       estimatedDays,
       suggestedDeadline: format(deadline, 'yyyy-MM-dd'),
-      status: t.prerequisites.length > 0 ? 'locked' : 'active',
     }
     byKey.set(t.key, scheduled)
   }
@@ -201,7 +108,8 @@ export async function generateQuestsForWedding(
   input: GeneratorInput,
 ): Promise<void> {
   const locale = input.locale ?? 'en'
-  const scheduled = scheduleQuests(resolveQuests(input), input.weddingDate)
+  const tree = resolveTree(input)
+  const scheduled = scheduleQuests(tree.quests, input.weddingDate)
 
   for (const item of scheduled) {
     const keys = questKeys(item)
@@ -217,7 +125,9 @@ export async function generateQuestsForWedding(
         subtitle: translate(locale, keys.subtitle),
         description: translate(locale, keys.celebration),
         sortOrder: item.template.order,
-        status: item.status,
+        // Every quest is open. Prerequisites drive the suggested deadline and a
+        // nudge, never a gate — see PRD.md §6.1.
+        status: 'active',
         isOptional: item.template.isOptional,
         culture: item.culture,
         estimatedDays: item.estimatedDays,
@@ -248,13 +158,17 @@ export async function generateQuestsForWedding(
         return {
           subModuleId: subMod!.id,
           weddingId,
+          templateKey: task.key,
           i18nKey: tKey,
           title: translate(locale, `${tKey}.title`),
           // translate() returns the key itself when missing; treat that as absent.
           description: description === descriptionKey ? null : description,
           sortOrder: ti + 1,
+          confidence: 'assumed' as const,
           isOptional: task.isOptional,
+          dueDate: item.suggestedDeadline,
           leadTimeDays: task.leadTimeDays ?? null,
+          effortMinutes: task.effortMinutes ?? 60,
           costCategory: task.costCategory ?? null,
         }
       })
@@ -264,4 +178,5 @@ export async function generateQuestsForWedding(
       }
     }
   }
+  await recomputeWeddingSchedule(weddingId)
 }
