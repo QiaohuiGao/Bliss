@@ -6,6 +6,13 @@ import { weddingRoutes } from './routes/weddings'
 import { moduleRoutes } from './routes/modules'
 import { taskRoutes } from './routes/tasks'
 import { celebrationRoutes } from './routes/celebrations'
+import { agentRoutes } from './routes/agent'
+import { memoryRoutes } from './routes/memory'
+import { actionRoutes } from './routes/actions'
+import { feedbackRoutes } from './routes/feedback'
+import { opsRoutes } from './routes/ops'
+import { legalRoutes } from './routes/legal'
+import { uploadRoutes } from './routes/uploads'
 
 const app = Fastify({
   logger: {
@@ -43,6 +50,13 @@ await app.register(weddingRoutes)
 await app.register(moduleRoutes)
 await app.register(taskRoutes)
 await app.register(celebrationRoutes)
+await app.register(agentRoutes)
+await app.register(memoryRoutes)
+await app.register(actionRoutes)
+await app.register(feedbackRoutes)
+await app.register(opsRoutes)
+await app.register(legalRoutes)
+await app.register(uploadRoutes)
 
 const port = parseInt(process.env['PORT'] ?? '3001')
 const host = '0.0.0.0'

@@ -1,0 +1,51 @@
+{
+  "eyebrow": "Your story so far",
+  "title": "Moments",
+  "subtitle": "Not just what you chose—the reasons, feelings, and little turns that made this wedding yours.",
+  "memory": {
+    "title": "What Bliss understands about you",
+    "subtitle": "Only confirmed preferences live here. Each person keeps their own voice.",
+    "empty": "As you make decisions together, the things that matter will gather here.",
+    "wedding": "About the wedding",
+    "couple": "Shared priorities",
+    "member": "Personal preference",
+    "memberNamed": "{name}'s preference",
+    "correct": "Correct this",
+    "newValue": "What should Bliss remember instead?",
+    "reason": "Say why this changed or was misunderstood",
+    "save": "Update memory",
+    "saving": "Updating…",
+    "cancel": "Cancel"
+  },
+  "timeline": {
+    "title": "The decisions becoming your story",
+    "empty": "Your first saved Moment will appear after you make a decision with Bliss.",
+    "suggested": "Bliss noticed this",
+    "saved": "Saved to your story",
+    "save": "Keep this Moment",
+    "dismiss": "Not one to keep",
+    "photo": "Add a photo",
+    "choosePhoto": "Choose a photo from your device",
+    "photoHelp": "JPEG, PNG, or WebP, up to 10 MB.",
+    "photoTypeError": "Choose a JPEG, PNG, or WebP image.",
+    "photoSizeError": "Choose an image smaller than 10 MB.",
+    "photoUploadError": "That photo didn't upload. Try once more.",
+    "removePhoto": "Remove photo",
+    "removePhotoConfirm": "Remove this photo from your Moment?",
+    "removePhotoError": "That photo couldn't be removed. Try once more.",
+    "caption": "A small note about this image",
+    "photoKind": "Image role",
+    "addPhoto": "Add to Moment",
+    "uploadingPhoto": "Uploading…",
+    "kind": {
+      "memory": "Memory",
+      "before": "Before",
+      "after": "After",
+      "reference": "Inspiration"
+    }
+  },
+  "state": {
+    "loading": "Gathering your story…",
+    "error": "That didn't save. Try once more."
+  }
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# CI gates for the i18n layer (US-MARKET-PLAN Phase 6).
+# CI gates for the i18n layer. See docs/I18N.md.
 #
-#   1. No CJK characters anywhere in code paths.
+#   1. No CJK characters in code paths or spec docs.
 #   2. No hardcoded user-facing strings in web JSX.
 #   3. Catalog parity across locales.
 #
@@ -12,21 +12,23 @@ cd "$(dirname "$0")/.."
 
 fail=0
 
-echo "── gate 1: no CJK in code ──────────────────────────────────────"
-cjk=$(grep -rlP '[\x{4e00}-\x{9fff}]' apps packages \
+echo "── gate 1: no CJK in code or spec docs ─────────────────────────"
+# docs/other/ is personal reference material, deliberately exempt.
+cjk=$(grep -rlP '[\x{4e00}-\x{9fff}]' apps packages docs *.md \
   --include="*.ts" --include="*.tsx" --include="*.json" --include="*.md" 2>/dev/null \
   | grep -v node_modules \
   | grep -v '/\.next/' \
   | grep -v '/\.expo/' \
+  | grep -v '^docs/other/' \
   | grep -v 'locales/zh/' \
   | grep -v 'content/zh/' || true)
 
 if [ -n "$cjk" ]; then
-  echo "FAIL: Chinese characters found in code paths:"
+  echo "FAIL: Chinese characters found outside zh catalogs and docs/other:"
   echo "$cjk" | sed 's/^/       /'
   fail=1
 else
-  echo "ok: no CJK outside zh catalogs"
+  echo "ok: no CJK outside zh catalogs and docs/other"
 fi
 
 echo

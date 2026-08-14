@@ -172,6 +172,20 @@ export default function QuestPage({ params }: { params: { moduleId: string } }) 
 
       {/* Sub-modules & Tasks */}
       <main className="max-w-2xl mx-auto px-4 py-4 pb-24 relative z-10">
+        {(data.templateKey === 'foundation' || data.templateKey === 'venue_date' || data.templateKey === 'wedding_party' || data.templateKey === 'guests_stationery' || data.templateKey === 'guest_experience' || data.templateKey === 'food_beverage' || data.templateKey === 'design_flowers' || data.templateKey === 'ceremony' || data.templateKey === 'registry_rings_honeymoon' || data.templateKey === 'legal' || data.templateKey === 'pre_wedding_events' || data.templateKey === 'final_30_and_day_of') && (
+          <button
+            onClick={() => router.push(`/assistant/quest/${data.templateKey}`)}
+            className="card w-full p-5 mb-5 text-left flex items-start gap-4 hover:-translate-y-0.5 hover:shadow-warm-lg transition-all"
+          >
+            <div className="w-10 h-10 rounded-full bg-bliss-terra-mist flex items-center justify-center shrink-0">
+              <Leaf className="w-5 h-5 text-bliss-terra-dark" />
+            </div>
+            <div>
+              <p className="font-serif text-lg text-bliss-ink">{t('assistant.questScoping.openAction')}</p>
+              <p className="text-sm text-bliss-muted mt-1 leading-relaxed">{t('assistant.questScoping.openBody')}</p>
+            </div>
+          </button>
+        )}
         <div className="space-y-4">
           {data.subModules.map((sub) => {
             const isExpanded = expandedSubs.has(sub.id)

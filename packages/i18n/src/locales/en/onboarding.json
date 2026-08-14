@@ -12,7 +12,7 @@
     },
     "location": {
       "title": "Where are you getting married?",
-      "help": "State matters more than you'd think. Marriage licenses, waiting periods, and officiant rules are all set at the state level.",
+      "help": "Location matters more than you'd think. Marriage-license, waiting-period, and officiant rules depend on the ceremony jurisdiction and issuing office.",
       "stateLabel": "State",
       "statePlaceholder": "Select a state",
       "cityLabel": "City or town",
@@ -92,6 +92,9 @@
         "over_75k": "$75k and up"
       },
       "exactLabel": "Or enter a number",
+      "capacityLabel": "How much planning time fits in a normal week?",
+      "capacityHint": "Count both of you together. Bliss uses this to avoid quietly overloading your evenings.",
+      "capacityValue": "{hours}h",
       "plannerLabel": "Are you working with a planner?",
       "planner": {
         "full": "Full-service planner",

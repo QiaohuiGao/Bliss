@@ -115,6 +115,7 @@ export interface Wedding {
   city: string | null
   currency: Currency
   weddingType: WeddingType
+  weeklyCapacityHours: number
   cultures: Culture[]
   /** Exact count is primary; the range is a fallback for couples who don't know yet. */
   guestCountExact: number | null
@@ -138,6 +139,12 @@ export interface WeddingMember {
   userId: string
   role: MemberRole
   joinedAt: string
+}
+
+export interface WeddingMemberSummary extends WeddingMember {
+  displayName: string | null
+  avatarUrl: string | null
+  isCurrentUser: boolean
 }
 
 export interface Module {
@@ -182,15 +189,25 @@ export interface Task {
   subModuleId: string
   weddingId: string
   i18nKey: string | null
+  templateKey: string | null
   title: string
   description: string | null
   sortOrder: number
   status: TaskStatus
+  source: 'template' | 'ai' | 'user'
+  confidence: 'decided' | 'assumed' | null
+  rationale: string | null
+  decisionId: string | null
   isOptional: boolean
   assigneeId: string | null
   dueDate: string | null
   /** Booking lead time in days, surfaced as "book 9-12 months out" guidance. */
   leadTimeDays: number | null
+  effortMinutes: number
+  computedLatestStart: string | null
+  plannedWeekStart: string | null
+  slackDays: number | null
+  onCriticalPath: boolean
   rating: number | null
   notes: string | null
   costCents: number | null
@@ -199,7 +216,7 @@ export interface Task {
   createdAt: string
 }
 
-/** Planner-standard allocation categories. See docs/US-MARKET-PLAN.md §1.2. */
+/** Planner-standard allocation categories. See docs/MARKET.md §2. */
 export type BudgetCategory =
   | 'venue_catering'
   | 'photo_video'
@@ -254,22 +271,65 @@ export interface Milestone {
 
 // ─── Marriage license (US-specific, state-level) ──────────────────────────────
 
+export type MarriageLicenseFieldKey =
+  | 'waiting_period'
+  | 'validity_window'
+  | 'appearance'
+  | 'witnesses'
+  | 'officiant'
+  | 'documents'
+
+export interface MarriageLicenseAuthoritySource {
+  publisher: string
+  title: string
+  url: string
+  retrievedAt: string
+  fieldKeys: MarriageLicenseFieldKey[]
+}
+
 /**
- * Informational only — never presented as legal advice. Sourced from a lookup
- * table, never from a model. A miscalculated waiting period can make a wedding
- * legally impossible on the planned date.
+ * Informational only — never presented as legal advice. Every populated rule is
+ * fresh, jurisdiction-matched, and field-covered by official authority sources.
+ * The API returns unavailable rather than filling a missing field from defaults
+ * or model knowledge.
  */
 export interface MarriageLicenseRule {
   state: string
+  county: string | null
   waitingPeriodHours: number
   validityDays: number
   bothPartiesMustAppear: boolean
   witnessesRequired: number
-  onlineOrdinationAccepted: 'yes' | 'no' | 'varies_by_county'
+  onlineOrdinationAccepted: 'yes' | 'no' | 'varies_by_county' | 'not_verified'
   documentsRequired: string[]
-  /** i18n keys for state-specific caveats. */
-  noteKeys: string[]
+  notes: string[]
+  sources: MarriageLicenseAuthoritySource[]
+  verifiedAt: string
+  expiresAt: string
 }
+
+export type MarriageLicenseLookupResponse =
+  | {
+      status: 'verified'
+      provider: string
+      rule: MarriageLicenseRule
+      window: {
+        earliest: string
+        latest: string
+        waitingPeriodHours: number
+      } | null
+      untrustedExternalContent: true
+      disclaimerKey: string
+    }
+  | {
+      status: 'verification_required'
+      code: 'LEGAL_AUTHORITY_NOT_COVERED'
+      state: string
+      county: string | null
+      rule: null
+      window: null
+      disclaimerKey: string
+    }
 
 // ─── API Response Types ────────────────────────────────────────────────────────
 
@@ -315,6 +375,39 @@ export interface DashboardResponse {
     totalBudgetCents: number
     spentCents: number
   }
+  reminders: Array<{
+    id: string
+    weddingId: string
+    action: string
+    targetType: string | null
+    targetId: string | null
+    metadata: Record<string, unknown> | null
+    createdAt: string
+  }>
+  schedule: {
+    blockingCount: number
+    warningCount: number
+    issues: ScheduleIssue[]
+  }
+  couple: {
+    members: WeddingMemberSummary[]
+    canInvitePartner: boolean
+  }
+}
+
+export interface ScheduleIssue {
+  id: string
+  weddingId: string
+  type: 'negative_slack' | 'weekly_overload'
+  severity: 'warning' | 'blocking'
+  taskId: string | null
+  decisionId: string | null
+  questKey: string | null
+  weekStart: string | null
+  slackDays: number | null
+  overloadMinutes: number | null
+  createdAt: string
+  taskTitle?: string | null
 }
 
 export interface OnboardingPayload {
@@ -322,6 +415,7 @@ export interface OnboardingPayload {
   state?: string
   city?: string
   weddingType?: WeddingType
+  weeklyCapacityHours?: number
   cultures?: Culture[]
   guestCountRange?: GuestCountRange
   guestCountExact?: number
@@ -334,6 +428,269 @@ export interface OnboardingPayload {
   hasPlanner?: boolean
   plannerType?: PlannerType
   specialNeeds?: string[]
+}
+
+// ─── Agent planning ───────────────────────────────────────────────────────────
+
+export type PlanningThreadStatus =
+  | 'open'
+  | 'exploring'
+  | 'contested'
+  | 'ready'
+  | 'resolved'
+  | 'parked'
+
+export interface PlanningThread {
+  id: string
+  weddingId: string
+  questKey: string
+  title: string
+  status: PlanningThreadStatus
+  openedBy: string | null
+  resolvedDecisionId: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface QuestScopingOverview {
+  questKey: string
+  titleI18nKey: string
+  subtitleI18nKey: string
+  questions: Array<{
+    questionKey: string
+    promptI18nKey: string
+    helpI18nKey: string
+    options: Array<{ value: string; labelI18nKey: string }>
+    currentChoice: string
+    source: 'confirmed' | 'assumed'
+    allowsDefer: boolean
+  }>
+}
+
+export interface ThreadMessage {
+  id: string
+  threadId: string
+  weddingId: string
+  authorType: 'user' | 'assistant' | 'tool' | 'system'
+  authorUserId: string | null
+  content: string
+  metadata: Record<string, unknown> | null
+  createdAt: string
+  isCurrentUser: boolean
+}
+
+export interface DecisionMemberInput {
+  memberId: string
+  stance: string
+  reason: string | null
+  sourceMessageIds: string[]
+}
+
+export interface ProposedTaskEffect {
+  taskKey: string
+  rationale: string
+}
+
+export interface ProposedMemoryEffect {
+  subjectType: 'wedding' | 'couple' | 'member'
+  subjectId: string | null
+  kind: 'fact' | 'preference' | 'priority' | 'constraint' | 'ruled_out'
+  key: string
+  value: unknown
+  source: 'explicit' | 'inferred' | 'decision'
+  confidenceBasisPoints: number
+  evidenceMessageIds: string[]
+}
+
+export interface ProposedExternalAction {
+  kind: 'draft_email' | 'send_email' | 'calendar_event' | 'reminder' | 'vendor_shortlist'
+  payload: Record<string, unknown>
+  requiresApproval: true
+}
+
+export interface DecisionProposal {
+  id: string
+  weddingId: string
+  threadId: string
+  agentRunId: string | null
+  schemaVersion: number
+  version: number
+  questKey: string
+  questionKey: string
+  state: 'contested' | 'ready'
+  summary: string
+  proposedChoice: string | null
+  reason: string | null
+  alternativesConsidered: Array<{ value: string; tradeoff: string }>
+  memberInputs: DecisionMemberInput[]
+  taskEffects: ProposedTaskEffect[]
+  memoryEffects: ProposedMemoryEffect[]
+  externalActions: ProposedExternalAction[]
+  vendorEffects: Array<{
+    candidateId: string
+    rationale: string
+    pros: string[]
+    concerns: string[]
+    candidate?: VendorCandidate | null
+  }>
+  momentCandidate: {
+    title: string
+    narrative: string
+    sourceMessageIds: string[]
+  } | null
+  status: 'pending' | 'confirmed' | 'superseded' | 'rejected' | 'deferred'
+  confirmedBy: string | null
+  confirmedAt: string | null
+  createdAt: string
+}
+
+export interface VendorCandidate {
+  id: string
+  weddingId: string
+  searchId: string
+  providerVendorId: string
+  category: string
+  name: string
+  website: string | null
+  sourceUrl: string
+  city: string | null
+  state: string | null
+  priceLevel: string | null
+  summary: string | null
+  metadata: Record<string, unknown>
+  createdAt: string
+}
+
+export interface AgentFeedback {
+  id: string
+  weddingId: string
+  runId: string
+  userId: string
+  dimension: 'understood_us' | 'represented_both' | 'reduced_pressure'
+  rating: -1 | 1
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AttireAgentRunResult {
+  runId: string
+  stopReason: string
+  message: string | null
+  proposal: { proposalId: string; version: number; status: 'pending' } | null
+  usage: {
+    steps: number
+    inputTokens: number
+    outputTokens: number
+    costMicros: number
+  }
+}
+
+export interface ConfirmDecisionResult {
+  proposalId: string
+  decisionId: string
+  taskIds: string[]
+  memoryClaimIds: string[]
+  externalActionIds: string[]
+  momentId: string | null
+  vendorShortlistItemIds: string[]
+  replayed: boolean
+}
+
+export interface MemoryProfileClaim {
+  id: string
+  subjectType: 'wedding' | 'couple' | 'member'
+  subjectId: string | null
+  kind: 'fact' | 'preference' | 'priority' | 'constraint' | 'ruled_out'
+  key: string
+  value: unknown
+  source: 'explicit' | 'inferred' | 'decision'
+  confidenceBasisPoints: number
+  createdAt: string
+}
+
+export interface MemoryProfile {
+  wedding: MemoryProfileClaim[]
+  couple: MemoryProfileClaim[]
+  members: Record<string, MemoryProfileClaim[]>
+  memberNames: Record<string, string | null>
+}
+
+export interface MomentAsset {
+  id: string
+  momentId: string
+  weddingId: string
+  kind: 'memory' | 'before' | 'after' | 'reference'
+  url: string
+  caption: string | null
+  sortOrder: number
+  createdAt: string
+}
+
+export interface MediaUploadIntent {
+  id: string
+  provider: string
+  purpose: 'moment'
+  contentType: 'image/jpeg' | 'image/png' | 'image/webp'
+  sizeBytes: number
+  uploadUrl: string
+  uploadHeaders: Record<string, string>
+  expiresAt: string
+}
+
+export interface BlissMoment {
+  id: string
+  weddingId: string
+  decisionId: string
+  status: 'suggested' | 'saved' | 'dismissed'
+  title: string
+  narrative: string
+  sourceMessageIds: string[]
+  createdByAgentRunId: string | null
+  savedBy: string | null
+  createdAt: string
+  savedAt: string | null
+  assets: MomentAsset[]
+}
+
+export type ExternalActionKind = 'draft_email' | 'send_email' | 'calendar_event' | 'reminder' | 'vendor_shortlist'
+export type ExternalActionStatus =
+  | 'draft'
+  | 'pending_approval'
+  | 'approved'
+  | 'executing'
+  | 'succeeded'
+  | 'failed'
+  | 'cancelled'
+
+export interface ExternalAction {
+  id: string
+  weddingId: string
+  decisionId: string
+  kind: ExternalActionKind
+  payload: Record<string, unknown>
+  status: ExternalActionStatus
+  approvedBy: string | null
+  approvedPayload: Record<string, unknown> | null
+  approvedAt: string | null
+  idempotencyKey: string | null
+  provider: string | null
+  attemptCount: number
+  nextAttemptAt: string | null
+  leaseExpiresAt: string | null
+  lastErrorCode: string | null
+  lastErrorAt: string | null
+  result: Record<string, unknown> | null
+  createdAt: string
+  updatedAt: string
+  executedAt: string | null
+}
+
+export interface ApprovedActionResult {
+  actionId: string
+  kind: ExternalActionKind
+  status: 'approved' | 'succeeded'
+  result: Record<string, unknown>
+  replayed: boolean
 }
 
 // ─── Localized API envelope ───────────────────────────────────────────────────

@@ -1,0 +1,78 @@
+{
+  "eyebrow": "Attire decision",
+  "title": "Let's find your gown path",
+  "subtitle": "Tell me what feels exciting, what feels heavy, and what matters to each of you. I'll turn it into one clear next step.",
+  "dashboard": {
+    "title": "Make a decision with Bliss",
+    "body": "Talk through renting, buying off the rack, or ordering custom. Your reasons become the plan—not just another checklist.",
+    "action": "Talk it through"
+  },
+  "intro": {
+    "title": "Start anywhere",
+    "body": "You don't need a polished answer. A feeling, a budget worry, or a disagreement is enough.",
+    "promptCustom": "A custom gown feels meaningful, but we're worried about cost and timing.",
+    "promptOffrack": "We want something special without turning dress shopping into a long project.",
+    "promptRent": "We care more about ease and flexibility than owning the gown afterward."
+  },
+  "speaker": {
+    "bliss": "Bliss",
+    "you": "You",
+    "partner": "Your partner"
+  },
+  "composer": {
+    "placeholder": "What are you both thinking?",
+    "send": "Send",
+    "thinking": "Bliss is thinking with you…",
+    "privacy": "Shared with the two people in this wedding."
+  },
+  "decision": {
+    "ready": "A decision is taking shape",
+    "contested": "Two valid needs are on the table",
+    "tasks": "How this changes your plan",
+    "memory": "What Bliss will remember",
+    "actions": "Prepared for you—never sent without approval",
+    "moment": "A moment worth keeping",
+    "confirm": "Add this to our plan",
+    "confirming": "Adding it to your plan…",
+    "confirmed": "It's in your plan",
+    "confirmedBody": "The next steps now reflect your decision. You can keep talking whenever the choice changes.",
+    "keepTalking": "Keep talking until this feels shared",
+    "alternative": "Also considered: {value} — {tradeoff}"
+  },
+  "feedback": {
+    "question": "Did Bliss represent both of you fairly?",
+    "yes": "Yes",
+    "notQuite": "Not quite",
+    "thanks": "Thank you — this helps Bliss get better."
+  },
+  "choice": {
+    "rent": "Rent the gown",
+    "buy_offrack": "Buy off the rack",
+    "buy_custom": "Order a custom gown"
+  },
+  "state": {
+    "loading": "Opening your shared conversation…",
+    "error": "Bliss couldn't finish that thought. Your message is safe—try again in a moment.",
+    "retry": "Try again"
+  },
+  "questScoping": {
+    "eyebrow": "A decision, made together",
+    "genericSubtitle": "Choose the feeling first. Bliss will turn it into the few planning steps that actually change.",
+    "introTitle": "Three choices shape this part of the plan",
+    "introBody": "Pick one to start, then tell Bliss why it feels right—or where the two of you differ.",
+    "leaning": "We're leaning toward {choice}. What should we think through together?",
+    "backToQuest": "Back to the planning board",
+    "currentConfirmed": "Already chosen",
+    "currentAssumed": "Currently assumed",
+    "openAction": "Shape this plan with Bliss",
+    "openBody": "Talk through the few choices that change this list. Bliss will keep the reasons and update only the relevant steps.",
+    "unsupported": "This decision companion is not available for this quest yet."
+  },
+  "legalLookup": {
+    "verifiedTitle": "Verified marriage-license rules",
+    "checked": "Checked {date}",
+    "sources": "Official sources",
+    "unavailableTitle": "No verified rule shown",
+    "unavailableBody": "Bliss has no fresh official-source coverage for this jurisdiction yet, so it will not substitute an estimate. Use the issuing office's current instructions."
+  }
+}

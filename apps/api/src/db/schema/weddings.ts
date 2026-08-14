@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, boolean, pgEnum, date, char } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, integer, boolean, pgEnum, date, char, uniqueIndex } from 'drizzle-orm/pg-core'
 import { sql } from 'drizzle-orm'
 import { users } from './users'
 
@@ -36,6 +36,9 @@ export const weddings = pgTable('weddings', {
 
   weddingType: weddingTypeEnum('wedding_type').notNull().default('traditional'),
 
+  /** Human planning capacity. Lead time is modeled separately on tasks. */
+  weeklyCapacityHours: integer('weekly_capacity_hours').notNull().default(5),
+
   /** Heritages selected by the couple. Drives additive cultural quest packs. */
   cultures: text('cultures').array().notNull().default(sql`'{}'`),
 
@@ -68,4 +71,9 @@ export const weddingMembers = pgTable('wedding_members', {
   userId: text('user_id').notNull().references(() => users.id),
   role: memberRoleEnum('role').notNull(),
   joinedAt: timestamp('joined_at').defaultNow().notNull(),
-})
+}, table => ({
+  // v1 intentionally supports one shared wedding workspace per person.
+  userUnique: uniqueIndex('wedding_members_user_unique').on(table.userId),
+  weddingUserUnique: uniqueIndex('wedding_members_wedding_user_unique')
+    .on(table.weddingId, table.userId),
+}))

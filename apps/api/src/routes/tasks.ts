@@ -2,8 +2,14 @@ import type { FastifyInstance } from 'fastify'
 import { db } from '../db'
 import { tasks, taskPhotos, taskVendors, subModules, modules, moduleCelebrations } from '../db/schema'
 import { eq, and, sql } from 'drizzle-orm'
-import { requireAuth } from '../middleware/auth'
+import {
+  requireAuth,
+  requirePhotoAccess,
+  requireSubModuleAccess,
+  requireTaskAccess,
+} from '../middleware/auth'
 import { differenceInDays } from 'date-fns'
+import { recomputeWeddingSchedule } from '../services/schedule-store'
 
 async function checkModuleCompletion(moduleId: string) {
   const allTasks = await db
@@ -82,7 +88,7 @@ async function checkModuleCompletion(moduleId: string) {
 
 export async function taskRoutes(app: FastifyInstance) {
   app.patch('/tasks/:taskId', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireTaskAccess]
   }, async (req, reply) => {
     const { taskId } = req.params as any
     const body = req.body as any
@@ -99,6 +105,7 @@ export async function taskRoutes(app: FastifyInstance) {
     if (body.assigneeId !== undefined) updates.assigneeId = body.assigneeId
     if (body.dueDate !== undefined) updates.dueDate = body.dueDate
     if (body.title !== undefined) updates.title = body.title
+    if (body.effortMinutes !== undefined) updates.effortMinutes = body.effortMinutes
 
     const [updated] = await db
       .update(tasks)
@@ -119,11 +126,15 @@ export async function taskRoutes(app: FastifyInstance) {
       }
     }
 
+    if (body.status !== undefined || body.dueDate !== undefined || body.effortMinutes !== undefined) {
+      await recomputeWeddingSchedule(updated.weddingId)
+    }
+
     return reply.send(updated)
   })
 
   app.post('/sub-modules/:subModuleId/tasks', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireSubModuleAccess]
   }, async (req, reply) => {
     const { subModuleId } = req.params as any
     const body = req.body as any
@@ -159,19 +170,24 @@ export async function taskRoutes(app: FastifyInstance) {
       })
       .returning()
 
+    await recomputeWeddingSchedule(mod!.weddingId)
+
     return reply.status(201).send(task)
   })
 
   app.delete('/tasks/:taskId', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireTaskAccess]
   }, async (req, reply) => {
     const { taskId } = req.params as any
+    const [target] = await db.select({ weddingId: tasks.weddingId }).from(tasks)
+      .where(eq(tasks.id, taskId)).limit(1)
     await db.delete(tasks).where(eq(tasks.id, taskId))
+    if (target) await recomputeWeddingSchedule(target.weddingId)
     return reply.status(204).send()
   })
 
   app.get('/tasks/:taskId/photos', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireTaskAccess]
   }, async (req, reply) => {
     const { taskId } = req.params as any
     const photos = await db
@@ -183,7 +199,7 @@ export async function taskRoutes(app: FastifyInstance) {
   })
 
   app.post('/tasks/:taskId/photos', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireTaskAccess]
   }, async (req, reply) => {
     const { taskId } = req.params as any
     const body = req.body as any
@@ -201,7 +217,7 @@ export async function taskRoutes(app: FastifyInstance) {
   })
 
   app.delete('/photos/:photoId', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requirePhotoAccess]
   }, async (req, reply) => {
     const { photoId } = req.params as any
     await db.delete(taskPhotos).where(eq(taskPhotos.id, photoId))
@@ -209,7 +225,7 @@ export async function taskRoutes(app: FastifyInstance) {
   })
 
   app.put('/tasks/:taskId/vendor', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireTaskAccess]
   }, async (req, reply) => {
     const { taskId } = req.params as any
     const body = req.body as any
@@ -251,7 +267,7 @@ export async function taskRoutes(app: FastifyInstance) {
   })
 
   app.delete('/tasks/:taskId/vendor', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireTaskAccess]
   }, async (req, reply) => {
     const { taskId } = req.params as any
     await db.delete(taskVendors).where(eq(taskVendors.taskId, taskId))

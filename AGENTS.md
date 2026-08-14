@@ -9,9 +9,14 @@
 - **Every file in this repo is written in English** — code, comments, docs, UI
   copy, content templates, commit messages. Conversation with the user happens
   in Chinese; files do not. `bun run lint:i18n` enforces this.
-- The only Chinese permitted in the repo is inside
-  `packages/i18n/src/locales/zh/` and `packages/i18n/src/content/zh/`, if a `zh`
-  locale is ever added.
+- Chinese is permitted in exactly two places: `docs/other/`, which is personal
+  reference material rather than project spec, and `packages/i18n/src/locales/zh/`
+  plus `content/zh/` if a `zh` locale is ever added.
+- **`docs/other/` is out of scope.** Do not cite it, link to it from spec docs, or
+  fold it into product or architecture reasoning unless explicitly asked.
+- The spec set, in reading order: [README.md](README.md) →
+  [PRD.md](PRD.md) (product) → [DESIGN.md](DESIGN.md) (implementation), with
+  [docs/MARKET.md](docs/MARKET.md) as the source for every market number.
 - **No hardcoded user-facing strings.** All copy goes through `packages/i18n`.
   See [docs/I18N.md](docs/I18N.md).
 - **Enum values, slugs, and template keys are identifiers.** Translate labels,
@@ -20,3 +25,5 @@
   (`apps/api/src/content/marriage-license.ts`), never from prose or model
   knowledge. A wrong waiting period can make a wedding legally impossible.
 - After changing quest content or culture packs, run `bun run verify:generation`.
+
+## Imported Claude Cowork project instructions

@@ -11,6 +11,10 @@ import enBoard from './locales/en/board.json'
 import enQuest from './locales/en/quest.json'
 import enErrors from './locales/en/errors.json'
 import enGlossary from './locales/en/glossary.json'
+import enAssistant from './locales/en/assistant.json'
+import enMoments from './locales/en/moments.json'
+import enActions from './locales/en/actions.json'
+import enPhotographer from './locales/en/photographer.json'
 import enQuests from './content/en/quests.json'
 import enCultures from './content/en/cultures.json'
 
@@ -24,6 +28,10 @@ const CATALOGS: Record<string, Record<string, Catalog>> = {
     quest: enQuest,
     errors: enErrors,
     glossary: enGlossary,
+    assistant: enAssistant,
+    moments: enMoments,
+    actions: enActions,
+    photographer: enPhotographer,
   },
 }
 

@@ -10,7 +10,8 @@ import { cn, formatCents } from '@/lib/utils'
 import type { DashboardResponse, Module } from '@bliss/types'
 import {
   Calendar, Map, Wallet, ChevronRight, Leaf, TreePine,
-  Clock, Sun, Moon, Sunrise, Sunset,
+  Clock, Sun, Moon, Sunrise, Sunset, MessageCircleHeart, Sparkles, BookHeart, Bell, Camera,
+  AlertTriangle, Check, Copy, Users,
 } from 'lucide-react'
 
 const QUEST_ICONS: Record<string, string> = {
@@ -30,6 +31,26 @@ export default function DashboardPage() {
   const getToken = useToken()
   const [data, setData] = useState<DashboardResponse | null>(null)
   const [loading, setLoading] = useState(true)
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null)
+  const [inviteState, setInviteState] = useState<'idle' | 'creating' | 'copied' | 'error'>('idle')
+
+  async function createPartnerInvite() {
+    if (!data || inviteState === 'creating') return
+    setInviteState('creating')
+    try {
+      const token = await getToken()
+      const result = await api.createPartnerInvite(data.wedding.id, token)
+      setInviteUrl(result.inviteUrl)
+      try {
+        await navigator.clipboard.writeText(result.inviteUrl)
+        setInviteState('copied')
+      } catch {
+        setInviteState('idle')
+      }
+    } catch {
+      setInviteState('error')
+    }
+  }
 
   useEffect(() => {
     async function load() {
@@ -60,6 +81,7 @@ export default function DashboardPage() {
   }
 
   const { wedding, todayTasks, activeModules, budget } = data
+  const primaryScheduleIssue = data.schedule.issues[0]
 
   const greeting = (() => {
     const h = new Date().getHours()
@@ -85,9 +107,17 @@ export default function DashboardPage() {
             <div className="font-serif text-2xl font-light text-bliss-ink flex items-center gap-2 tracking-wider">
               <TreePine className="w-5 h-5 text-bliss-sage-dark" /> Bliss
             </div>
-            <button onClick={() => router.push('/board')} className="btn-ghost text-sm flex items-center gap-1.5">
-              <Map className="w-4 h-4" /> {t('common.nav.board')}
-            </button>
+            <div className="flex items-center gap-1">
+              <button onClick={() => router.push('/actions')} className="btn-ghost text-sm flex items-center gap-1.5">
+                <Bell className="w-4 h-4" /> <span className="hidden md:inline">{t('common.nav.actions')}</span>
+              </button>
+              <button onClick={() => router.push('/moments')} className="btn-ghost text-sm flex items-center gap-1.5">
+                <BookHeart className="w-4 h-4" /> <span className="hidden sm:inline">{t('common.nav.moments')}</span>
+              </button>
+              <button onClick={() => router.push('/board')} className="btn-ghost text-sm flex items-center gap-1.5">
+                <Map className="w-4 h-4" /> {t('common.nav.board')}
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center gap-3 mb-1">
@@ -154,6 +184,181 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        <section className="mb-6 grid md:grid-cols-2 gap-3 animate-slide-up" style={{ animationDelay: '0.04s', animationFillMode: 'backwards' }}>
+          <button
+            onClick={() => router.push('/assistant')}
+            className="w-full rounded-warm-lg bg-gradient-to-br from-bliss-sage-dark to-bliss-sage-deep text-white p-5 text-left shadow-warm-lg hover:-translate-y-0.5 hover:shadow-warm-xl transition-all relative overflow-hidden group"
+          >
+            <div className="absolute -right-8 -top-10 w-32 h-32 rounded-full bg-white/10 group-hover:scale-110 transition-transform" />
+            <div className="relative flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center shrink-0">
+                <MessageCircleHeart className="w-6 h-6" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-white/70 font-bold mb-1">
+                  <Sparkles className="w-3 h-3" /> {t('common.nav.companion')}
+                </div>
+                <h2 className="font-serif text-xl mb-1">{t('assistant.dashboard.title')}</h2>
+                <p className="text-xs md:text-sm text-white/75 leading-relaxed">{t('assistant.dashboard.body')}</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-white/70 shrink-0" />
+            </div>
+          </button>
+          <button
+            onClick={() => router.push('/assistant/photographer')}
+            className="w-full rounded-warm-lg bg-white/90 border border-bliss-sky-light text-bliss-ink p-5 text-left shadow-warm hover:-translate-y-0.5 hover:shadow-warm-lg transition-all relative overflow-hidden group"
+          >
+            <div className="absolute -right-8 -top-10 w-32 h-32 rounded-full bg-bliss-sky-light/50 group-hover:scale-110 transition-transform" />
+            <div className="relative flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-bliss-sky-light flex items-center justify-center shrink-0">
+                <Camera className="w-6 h-6 text-bliss-sky" />
+              </div>
+              <div className="flex-1">
+                <div className="text-[10px] uppercase tracking-[0.16em] text-bliss-sky font-bold mb-1">{t('photographer.eyebrow')}</div>
+                <h2 className="font-serif text-xl mb-1">{t('photographer.dashboard.title')}</h2>
+                <p className="text-xs text-bliss-muted leading-relaxed">{t('photographer.dashboard.body')}</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-bliss-sky shrink-0" />
+            </div>
+          </button>
+        </section>
+
+        <section className="mb-6 animate-slide-up" style={{ animationDelay: '0.045s', animationFillMode: 'backwards' }}>
+          <div className="card p-5 flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-bliss-terra-mist flex items-center justify-center shrink-0">
+              <Users className="w-5 h-5 text-bliss-terra-dark" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h2 className="font-serif text-lg text-bliss-ink">
+                {data.couple.members.length === 2 ? t('board.couple.togetherTitle') : t('board.couple.inviteTitle')}
+              </h2>
+              <p className="text-sm text-bliss-muted mt-1 leading-relaxed">
+                {data.couple.members.length === 2
+                  ? t('board.couple.togetherBody', {
+                      names: data.couple.members.map(member => member.isCurrentUser
+                        ? t('board.couple.you')
+                        : member.displayName ?? t('board.couple.partner')).join(' & '),
+                    })
+                  : t('board.couple.inviteBody')}
+              </p>
+              {data.couple.canInvitePartner && (
+                <div className="mt-3 space-y-2">
+                  <button
+                    onClick={() => void createPartnerInvite()}
+                    disabled={inviteState === 'creating'}
+                    className="btn-secondary py-2 px-4 text-xs flex items-center gap-1.5"
+                  >
+                    {inviteState === 'copied' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                    {inviteState === 'creating'
+                      ? t('board.couple.creating')
+                      : inviteState === 'copied'
+                        ? t('board.couple.copied')
+                        : t('board.couple.copyInvite')}
+                  </button>
+                  {inviteUrl && (
+                    <input
+                      readOnly
+                      value={inviteUrl}
+                      onFocus={event => event.currentTarget.select()}
+                      aria-label={t('board.couple.inviteLink')}
+                      className="input-warm text-xs"
+                    />
+                  )}
+                  {inviteState === 'error' && <p role="alert" className="text-xs text-bliss-terra-dark">{t('board.couple.inviteError')}</p>}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {primaryScheduleIssue && (
+          <section className="mb-6 animate-slide-up" style={{ animationDelay: '0.045s', animationFillMode: 'backwards' }}>
+            <div className={cn(
+              'rounded-warm-lg border p-5 shadow-warm',
+              primaryScheduleIssue.severity === 'blocking'
+                ? 'bg-bliss-terra-mist/80 border-bliss-terra-light'
+                : 'bg-bliss-sky-light/70 border-bliss-sky/20',
+            )}>
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-white/70 flex items-center justify-center shrink-0">
+                  <AlertTriangle className={cn(
+                    'w-5 h-5',
+                    primaryScheduleIssue.severity === 'blocking' ? 'text-bliss-terra-dark' : 'text-bliss-sky',
+                  )} />
+                </div>
+                <div className="flex-1">
+                  <h2 className="font-serif text-xl text-bliss-ink">
+                    {primaryScheduleIssue.type === 'negative_slack'
+                      ? t('board.schedule.decisionTitle')
+                      : t('board.schedule.workloadTitle')}
+                  </h2>
+                  <p className="text-sm text-bliss-ink-light mt-1 leading-relaxed">
+                    {primaryScheduleIssue.type === 'negative_slack'
+                      ? t('board.schedule.decisionBody', {
+                          task: primaryScheduleIssue.taskTitle ?? t('common.state.empty'),
+                          days: Math.abs(primaryScheduleIssue.slackDays ?? 0),
+                        })
+                      : t('board.schedule.workloadBody', {
+                          hours: ((primaryScheduleIssue.overloadMinutes ?? 0) / 60).toFixed(1),
+                        })}
+                  </p>
+                  <button
+                    onClick={() => router.push(
+                      primaryScheduleIssue.questKey === 'attire_beauty'
+                        ? '/assistant'
+                        : primaryScheduleIssue.questKey === 'vendor_team'
+                          ? '/assistant/photographer'
+                          : '/board',
+                    )}
+                    className="mt-3 text-xs font-bold text-bliss-sage-dark flex items-center gap-1 hover:underline"
+                  >
+                    {primaryScheduleIssue.decisionId
+                      ? t('board.schedule.reopen')
+                      : t('board.schedule.review')}
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {data.reminders.length > 0 && (
+          <section className="mb-6 animate-slide-up" style={{ animationDelay: '0.05s', animationFillMode: 'backwards' }}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-serif text-lg text-bliss-ink flex items-center gap-2 font-medium">
+                <Bell className="w-4 h-4 text-bliss-sky" />
+                {t('actions.dashboard.title')}
+              </h2>
+              <button onClick={() => router.push('/actions')} className="text-xs text-bliss-sage-dark font-medium hover:underline">
+                {t('actions.dashboard.viewAll')}
+              </button>
+            </div>
+            <div className="card overflow-hidden">
+              {data.reminders.map((reminder, index) => (
+                <button
+                  key={reminder.id}
+                  onClick={() => router.push('/actions')}
+                  className={cn(
+                    'w-full flex items-center gap-3 px-5 py-3.5 text-left hover:bg-bliss-sky-light/30 transition-colors',
+                    index < data.reminders.length - 1 && 'border-b border-bliss-border/30',
+                  )}
+                >
+                  <div className="w-8 h-8 rounded-full bg-bliss-sky-light flex items-center justify-center shrink-0">
+                    <Bell className="w-4 h-4 text-bliss-sky" />
+                  </div>
+                  <span className="text-sm text-bliss-ink flex-1">
+                    {typeof reminder.metadata?.['title'] === 'string'
+                      ? reminder.metadata['title']
+                      : t('actions.kind.reminder')}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-bliss-muted" />
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Today's Tasks */}
         <section className="mb-6 animate-slide-up" style={{ animationDelay: '0.06s', animationFillMode: 'backwards' }}>
           <h2 className="font-serif text-lg text-bliss-ink mb-3 flex items-center gap-2 font-medium">
@@ -180,6 +385,17 @@ export default function DashboardPage() {
                 >
                   <div className="w-5 h-5 rounded-md border-2 border-bliss-border shrink-0" />
                   <span className="text-sm text-bliss-ink flex-1">{task.title}</span>
+                  {task.computedLatestStart && (
+                    <span className={cn(
+                      'text-[10px] font-semibold',
+                      (task.slackDays ?? 1) < 0 ? 'text-bliss-terra-dark' : 'text-bliss-muted',
+                    )}>
+                      {t('board.schedule.startBy', {
+                        date: new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' })
+                          .format(new Date(`${task.computedLatestStart}T12:00:00`)),
+                      })}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>

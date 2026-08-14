@@ -2,7 +2,12 @@ import type { FastifyInstance } from 'fastify'
 import { db } from '../db'
 import { moduleCelebrations, milestones } from '../db/schema'
 import { eq, sql } from 'drizzle-orm'
-import { requireAuth, requireWeddingAccess } from '../middleware/auth'
+import {
+  requireAuth,
+  requireCelebrationAccess,
+  requireMilestoneAccess,
+  requireWeddingAccess,
+} from '../middleware/auth'
 
 export async function celebrationRoutes(app: FastifyInstance) {
   app.get('/weddings/:weddingId/celebrations/pending', {
@@ -22,7 +27,7 @@ export async function celebrationRoutes(app: FastifyInstance) {
   })
 
   app.patch('/celebrations/:id/dismiss', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireCelebrationAccess]
   }, async (req, reply) => {
     const { id } = req.params as any
 
@@ -52,7 +57,7 @@ export async function celebrationRoutes(app: FastifyInstance) {
   })
 
   app.patch('/milestones/:id/dismiss', {
-    preHandler: [requireAuth]
+    preHandler: [requireAuth, requireMilestoneAccess]
   }, async (req, reply) => {
     const { id } = req.params as any
 

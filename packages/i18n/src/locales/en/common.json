@@ -7,6 +7,9 @@
   "nav": {
     "dashboard": "Home",
     "board": "Plan",
+    "companion": "Ask Bliss",
+    "moments": "Moments",
+    "actions": "Actions",
     "timeline": "Timeline",
     "budget": "Budget",
     "guests": "Guests",

@@ -96,6 +96,10 @@ export const NAMESPACES = [
   'quest',
   'errors',
   'glossary',
+  'assistant',
+  'moments',
+  'actions',
+  'photographer',
 ] as const
 
 export type Namespace = (typeof NAMESPACES)[number]

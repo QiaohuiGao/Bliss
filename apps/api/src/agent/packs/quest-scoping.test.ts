@@ -1,0 +1,138 @@
+import { describe, expect, it } from 'bun:test'
+import type { DecisionProposalStore } from '../proposals/store'
+import type { AgentToolContext, DecisionPacket } from '../types'
+import { createQuestScopingTools } from './quest-scoping'
+
+const context: AgentToolContext = {
+  runId: 'run-1',
+  weddingId: 'wedding-1',
+  userId: 'member-1',
+  threadId: 'thread-1',
+}
+
+class CaptureStore implements DecisionProposalStore {
+  packet: DecisionPacket | null = null
+  async create(_context: AgentToolContext, packet: DecisionPacket) {
+    this.packet = packet
+    return { proposalId: 'proposal-1', version: 1, status: 'pending' as const }
+  }
+}
+
+const packet = (overrides: Partial<DecisionPacket> = {}): DecisionPacket => ({
+  schemaVersion: 1,
+  threadId: context.threadId,
+  questKey: 'food_beverage',
+  questionKey: 'food.service_style',
+  state: 'ready',
+  summary: 'Buffet keeps the evening relaxed and lets guests choose portions.',
+  proposedChoice: 'buffet',
+  reason: 'The couple values an informal flow and flexible portions.',
+  alternativesConsidered: [{ value: 'plated', tradeoff: 'More formal, with stationery dependencies.' }],
+  memberInputs: [{
+    memberId: 'member-1',
+    stance: 'buffet',
+    reason: 'We want the meal to feel relaxed.',
+    sourceMessageIds: ['message-1'],
+  }],
+  taskEffects: [{
+    taskKey: 'confirm_line_count_and_flow',
+    rationale: 'Prevent queues once buffet is selected.',
+  }],
+  memoryEffects: [],
+  externalActions: [],
+  vendorEffects: [],
+  momentCandidate: null,
+  ...overrides,
+})
+
+const tools = (store = new CaptureStore()) => {
+  const result = createQuestScopingTools({
+    questKey: 'food_beverage',
+    resolverInput: { weddingType: 'traditional', cultures: [], plannerType: 'none' },
+    activeAnswers: { 'food.bar_package': 'dry' },
+    proposalStore: store,
+  })
+  return { store, questions: result[0]!, candidates: result[1]!, propose: result[2]! }
+}
+
+describe('generic quest scoping pack', () => {
+  it('exposes authored questions with confirmed and assumed state', async () => {
+    const { questions } = tools()
+    const result = await questions.execute({}, context) as {
+      questions: Array<{ questionKey: string; currentChoice: string; source: string }>
+    }
+    expect(result.questions).toHaveLength(3)
+    expect(result.questions.find(item => item.questionKey === 'food.bar_package')).toMatchObject({
+      currentChoice: 'dry',
+      source: 'confirmed',
+    })
+    expect(result.questions.find(item => item.questionKey === 'food.dessert')?.source).toBe('assumed')
+  })
+
+  it('returns only tasks controlled by the selected question and branch', async () => {
+    const { candidates } = tools()
+    const result = await candidates.execute({
+      questionKey: 'food.service_style',
+      choice: 'buffet',
+    }, context) as { candidates: Array<{ taskKey: string }> }
+    expect(result.candidates.map(item => item.taskKey)).toEqual(['confirm_line_count_and_flow'])
+  })
+
+  it('creates a grounded proposal from the exact candidate pool', async () => {
+    const { store, candidates, propose } = tools()
+    await candidates.execute({ questionKey: 'food.service_style', choice: 'buffet' }, context)
+    await propose.execute(packet(), context)
+    expect(store.packet?.proposedChoice).toBe('buffet')
+  })
+
+  it('rejects an invented or cross-question task', async () => {
+    const { candidates, propose } = tools()
+    await candidates.execute({ questionKey: 'food.service_style', choice: 'buffet' }, context)
+    expect(propose.execute(packet({
+      taskEffects: [{ taskKey: 'collect_meal_choices_with_rsvp', rationale: 'Invented for this branch.' }],
+    }), context)).rejects.toMatchObject({ code: 'INVENTED_TASK' })
+  })
+
+  it('keeps contested proposals free of downstream effects', async () => {
+    const { propose } = tools()
+    expect(propose.execute(packet({
+      state: 'contested',
+      proposedChoice: null,
+      reason: null,
+      externalActions: [{
+        kind: 'reminder',
+        payload: { title: 'Decide', triggerAt: '2027-01-01T09:00:00-05:00' },
+        requiresApproval: true,
+      }],
+    }), context)).rejects.toMatchObject({ code: 'CONTESTED_SIDE_EFFECT' })
+  })
+
+  it('shows the full deterministic branch even when the model previews only one task', async () => {
+    const store = new CaptureStore()
+    const [questions, candidates, propose] = createQuestScopingTools({
+      questKey: 'guests_stationery',
+      resolverInput: { weddingType: 'traditional', cultures: [], plannerType: 'none' },
+      activeAnswers: {},
+      proposalStore: store,
+    })
+    await questions!.execute({}, context)
+    await candidates!.execute({
+      questionKey: 'guests.invitation_format',
+      choice: 'digital_first',
+    }, context)
+    await propose!.execute(packet({
+      questKey: 'guests_stationery',
+      questionKey: 'guests.invitation_format',
+      proposedChoice: 'digital_first',
+      taskEffects: [{
+        taskKey: 'choose_digital_invitation_platform',
+        rationale: 'Choose the system of record.',
+      }],
+    }), context)
+    expect(store.packet?.taskEffects.map(effect => effect.taskKey)).toEqual([
+      'choose_digital_invitation_platform',
+      'test_digital_delivery_and_rsvp',
+      'plan_offline_guest_backup',
+    ])
+  })
+})
