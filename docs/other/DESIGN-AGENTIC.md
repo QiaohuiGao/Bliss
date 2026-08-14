@@ -1,8 +1,8 @@
 # Bliss — Agentic System Design
 
-> **这份文档取代 [DESIGN.md](DESIGN.md) 的 §2–§7。** 术语与分层遵循
-> [docs/other/AGENTIC-SYSTEM-REFERENCE.md](docs/other/AGENTIC-SYSTEM-REFERENCE.md)。
-> 产品意图仍以 [PRD.md](PRD.md) 为准，但 §5 的"确定性骨架 + 决策点嵌入 agent"
+> **这份文档取代 [DESIGN.md](../../DESIGN.md) 的 §2–§7。** 术语与分层遵循
+> [AGENTIC-SYSTEM-REFERENCE.md](AGENTIC-SYSTEM-REFERENCE.md)。
+> 产品意图仍以 [PRD.md](../../PRD.md) 为准，但 §5 的"确定性骨架 + 决策点嵌入 agent"
 > 需按本文 §1 重新理解。
 
 ---
@@ -127,7 +127,7 @@ graph TB
 
 **决定：两个 user 角色共享一个 wedding，内容全部共享，不做可见性分级。**
 
-已有的 [`wedding_members`](apps/api/src/db/schema/weddings.ts#L64) 直接满足。
+已有的 [`wedding_members`](../../apps/api/src/db/schema/weddings.ts#L64) 直接满足。
 明确**不做**：私密笔记、给对方的惊喜、每条记忆的 visibility scope、分角色权限。
 
 代价（明确接受）：不支持"我想偷偷准备一个惊喜"这类场景。若将来要，加一个
@@ -308,9 +308,9 @@ propose_decision({
 
 ### 4.1 Resolver 的新位置
 
-已写的 [predicates.ts](apps/api/src/content/predicates.ts)、
-[quest-resolver.ts](apps/api/src/services/quest-resolver.ts)、
-[validate-content.ts](apps/api/src/content/validate-content.ts) **全部保留**，
+已写的 [predicates.ts](../../apps/api/src/content/predicates.ts)、
+[quest-resolver.ts](../../apps/api/src/services/quest-resolver.ts)、
+[validate-content.ts](../../apps/api/src/content/validate-content.ts) **全部保留**，
 它们成为 `get_candidate_tasks` 的实现。
 
 变化只有一处，但很关键：**它的输出不再直接是用户看到的清单，而是给 agent 看的
@@ -404,7 +404,7 @@ graph TB
 ## 7. 时间：先诚实，再精确
 
 **改名：不叫 CPM Scheduler，叫 `DeadlineHeuristic`。** 现在的实现
-（[quest-generator.ts](apps/api/src/services/quest-generator.ts#L38-L76)）是
+（[quest-generator.ts](../../apps/api/src/services/quest-generator.ts#L38-L76)）是
 按 quest 顺序做的前向估算，它不是关键路径法，叫 CPM 会让人（包括未来的你）
 高估它。
 
@@ -471,8 +471,8 @@ PlanningThread。**
 记忆、动作和一段值得读的话。** 这件事在一个 quest 上做不成，做十四个也没用。
 
 注意 Sprint 3 只需要 **attire 或 photo 一个 quest 的内容**——它们是现有 14 个
-里唯二写了 scoping questions 的（[quest-templates.ts:291](apps/api/src/content/quest-templates.ts#L291)、
-[:604](apps/api/src/content/quest-templates.ts#L604)），所以起点是现成的。
+里唯二写了 scoping questions 的（[quest-templates.ts:291](../../apps/api/src/content/quest-templates.ts#L291)、
+[:604](../../apps/api/src/content/quest-templates.ts#L604)），所以起点是现成的。
 
 ---
 
