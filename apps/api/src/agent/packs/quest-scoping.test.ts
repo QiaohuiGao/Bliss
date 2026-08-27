@@ -45,9 +45,10 @@ const packet = (overrides: Partial<DecisionPacket> = {}): DecisionPacket => ({
   ...overrides,
 })
 
-const tools = (store = new CaptureStore()) => {
+const tools = (store = new CaptureStore(), questionKey = 'food.service_style') => {
   const result = createQuestScopingTools({
     questKey: 'food_beverage',
+    questionKey,
     resolverInput: { weddingType: 'traditional', cultures: [], plannerType: 'none' },
     activeAnswers: { 'food.bar_package': 'dry' },
     proposalStore: store,
@@ -56,17 +57,30 @@ const tools = (store = new CaptureStore()) => {
 }
 
 describe('generic quest scoping pack', () => {
-  it('exposes authored questions with confirmed and assumed state', async () => {
-    const { questions } = tools()
+  it('exposes only the active authored question', async () => {
+    const { questions } = tools(new CaptureStore(), 'food.bar_package')
     const result = await questions.execute({}, context) as {
       questions: Array<{ questionKey: string; currentChoice: string; source: string }>
     }
-    expect(result.questions).toHaveLength(3)
-    expect(result.questions.find(item => item.questionKey === 'food.bar_package')).toMatchObject({
+    expect(result.questions).toHaveLength(1)
+    expect(result.questions[0]).toMatchObject({
+      questionKey: 'food.bar_package',
       currentChoice: 'dry',
       source: 'confirmed',
     })
-    expect(result.questions.find(item => item.questionKey === 'food.dessert')?.source).toBe('assumed')
+  })
+
+  it('rejects access to another question in the same quest', async () => {
+    const { candidates, propose } = tools()
+    expect(candidates.execute({
+      questionKey: 'food.bar_package',
+      choice: 'dry',
+    }, context)).rejects.toMatchObject({ code: 'INVALID_QUESTION' })
+    expect(propose.execute(packet({
+      questionKey: 'food.bar_package',
+      proposedChoice: 'dry',
+      taskEffects: [],
+    }), context)).rejects.toMatchObject({ code: 'INVALID_QUESTION' })
   })
 
   it('returns only tasks controlled by the selected question and branch', async () => {
@@ -111,6 +125,7 @@ describe('generic quest scoping pack', () => {
     const store = new CaptureStore()
     const [questions, candidates, propose] = createQuestScopingTools({
       questKey: 'guests_stationery',
+      questionKey: 'guests.invitation_format',
       resolverInput: { weddingType: 'traditional', cultures: [], plannerType: 'none' },
       activeAnswers: {},
       proposalStore: store,

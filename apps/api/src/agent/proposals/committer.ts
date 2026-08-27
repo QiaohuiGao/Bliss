@@ -13,6 +13,7 @@ import {
   planningThreads,
   subModules,
   tasks,
+  threadMessages,
   vendorShortlistItems,
   weddingMembers,
   weddings,
@@ -24,6 +25,8 @@ import { resolveTree } from '../../services/quest-resolver'
 import { AgentGuardrailError } from '../errors'
 import { recomputeWeddingSchedule } from '../../services/schedule-store'
 import { loadCurrentDecisionState } from './current'
+import { citedMessageIds, unresolvedCitations } from './evidence'
+import { planClaimWrite } from '../memory/write-policy'
 
 export interface CommitDecisionResult {
   proposalId: string
@@ -139,6 +142,27 @@ export class DatabaseDecisionCommitter implements DecisionCommitter {
       const supersededDecision = currentDecisions.byQuestion.get(proposal.questionKey)
       const activeAnswers = { ...currentDecisions.answers }
       activeAnswers[proposal.questionKey] = proposal.proposedChoice
+
+      // Resolve every cited message before writing anything. A fabricated citation
+      // passes schema validation and is indistinguishable from a real one once
+      // stored, which would destroy the one affordance that makes a wrong inference
+      // correctable. Scoped to this thread as well as this wedding: evidence for a
+      // decision has to come from the conversation that produced it.
+      const citedIds = citedMessageIds(proposal)
+      if (citedIds.length > 0) {
+        const knownMessages = await tx
+          .select({ id: threadMessages.id })
+          .from(threadMessages)
+          .where(and(
+            eq(threadMessages.weddingId, input.weddingId),
+            eq(threadMessages.threadId, proposal.threadId),
+            inArray(threadMessages.id, citedIds),
+          ))
+        const unresolved = unresolvedCitations(proposal, knownMessages.map(message => message.id))
+        if (unresolved.length > 0) {
+          throw new AgentGuardrailError('EVIDENCE_NOT_FOUND', unresolved.join('; '))
+        }
+      }
 
       const memberCount = new Set(proposal.memberInputs.map(member => member.memberId)).size
       const [decision] = await tx
@@ -372,7 +396,8 @@ export class DatabaseDecisionCommitter implements DecisionCommitter {
               eq(memoryClaims.status, 'confirmed'),
             ))
             .limit(1)
-          if (current) {
+          const claimPlan = planClaimWrite(effect.source)
+          if (current && claimPlan.supersedesCurrent) {
             await tx
               .update(memoryClaims)
               .set({ status: 'superseded' })
@@ -388,10 +413,10 @@ export class DatabaseDecisionCommitter implements DecisionCommitter {
             value: effect.value,
             source: effect.source,
             confidenceBasisPoints: effect.confidenceBasisPoints,
-            status: 'confirmed' as const,
+            status: claimPlan.status,
             evidenceMessageIds: effect.evidenceMessageIds,
             createdBy: input.userId,
-            supersedesId: current?.id ?? null,
+            supersedesId: claimPlan.supersedesCurrent ? current?.id ?? null : null,
           }).returning({ id: memoryClaims.id })
           memoryClaimIds.push(created!.id)
         }
@@ -451,7 +476,7 @@ export class DatabaseDecisionCommitter implements DecisionCommitter {
         .where(eq(decisionProposals.id, proposal.id))
       await tx
         .update(planningThreads)
-        .set({ status: 'resolved', resolvedDecisionId: decision!.id, updatedAt: now })
+        .set({ status: 'open', currentDecisionId: decision!.id, updatedAt: now })
         .where(eq(planningThreads.id, proposal.threadId))
 
       const result: Omit<CommitDecisionResult, 'replayed'> = {

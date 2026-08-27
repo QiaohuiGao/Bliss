@@ -1,0 +1,2379 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Bliss — Agent Workspace Concept</title>
+  <style>
+    :root {
+      --canvas: #eceeec;
+      --paper: #f8f9f7;
+      --paper-strong: #ffffff;
+      --ink: #242b2f;
+      --muted: #6d7474;
+      --quiet: #9ba19f;
+      --line: #dce0dc;
+      --line-strong: #c8cec9;
+      --violet: #52677a;
+      --violet-deep: #344958;
+      --violet-wash: #e9eef1;
+      --coral: #a16f68;
+      --coral-wash: #f4eae8;
+      --sage: #6f8175;
+      --sage-wash: #eaf0ec;
+      --amber: #a48655;
+      --amber-wash: #f4eee3;
+      --shadow: 0 22px 55px rgba(39, 47, 51, 0.11);
+      --shadow-small: 0 8px 24px rgba(39, 47, 51, 0.08);
+      --radius-large: 28px;
+      --radius-medium: 18px;
+      --radius-small: 12px;
+      --display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      --body: "Avenir Next", Avenir, "Segoe UI", Helvetica, Arial, sans-serif;
+      --utility: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+      background: var(--canvas);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--canvas);
+      font-family: var(--body);
+      font-size: 14px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 3px solid rgba(82, 103, 122, 0.26);
+      outline-offset: 2px;
+    }
+
+    .app-shell {
+      width: min(1560px, calc(100% - 28px));
+      min-height: calc(100vh - 28px);
+      margin: 14px auto;
+      overflow: hidden;
+      border: 1px solid rgba(203, 211, 223, 0.92);
+      border-radius: 30px;
+      background: rgba(248, 249, 247, 0.96);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+    }
+
+    .app-header {
+      display: grid;
+      grid-template-columns: 260px 1fr auto;
+      align-items: center;
+      min-height: 68px;
+      padding: 0 22px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.86);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      width: fit-content;
+      font-family: var(--display);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 31px;
+      height: 25px;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      width: 17px;
+      height: 17px;
+      border: 2px solid;
+      border-radius: 50%;
+    }
+
+    .brand-mark::before {
+      left: 1px;
+      border-color: var(--violet);
+    }
+
+    .brand-mark::after {
+      right: 1px;
+      border-color: var(--coral);
+    }
+
+    .wedding-identity {
+      justify-self: center;
+      text-align: center;
+    }
+
+    .wedding-identity strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: 0.01em;
+    }
+
+    .wedding-identity span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 9px;
+    }
+
+    .presence {
+      display: flex;
+      align-items: center;
+      margin-right: 6px;
+    }
+
+    .avatar {
+      display: inline-grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      border: 2px solid var(--paper-strong);
+      border-radius: 50%;
+      color: white;
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 0.03em;
+    }
+
+    .avatar + .avatar {
+      margin-left: -7px;
+    }
+
+    .avatar.maya {
+      background: var(--violet);
+    }
+
+    .avatar.theo {
+      background: var(--coral);
+    }
+
+    .icon-button,
+    .notes-button {
+      display: inline-grid;
+      place-items: center;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--paper-strong);
+      cursor: pointer;
+      transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .icon-button {
+      width: 36px;
+      padding: 0;
+    }
+
+    .notes-button {
+      padding: 0 13px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .icon-button:hover,
+    .notes-button:hover {
+      border-color: var(--line-strong);
+      box-shadow: var(--shadow-small);
+      transform: translateY(-1px);
+    }
+
+    .journey-bar {
+      display: grid;
+      grid-template-columns: 250px 1fr auto;
+      align-items: center;
+      min-height: 104px;
+      padding: 16px 22px 17px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .journey-copy .eyebrow {
+      margin-bottom: 5px;
+    }
+
+    .journey-copy strong {
+      display: block;
+      font-family: var(--display);
+      font-size: 20px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+    }
+
+    .journey-copy span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .journey-track {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(14, minmax(24px, 1fr));
+      align-items: center;
+      gap: 2px;
+      max-width: 850px;
+      padding: 17px 7px 0;
+    }
+
+    .journey-track::before {
+      content: "";
+      position: absolute;
+      top: 27px;
+      right: 24px;
+      left: 24px;
+      height: 1px;
+      background: var(--line-strong);
+    }
+
+    .journey-track::after {
+      content: "";
+      position: absolute;
+      top: 26px;
+      left: 24px;
+      width: 41%;
+      height: 3px;
+      border-radius: 99px;
+      background: var(--violet);
+    }
+
+    .quest-node {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      justify-items: center;
+      gap: 7px;
+      min-width: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .quest-dot {
+      display: grid;
+      place-items: center;
+      width: 11px;
+      height: 11px;
+      border: 2px solid var(--paper);
+      border-radius: 50%;
+      background: var(--line-strong);
+      box-shadow: 0 0 0 1px var(--line-strong);
+      transition: transform 160ms ease;
+    }
+
+    .quest-node:hover .quest-dot {
+      transform: scale(1.22);
+    }
+
+    .quest-node.done .quest-dot {
+      background: var(--violet);
+      box-shadow: 0 0 0 1px var(--violet);
+    }
+
+    .quest-node.current .quest-dot {
+      width: 20px;
+      height: 20px;
+      border: 5px solid white;
+      background: linear-gradient(90deg, var(--violet) 0 50%, var(--coral) 50%);
+      box-shadow: 0 0 0 2px var(--violet), 0 5px 14px rgba(82, 103, 122, 0.27);
+    }
+
+    .quest-label {
+      overflow: hidden;
+      max-width: 72px;
+      color: var(--quiet);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .quest-node.current .quest-label {
+      color: var(--ink);
+    }
+
+    .journey-score {
+      min-width: 115px;
+      padding-left: 20px;
+      text-align: right;
+    }
+
+    .journey-score strong {
+      display: block;
+      font-family: var(--display);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .journey-score span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 278px minmax(480px, 1fr) 328px;
+      min-height: calc(100vh - 202px);
+    }
+
+    .quest-rail,
+    .decision-dock {
+      background: rgba(246, 247, 245, 0.84);
+    }
+
+    .quest-rail {
+      padding: 23px 19px 20px;
+      border-right: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0;
+      color: var(--muted);
+      font-family: var(--utility);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--violet);
+    }
+
+    .quest-title {
+      margin: 9px 0 5px;
+      font-family: var(--display);
+      font-size: 27px;
+      line-height: 1.06;
+      letter-spacing: -0.035em;
+    }
+
+    .quest-subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .phase-list {
+      position: relative;
+      display: grid;
+      gap: 0;
+      margin: 24px 0 26px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .phase-list::before {
+      content: "";
+      position: absolute;
+      top: 16px;
+      bottom: 20px;
+      left: 14px;
+      width: 1px;
+      background: var(--line-strong);
+    }
+
+    .phase-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 29px 1fr;
+      gap: 11px;
+      min-height: 57px;
+    }
+
+    .phase-mark {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 29px;
+      height: 29px;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      background: var(--paper);
+      color: var(--quiet);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .phase-item.done .phase-mark {
+      border-color: var(--sage);
+      color: white;
+      background: var(--sage);
+    }
+
+    .phase-item.current .phase-mark {
+      border: 5px solid var(--violet-wash);
+      color: white;
+      background: var(--violet);
+      box-shadow: 0 0 0 1px var(--violet);
+    }
+
+    .phase-copy {
+      padding-top: 1px;
+    }
+
+    .phase-copy strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .phase-copy span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    .phase-item:not(.done, .current) .phase-copy strong {
+      color: var(--quiet);
+    }
+
+    .capability-box {
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 11px;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .section-heading span {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .capability-list {
+      display: grid;
+      gap: 7px;
+    }
+
+    .capability {
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      min-height: 49px;
+      padding: 7px 8px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .capability:hover {
+      border-color: var(--line);
+      background: white;
+      transform: translateX(2px);
+    }
+
+    .capability-icon {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      color: var(--violet-deep);
+      background: var(--violet-wash);
+      font-size: 13px;
+    }
+
+    .capability:nth-child(2) .capability-icon {
+      color: #744c48;
+      background: var(--coral-wash);
+    }
+
+    .capability:nth-child(3) .capability-icon {
+      color: #50665a;
+      background: var(--sage-wash);
+    }
+
+    .capability:nth-child(4) .capability-icon {
+      color: #765e38;
+      background: var(--amber-wash);
+    }
+
+    .capability strong {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .capability small {
+      display: block;
+      margin-top: 1px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .capability-arrow {
+      color: var(--quiet);
+      font-size: 14px;
+    }
+
+    .conversation {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: var(--paper-strong);
+    }
+
+    .conversation-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 67px;
+      padding: 13px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .thread-name {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .bliss-orb {
+      position: relative;
+      display: grid;
+      flex: 0 0 auto;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 12px 12px 12px 4px;
+      color: white;
+      background: var(--violet);
+      box-shadow: 0 7px 16px rgba(82, 103, 122, 0.23);
+      font-family: var(--display);
+      font-size: 18px;
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .thread-name strong {
+      display: block;
+      overflow: hidden;
+      font-size: 13px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .thread-name span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .thinking-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      color: var(--muted);
+      background: var(--paper);
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .thinking-state::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sage);
+      box-shadow: 0 0 0 4px rgba(110, 154, 134, 0.12);
+    }
+
+    .conversation-scroll {
+      flex: 1;
+      overflow: auto;
+      padding: 27px clamp(20px, 4vw, 58px) 30px;
+      scroll-behavior: smooth;
+    }
+
+    .conversation-intro {
+      max-width: 720px;
+      margin: 0 auto 26px;
+    }
+
+    .conversation-intro .eyebrow {
+      margin-bottom: 8px;
+    }
+
+    .conversation-intro h1 {
+      max-width: 620px;
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(31px, 3.2vw, 47px);
+      font-weight: 500;
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+    }
+
+    .conversation-intro h1 em {
+      color: var(--violet-deep);
+      font-weight: 500;
+    }
+
+    .conversation-intro > p {
+      max-width: 590px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .understanding-card {
+      position: relative;
+      max-width: 720px;
+      margin: 0 auto 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-medium);
+      background: var(--paper);
+    }
+
+    .understanding-card::before,
+    .understanding-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 3px;
+    }
+
+    .understanding-card::before {
+      left: 0;
+      background: var(--violet);
+    }
+
+    .understanding-card::after {
+      right: 0;
+      background: var(--coral);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 15px 17px 12px;
+    }
+
+    .card-header strong {
+      font-size: 12px;
+    }
+
+    .source-link,
+    .text-button {
+      padding: 0;
+      border: 0;
+      color: var(--violet-deep);
+      background: transparent;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .couple-inputs {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: stretch;
+      padding: 0 17px 17px;
+    }
+
+    .member-view {
+      padding: 13px;
+      border: 1px solid var(--line);
+      background: white;
+    }
+
+    .member-view.maya {
+      border-radius: 13px 3px 3px 13px;
+    }
+
+    .member-view.theo {
+      border-radius: 3px 13px 13px 3px;
+    }
+
+    .member-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 8px;
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .member-label i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--violet);
+    }
+
+    .member-view.theo .member-label i {
+      background: var(--coral);
+    }
+
+    .member-view p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .member-view strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .shared-knot {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 39px;
+      margin: 0 -1px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: white;
+    }
+
+    .shared-knot span {
+      display: grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      border: 2px solid white;
+      border-radius: 50%;
+      color: white;
+      background: linear-gradient(90deg, var(--violet) 0 50%, var(--coral) 50%);
+      box-shadow: 0 0 0 1px var(--line-strong);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .shared-priority {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 17px;
+      border-top: 1px solid var(--line);
+      color: #50665a;
+      background: var(--sage-wash);
+      font-size: 10px;
+    }
+
+    .shared-priority strong {
+      color: #3d5146;
+    }
+
+    .messages {
+      display: grid;
+      gap: 18px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .message {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      align-items: start;
+      gap: 11px;
+    }
+
+    .message.user {
+      grid-template-columns: minmax(0, 1fr) 30px;
+      justify-items: end;
+      margin-left: min(13vw, 125px);
+    }
+
+    .message .avatar {
+      width: 30px;
+      height: 30px;
+      border: 0;
+    }
+
+    .bubble {
+      width: fit-content;
+      max-width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px 16px 16px 16px;
+      background: var(--paper);
+      box-shadow: 0 4px 12px rgba(42, 53, 72, 0.04);
+      font-size: 12px;
+    }
+
+    .bubble p {
+      margin: 0;
+    }
+
+    .bubble p + p {
+      margin-top: 7px;
+    }
+
+    .user .bubble {
+      color: white;
+      border-color: var(--ink);
+      border-radius: 16px 6px 16px 16px;
+      background: var(--ink);
+    }
+
+    .comparison-card {
+      overflow: hidden;
+      margin-top: 11px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+    }
+
+    .comparison-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 13px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .comparison-topline strong {
+      font-size: 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .fit-label {
+      color: #50665a;
+      font-family: var(--utility);
+      font-size: 9px;
+      font-weight: 750;
+    }
+
+    .vendor-row {
+      display: grid;
+      grid-template-columns: 34px minmax(110px, 1fr) 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 13px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .vendor-row:last-child {
+      border-bottom: 0;
+    }
+
+    .vendor-swatch {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background:
+        linear-gradient(145deg, transparent 47%, rgba(255, 255, 255, 0.75) 48% 52%, transparent 53%),
+        #a8b7ca;
+    }
+
+    .vendor-row:nth-child(3) .vendor-swatch {
+      background:
+        radial-gradient(circle at 65% 35%, rgba(255, 255, 255, 0.72) 0 17%, transparent 18%),
+        #c7aa9c;
+    }
+
+    .vendor-name strong,
+    .vendor-name span {
+      display: block;
+    }
+
+    .vendor-name strong {
+      font-size: 10px;
+    }
+
+    .vendor-name span,
+    .vendor-reason {
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .vendor-price {
+      color: var(--ink);
+      font-family: var(--utility);
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .composer-shell {
+      position: sticky;
+      bottom: 0;
+      z-index: 4;
+      padding: 10px 24px 17px;
+      border-top: 1px solid rgba(220, 226, 235, 0.88);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(18px);
+    }
+
+    .prompt-row {
+      display: flex;
+      gap: 7px;
+      max-width: 760px;
+      margin: 0 auto 9px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .prompt-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .prompt-chip {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      color: var(--muted);
+      background: var(--paper-strong);
+      font-size: 10px;
+      cursor: pointer;
+      transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .prompt-chip:hover {
+      color: var(--violet-deep);
+      border-color: #aebac2;
+      background: var(--violet-wash);
+    }
+
+    .composer {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: end;
+      gap: 8px;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: 17px;
+      background: white;
+      box-shadow: 0 9px 30px rgba(39, 47, 51, 0.09);
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .composer:focus-within {
+      border-color: #a2b0b9;
+      box-shadow: 0 9px 30px rgba(82, 103, 122, 0.13);
+    }
+
+    .attach-button,
+    .send-button {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 11px;
+      cursor: pointer;
+    }
+
+    .attach-button {
+      color: var(--muted);
+      background: var(--canvas);
+    }
+
+    .send-button {
+      color: white;
+      background: var(--violet);
+      box-shadow: 0 6px 15px rgba(82, 103, 122, 0.23);
+    }
+
+    .composer textarea {
+      width: 100%;
+      min-height: 36px;
+      max-height: 120px;
+      padding: 8px 3px 5px;
+      resize: none;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+      background: transparent;
+      font-size: 12px;
+    }
+
+    .composer textarea::placeholder {
+      color: var(--quiet);
+    }
+
+    .decision-dock {
+      padding: 23px 19px 20px;
+      overflow: auto;
+      border-left: 1px solid var(--line);
+    }
+
+    .dock-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .dock-heading strong {
+      font-family: var(--display);
+      font-size: 20px;
+      letter-spacing: -0.025em;
+    }
+
+    .phase-pill {
+      padding: 5px 8px;
+      border-radius: 99px;
+      color: var(--violet-deep);
+      background: var(--violet-wash);
+      font-family: var(--utility);
+      font-size: 8px;
+      font-weight: 750;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .decision-card {
+      position: relative;
+      overflow: hidden;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+      box-shadow: var(--shadow-small);
+    }
+
+    .decision-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--violet) 0 49%, var(--coral) 51% 100%);
+    }
+
+    .decision-number {
+      margin: 2px 0 8px;
+      color: var(--muted);
+      font-family: var(--utility);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .decision-card h2 {
+      margin: 0;
+      font-family: var(--display);
+      font-size: 23px;
+      font-weight: 500;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+    }
+
+    .decision-card > p {
+      margin: 8px 0 14px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .choice-option {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      margin-top: 7px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: white;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .choice-option.selected {
+      border-color: #a2b0b9;
+      background: var(--violet-wash);
+    }
+
+    .choice-radio {
+      width: 14px;
+      height: 14px;
+      border: 4px solid white;
+      border-radius: 50%;
+      background: var(--line-strong);
+      box-shadow: 0 0 0 1px var(--line-strong);
+    }
+
+    .choice-option.selected .choice-radio {
+      background: var(--violet);
+      box-shadow: 0 0 0 1px var(--violet);
+    }
+
+    .choice-option strong,
+    .choice-option small {
+      display: block;
+    }
+
+    .choice-option strong {
+      font-size: 10px;
+    }
+
+    .choice-option small {
+      color: var(--muted);
+      font-size: 8px;
+    }
+
+    .choice-option > span:last-child {
+      font-family: var(--utility);
+      font-size: 8px;
+      font-weight: 750;
+    }
+
+    .choice-option.other-option {
+      border-style: dashed;
+    }
+
+    .other-choice-panel {
+      margin-top: 8px;
+      padding: 11px;
+      border: 1px solid #a2b0b9;
+      border-radius: 11px;
+      background: var(--violet-wash);
+      animation: reveal-other 180ms ease-out;
+    }
+
+    .other-choice-panel[hidden] {
+      display: none;
+    }
+
+    .other-choice-panel label,
+    .other-choice-panel small {
+      display: block;
+    }
+
+    .other-choice-panel label {
+      font-size: 9px;
+      font-weight: 750;
+    }
+
+    .other-choice-panel textarea {
+      width: 100%;
+      min-height: 72px;
+      margin-top: 7px;
+      padding: 9px 10px;
+      resize: vertical;
+      border: 1px solid var(--line-strong);
+      border-radius: 9px;
+      outline: 0;
+      color: var(--ink);
+      background: white;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .other-choice-panel textarea:focus {
+      border-color: var(--violet);
+      box-shadow: 0 0 0 3px rgba(82, 103, 122, 0.12);
+    }
+
+    .other-choice-panel small {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 8px;
+      line-height: 1.4;
+    }
+
+    .other-choice-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 9px;
+    }
+
+    .other-choice-actions button {
+      min-height: 32px;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 9px;
+      color: white;
+      background: var(--violet);
+      font-size: 9px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    @keyframes reveal-other {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .why-fit {
+      margin: 13px 0 0;
+      padding: 10px;
+      border-left: 2px solid var(--sage);
+      color: #50665a;
+      background: var(--sage-wash);
+      font-size: 9px;
+    }
+
+    .why-fit strong {
+      display: block;
+      margin-bottom: 2px;
+      color: #3d5146;
+    }
+
+    .member-confirmations {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      margin-top: 13px;
+    }
+
+    .member-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 9px;
+    }
+
+    .member-status i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--sage);
+    }
+
+    .member-status.waiting i {
+      background: var(--amber);
+    }
+
+    .primary-button,
+    .secondary-button,
+    .approve-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 39px;
+      padding: 0 14px;
+      border-radius: 11px;
+      font-size: 10px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .primary-button,
+    .approve-button {
+      color: white;
+      border: 1px solid var(--violet);
+      background: var(--violet);
+      box-shadow: 0 7px 16px rgba(82, 103, 122, 0.19);
+    }
+
+    .secondary-button {
+      border: 1px solid var(--line-strong);
+      background: white;
+    }
+
+    .primary-button:hover,
+    .approve-button:hover,
+    .secondary-button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-small);
+    }
+
+    .decision-card .primary-button {
+      width: 100%;
+      margin-top: 11px;
+    }
+
+    .dock-section {
+      margin-top: 21px;
+    }
+
+    .action-card {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+    }
+
+    .action-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .action-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-family: var(--utility);
+      font-size: 8px;
+      font-weight: 750;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .approval-badge {
+      padding: 4px 6px;
+      border-radius: 99px;
+      color: #765e38;
+      background: var(--amber-wash);
+      font-size: 8px;
+      font-weight: 750;
+    }
+
+    .action-card h3 {
+      margin: 0;
+      font-size: 11px;
+    }
+
+    .action-card p {
+      margin: 5px 0 11px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .action-card .secondary-button {
+      width: 100%;
+    }
+
+    .moment-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 142px;
+      padding: 15px;
+      border: 1px solid #d7c8c5;
+      border-radius: 18px 18px 18px 5px;
+      background:
+        radial-gradient(circle at 92% 12%, rgba(161, 111, 104, 0.18), transparent 72px),
+        #f6f1ef;
+    }
+
+    .moment-card .eyebrow::before {
+      background: var(--coral);
+    }
+
+    .moment-card h3 {
+      max-width: 220px;
+      margin: 18px 0 6px;
+      font-family: var(--display);
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    .moment-card p {
+      margin: 0 0 13px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .moment-card.saved {
+      border-color: #a9c2b6;
+      background: var(--sage-wash);
+    }
+
+    .toast {
+      position: fixed;
+      right: 25px;
+      bottom: 25px;
+      z-index: 20;
+      max-width: 330px;
+      padding: 12px 15px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 13px;
+      color: white;
+      background: var(--ink);
+      box-shadow: var(--shadow);
+      font-size: 11px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    dialog {
+      width: min(620px, calc(100% - 28px));
+      max-height: calc(100vh - 40px);
+      padding: 0;
+      overflow: auto;
+      border: 1px solid var(--line-strong);
+      border-radius: 24px;
+      color: var(--ink);
+      background: var(--paper-strong);
+      box-shadow: 0 35px 90px rgba(31, 40, 55, 0.24);
+    }
+
+    dialog::backdrop {
+      background: rgba(31, 40, 55, 0.48);
+      backdrop-filter: blur(5px);
+    }
+
+    .dialog-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 21px 23px 17px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .dialog-header h2 {
+      margin: 4px 0 0;
+      font-family: var(--display);
+      font-size: 26px;
+      letter-spacing: -0.035em;
+    }
+
+    .close-dialog {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+    }
+
+    .dialog-body {
+      padding: 20px 23px;
+    }
+
+    .payload-grid {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      overflow: hidden;
+    }
+
+    .payload-grid dt,
+    .payload-grid dd {
+      margin: 0;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 10px;
+    }
+
+    .payload-grid dt {
+      color: var(--muted);
+      background: var(--paper);
+      font-weight: 700;
+    }
+
+    .payload-grid dd:last-of-type,
+    .payload-grid dt:last-of-type {
+      border-bottom: 0;
+    }
+
+    .email-body {
+      margin-top: 14px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      color: var(--muted);
+      background: var(--paper);
+      font-size: 11px;
+      white-space: pre-line;
+    }
+
+    .approval-note {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 11px;
+      color: #765e38;
+      background: var(--amber-wash);
+      font-size: 9px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      padding: 15px 23px 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    .design-notes {
+      width: min(720px, calc(100% - 28px));
+    }
+
+    .note-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .note {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--paper);
+    }
+
+    .note b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 11px;
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .design-thesis {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 1180px) {
+      .workspace {
+        grid-template-columns: 252px minmax(460px, 1fr) 300px;
+      }
+
+      .journey-bar {
+        grid-template-columns: 210px 1fr auto;
+      }
+
+      .quest-label {
+        display: none;
+      }
+
+      .journey-track {
+        padding-top: 5px;
+      }
+
+      .journey-track::before {
+        top: 15px;
+      }
+
+      .journey-track::after {
+        top: 14px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .app-shell {
+        width: calc(100% - 16px);
+        margin: 8px auto;
+        border-radius: 22px;
+      }
+
+      .app-header {
+        grid-template-columns: 1fr auto;
+      }
+
+      .wedding-identity {
+        display: none;
+      }
+
+      .journey-bar {
+        grid-template-columns: 190px 1fr;
+        min-height: 91px;
+      }
+
+      .journey-score {
+        display: none;
+      }
+
+      .workspace {
+        grid-template-columns: 238px minmax(0, 1fr);
+      }
+
+      .decision-dock {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+        border-top: 1px solid var(--line);
+        border-left: 0;
+      }
+
+      .dock-heading {
+        grid-column: 1 / -1;
+        margin-bottom: 0;
+      }
+
+      .dock-section {
+        margin-top: 0;
+      }
+    }
+
+    @media (max-width: 720px) {
+      html,
+      body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      body {
+        background: var(--paper);
+      }
+
+      .app-shell {
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .app-header {
+        min-height: 60px;
+        padding: 0 14px;
+      }
+
+      .notes-button {
+        width: 36px;
+        padding: 0;
+        font-size: 0;
+      }
+
+      .notes-button::before {
+        content: "?";
+        font-size: 13px;
+      }
+
+      .journey-bar {
+        display: block;
+        min-height: 112px;
+        padding: 13px 14px 10px;
+        overflow: hidden;
+      }
+
+      .journey-copy {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .journey-copy .eyebrow,
+      .journey-copy span {
+        display: none;
+      }
+
+      .journey-copy strong {
+        font-size: 17px;
+      }
+
+      .journey-track {
+        width: 670px;
+        margin-top: 4px;
+        transform: translateX(-210px);
+      }
+
+      .workspace {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      .quest-rail {
+        padding: 15px 14px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .quest-rail > .eyebrow,
+      .quest-subtitle,
+      .phase-list {
+        display: none;
+      }
+
+      .quest-title {
+        margin: 0 0 11px;
+        font-size: 22px;
+      }
+
+      .capability-box {
+        padding-top: 0;
+        border-top: 0;
+      }
+
+      .capability-box .section-heading {
+        display: none;
+      }
+
+      .capability-list {
+        display: flex;
+        width: 100%;
+        max-width: 100%;
+        gap: 7px;
+        overflow-x: auto;
+      }
+
+      .capability {
+        flex: 0 0 auto;
+        grid-template-columns: 28px auto;
+        width: auto;
+        min-height: 42px;
+        padding-right: 11px;
+        border-color: var(--line);
+        background: white;
+      }
+
+      .capability small,
+      .capability-arrow {
+        display: none;
+      }
+
+      .conversation-header {
+        min-height: 59px;
+        padding: 10px 14px;
+      }
+
+      .conversation,
+      .conversation-scroll,
+      .conversation-intro,
+      .understanding-card,
+      .messages,
+      .message,
+      .bubble {
+        min-width: 0;
+        max-width: 100%;
+      }
+
+      .conversation {
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      .thinking-state {
+        display: none;
+      }
+
+      .conversation-scroll {
+        max-height: none;
+        padding: 23px 14px 26px;
+      }
+
+      .conversation-intro h1 {
+        max-width: 100%;
+        font-size: 32px;
+        overflow-wrap: anywhere;
+      }
+
+      .card-header {
+        align-items: flex-start;
+      }
+
+      .card-header strong {
+        min-width: 0;
+      }
+
+      .source-link {
+        flex: 0 1 132px;
+        text-align: right;
+        overflow-wrap: anywhere;
+      }
+
+      .couple-inputs {
+        grid-template-columns: 1fr;
+      }
+
+      .member-view.maya,
+      .member-view.theo {
+        border-radius: 11px;
+      }
+
+      .member-view.theo {
+        margin-top: 7px;
+      }
+
+      .shared-knot {
+        display: none;
+      }
+
+      .vendor-row {
+        grid-template-columns: 30px 1fr auto;
+      }
+
+      .bubble,
+      .vendor-name,
+      .shared-priority,
+      .member-view p {
+        overflow-wrap: anywhere;
+      }
+
+      .vendor-reason {
+        display: none;
+      }
+
+      .composer-shell {
+        padding: 9px 12px 13px;
+      }
+
+      .decision-dock {
+        display: block;
+        padding: 20px 14px 30px;
+      }
+
+      .dock-section {
+        margin-top: 18px;
+      }
+
+      .note-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand" aria-label="Bliss">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Bliss</span>
+      </div>
+
+      <div class="wedding-identity">
+        <strong>Maya &amp; Theo</strong>
+        <span>June 14, 2027 · Hudson Valley</span>
+      </div>
+
+      <div class="header-actions">
+        <div class="presence" aria-label="Maya and Theo are in this wedding workspace">
+          <span class="avatar maya" title="Maya">M</span>
+          <span class="avatar theo" title="Theo">T</span>
+        </div>
+        <button class="notes-button" type="button" data-open="notesDialog">Design notes</button>
+        <button class="icon-button" type="button" aria-label="Notifications">♧</button>
+      </div>
+    </header>
+
+    <section class="journey-bar" aria-labelledby="journeyTitle">
+      <div class="journey-copy">
+        <p class="eyebrow">Our wedding journey</p>
+        <strong id="journeyTitle">14 chapters, one story</strong>
+        <span>Bliss keeps the whole plan connected.</span>
+      </div>
+
+      <nav class="journey-track" aria-label="Wedding chapters">
+        <button class="quest-node done" type="button" title="Vision"><span class="quest-dot"></span><span class="quest-label">Vision</span></button>
+        <button class="quest-node done" type="button" title="Budget"><span class="quest-dot"></span><span class="quest-label">Budget</span></button>
+        <button class="quest-node done" type="button" title="Guests"><span class="quest-dot"></span><span class="quest-label">Guests</span></button>
+        <button class="quest-node done" type="button" title="Venue"><span class="quest-dot"></span><span class="quest-label">Venue</span></button>
+        <button class="quest-node done" type="button" title="Vendors"><span class="quest-dot"></span><span class="quest-label">Vendors</span></button>
+        <button class="quest-node current" type="button" title="Photography" aria-current="step"><span class="quest-dot"></span><span class="quest-label">Photo</span></button>
+        <button class="quest-node" type="button" title="Attire"><span class="quest-dot"></span><span class="quest-label">Attire</span></button>
+        <button class="quest-node" type="button" title="Ceremony"><span class="quest-dot"></span><span class="quest-label">Ceremony</span></button>
+        <button class="quest-node" type="button" title="Design"><span class="quest-dot"></span><span class="quest-label">Design</span></button>
+        <button class="quest-node" type="button" title="Invitations"><span class="quest-dot"></span><span class="quest-label">Invites</span></button>
+        <button class="quest-node" type="button" title="Guest care"><span class="quest-dot"></span><span class="quest-label">Guests</span></button>
+        <button class="quest-node" type="button" title="Timeline"><span class="quest-dot"></span><span class="quest-label">Timeline</span></button>
+        <button class="quest-node" type="button" title="Legal"><span class="quest-dot"></span><span class="quest-label">Legal</span></button>
+        <button class="quest-node" type="button" title="Celebration"><span class="quest-dot"></span><span class="quest-label">Finale</span></button>
+      </nav>
+
+      <div class="journey-score">
+        <strong>38%</strong>
+        <span>6 decisions made</span>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <aside class="quest-rail" aria-labelledby="questTitle">
+        <p class="eyebrow">Current chapter · 06</p>
+        <h2 class="quest-title" id="questTitle">Photography</h2>
+        <p class="quest-subtitle">Choose who will preserve how this felt.</p>
+
+        <ol class="phase-list" aria-label="Photography progress">
+          <li class="phase-item done">
+            <span class="phase-mark">✓</span>
+            <span class="phase-copy"><strong>Know your style</strong><span>Both preferences captured</span></span>
+          </li>
+          <li class="phase-item done">
+            <span class="phase-mark">✓</span>
+            <span class="phase-copy"><strong>Build a shortlist</strong><span>3 photographers compared</span></span>
+          </li>
+          <li class="phase-item current">
+            <span class="phase-mark">3</span>
+            <span class="phase-copy"><strong>Choose together</strong><span>One tradeoff to resolve</span></span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-mark">4</span>
+            <span class="phase-copy"><strong>Reach out</strong><span>Inquiry ready to review</span></span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-mark">5</span>
+            <span class="phase-copy"><strong>Book &amp; remember</strong><span>Contract, calendar, Moment</span></span>
+          </li>
+        </ol>
+
+        <section class="capability-box" aria-labelledby="capabilityTitle">
+          <h3 class="section-heading" id="capabilityTitle">Bliss can help here <span>Try one</span></h3>
+          <div class="capability-list">
+            <button class="capability" type="button" data-prompt="Find photographers who fit our shared style.">
+              <span class="capability-icon">⌕</span>
+              <span><strong>Find photographers</strong><small>Search by your priorities</small></span>
+              <span class="capability-arrow">›</span>
+            </button>
+            <button class="capability" type="button" data-prompt="Compare our finalists and explain the tradeoffs.">
+              <span class="capability-icon">≍</span>
+              <span><strong>Compare finalists</strong><small>Facts, fit, and tradeoffs</small></span>
+              <span class="capability-arrow">›</span>
+            </button>
+            <button class="capability" type="button" data-open="emailDialog">
+              <span class="capability-icon">✉</span>
+              <span><strong>Draft the inquiry</strong><small>Review before it is sent</small></span>
+              <span class="capability-arrow">›</span>
+            </button>
+            <button class="capability" type="button" data-action="calendar">
+              <span class="capability-icon">□</span>
+              <span><strong>Plan interviews</strong><small>Add approved times to calendar</small></span>
+              <span class="capability-arrow">›</span>
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <section class="conversation" aria-labelledby="conversationTitle">
+        <header class="conversation-header">
+          <div class="thread-name">
+            <span class="bliss-orb" aria-hidden="true">b</span>
+            <span><strong id="conversationTitle">Choose our photographer</strong><span>Bliss uses 8 confirmed preferences from both of you</span></span>
+          </div>
+          <span class="thinking-state" id="agentState">Ready when you are</span>
+        </header>
+
+        <div class="conversation-scroll" id="conversationScroll">
+          <div class="conversation-intro">
+            <p class="eyebrow">Bliss · Your planning companion</p>
+            <h1>Let’s choose who will tell <em>your story.</em></h1>
+            <p>I kept your separate preferences visible, found the common ground, and narrowed the choice to one honest tradeoff.</p>
+          </div>
+
+          <article class="understanding-card">
+            <header class="card-header">
+              <strong>What I understand about both of you</strong>
+              <button class="source-link" type="button" data-action="sources">6 source messages · Correct this</button>
+            </header>
+            <div class="couple-inputs">
+              <section class="member-view maya">
+                <div class="member-label"><i></i>Maya</div>
+                <p>Wants images that feel <strong>editorial and artful</strong>, with gentle direction during portraits.</p>
+              </section>
+              <div class="shared-knot" aria-label="Shared preference"><span>&amp;</span></div>
+              <section class="member-view theo">
+                <div class="member-label"><i></i>Theo</div>
+                <p>Wants the day to feel <strong>uninterrupted and natural</strong>, with very little posing.</p>
+              </section>
+            </div>
+            <div class="shared-priority"><strong>Shared ground:</strong> Human emotion matters more than a perfect shot list, and the budget should stay below $6,500.</div>
+          </article>
+
+          <div class="messages" id="messages">
+            <article class="message user">
+              <div class="bubble"><p>I like Harbor House, but I’m worried their work might feel too posed for Theo.</p></div>
+              <span class="avatar maya" aria-label="Maya">M</span>
+            </article>
+
+            <article class="message agent">
+              <span class="bliss-orb" aria-hidden="true">b</span>
+              <div class="bubble">
+                <p>That concern is fair. Harbor House gives more direction, but their full galleries still keep most of the day documentary. The meaningful tradeoff is <strong>more confidence during portraits</strong> versus <strong>less visible photographer direction</strong>.</p>
+                <p>Based on what both of you said, I would keep Harbor House first and ask one precise question about how they direct camera-shy couples.</p>
+
+                <div class="comparison-card">
+                  <div class="comparison-topline"><strong>Your two closest fits</strong><span class="fit-label">Grounded in 8 preferences</span></div>
+                  <div class="vendor-row">
+                    <span class="vendor-swatch" aria-hidden="true"></span>
+                    <span class="vendor-name"><strong>Harbor House</strong><span>Editorial documentary</span></span>
+                    <span class="vendor-reason">Best balance for both of you</span>
+                    <span class="vendor-price">$6,200</span>
+                  </div>
+                  <div class="vendor-row">
+                    <span class="vendor-swatch" aria-hidden="true"></span>
+                    <span class="vendor-name"><strong>Field Notes</strong><span>Pure documentary</span></span>
+                    <span class="vendor-reason">Best for uninterrupted moments</span>
+                    <span class="vendor-price">$5,850</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="composer-shell">
+          <div class="prompt-row" aria-label="Suggested next questions">
+            <button class="prompt-chip" type="button" data-prompt="Help us resolve the posing tradeoff.">Help us agree</button>
+            <button class="prompt-chip" type="button" data-prompt="What should we ask during the photographer interview?">Prepare interview questions</button>
+            <button class="prompt-chip" type="button" data-open="emailDialog">Review the inquiry email</button>
+            <button class="prompt-chip" type="button" data-prompt="Show me what this decision changes in our plan.">What changes next?</button>
+          </div>
+          <form class="composer" id="composerForm">
+            <button class="attach-button" type="button" aria-label="Attach a photo or file">＋</button>
+            <textarea id="composerInput" rows="1" aria-label="Message Bliss" placeholder="Ask a question, share a preference, or tell Bliss what to do…"></textarea>
+            <button class="send-button" type="submit" aria-label="Send to Bliss">↑</button>
+          </form>
+        </div>
+      </section>
+
+      <aside class="decision-dock" aria-labelledby="decisionDockTitle">
+        <div class="dock-heading">
+          <strong id="decisionDockTitle">Decision dock</strong>
+          <span class="phase-pill">Ready to decide</span>
+        </div>
+
+        <article class="decision-card" id="decisionCard">
+          <p class="decision-number">Decision 06 · Photography</p>
+          <h2>Who should capture the wedding?</h2>
+          <p>Choose the proposal you want Bliss to carry into tasks, outreach, and memory.</p>
+
+          <button class="choice-option selected" type="button" data-choice="Harbor House">
+            <span class="choice-radio"></span>
+            <span><strong>Harbor House</strong><small>Recommended for the shared balance</small></span>
+            <span>96% fit</span>
+          </button>
+          <button class="choice-option" type="button" data-choice="Field Notes">
+            <span class="choice-radio"></span>
+            <span><strong>Field Notes</strong><small>Stronger documentary approach</small></span>
+            <span>89% fit</span>
+          </button>
+          <button class="choice-option other-option" type="button" data-choice="Something else" data-other-choice>
+            <span class="choice-radio"></span>
+            <span><strong>Something else</strong><small>Share the idea you already have in mind</small></span>
+            <span>Write your own</span>
+          </button>
+          <form class="other-choice-panel" id="otherChoicePanel" hidden>
+            <label for="otherChoiceInput">What are you imagining instead?</label>
+            <textarea id="otherChoiceInput" placeholder="A photographer, approach, feeling, or possibility that is not shown here…"></textarea>
+            <small>Bliss will keep this inside this exact decision thread, ask only what is useful, and will not force it into one of the options above.</small>
+            <div class="other-choice-actions"><button type="submit">Share with Bliss →</button></div>
+          </form>
+
+          <div class="why-fit"><strong>Why this fits you</strong>Editorial portraits for Maya, an unobtrusive day for Theo, and room left in the confirmed budget.</div>
+
+          <div class="member-confirmations">
+            <span class="member-status"><i></i>Maya · ready</span>
+            <span class="member-status waiting" id="theoStatus"><i></i>Theo · reviewing</span>
+          </div>
+
+          <button class="primary-button" id="confirmationButton" type="button">Ask Theo to confirm →</button>
+        </article>
+
+        <section class="dock-section" aria-labelledby="nextActionTitle">
+          <h3 class="section-heading" id="nextActionTitle">Ready for you <span>1 approval</span></h3>
+          <article class="action-card">
+            <div class="action-meta"><span class="action-type">✉ Email draft</span><span class="approval-badge" id="actionBadge">Needs approval</span></div>
+            <h3>Ask Harbor House about availability</h3>
+            <p>Exact recipient, subject, and message are ready for your review.</p>
+            <button class="secondary-button" type="button" data-open="emailDialog">Review email →</button>
+          </article>
+        </section>
+
+        <section class="dock-section" aria-labelledby="momentTitle">
+          <h3 class="section-heading" id="momentTitle">Worth remembering <span>Suggested</span></h3>
+          <article class="moment-card" id="momentCard">
+            <p class="eyebrow">Moment</p>
+            <h3>Choosing how our day will be remembered</h3>
+            <p>From “posed or natural?” to a choice that makes room for both.</p>
+            <button class="text-button" id="saveMoment" type="button">Save this Moment</button>
+          </article>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <dialog id="emailDialog" aria-labelledby="emailDialogTitle">
+    <header class="dialog-header">
+      <div><p class="eyebrow">Exact action approval</p><h2 id="emailDialogTitle">Review before Bliss sends</h2></div>
+      <button class="close-dialog" type="button" data-close aria-label="Close">×</button>
+    </header>
+    <div class="dialog-body">
+      <dl class="payload-grid">
+        <dt>To</dt><dd>hello@harborhousephoto.com</dd>
+        <dt>Subject</dt><dd>June 14, 2027 wedding photography inquiry</dd>
+        <dt>From</dt><dd>Maya &amp; Theo</dd>
+      </dl>
+      <div class="email-body">Hi Harbor House team,
+
+We are planning our June 14, 2027 wedding in the Hudson Valley and love the balance of documentary moments and artful portraits in your work.
+
+Are you available on our date? We would also love to understand how you gently direct camera-shy couples while keeping the day feeling natural.
+
+Warmly,
+Maya &amp; Theo</div>
+      <div class="approval-note"><span>◆</span><span>Bliss will send only this exact message. Any edit requires a new approval.</span></div>
+    </div>
+    <footer class="dialog-actions">
+      <button class="secondary-button" type="button" data-close>Keep as draft</button>
+      <button class="approve-button" id="approveEmail" type="button">Approve &amp; send email</button>
+    </footer>
+  </dialog>
+
+  <dialog class="design-notes" id="notesDialog" aria-labelledby="notesDialogTitle">
+    <header class="dialog-header">
+      <div><p class="eyebrow">Design rationale</p><h2 id="notesDialogTitle">Conversation with a visible outcome</h2></div>
+      <button class="close-dialog" type="button" data-close aria-label="Close">×</button>
+    </header>
+    <div class="dialog-body">
+      <p class="design-thesis">The interface answers four questions at all times: Where are we in the wedding? What are we solving now? What can Bliss do? What becomes real after this conversation?</p>
+      <div class="note-grid">
+        <article class="note"><b>1 · Wedding journey</b><p>The 14 chapters stay visible as one connected story without exposing a giant checklist.</p></article>
+        <article class="note"><b>2 · Current chapter</b><p>The left rail combines local progress with specific capabilities, so users know exactly how Bliss can help.</p></article>
+        <article class="note"><b>3 · Agent conversation</b><p>Natural dialogue remains central, but attributed preferences and sourced comparisons appear as structured conversational objects.</p></article>
+        <article class="note"><b>4 · Decision dock</b><p>Decisions, approvals, and Moments live outside the chat stream. They are reviewable, deterministic, and persistent.</p></article>
+        <article class="note"><b>5 · The shared thread</b><p>Violet and coral represent two individual voices. They meet only where the couple has shared understanding or confirmation.</p></article>
+        <article class="note"><b>6 · Progressive disclosure</b><p>One next decision and one approval are prominent. Deeper planning remains available without becoming visual noise.</p></article>
+      </div>
+    </div>
+    <footer class="dialog-actions">
+      <button class="primary-button" type="button" data-close>Return to prototype</button>
+    </footer>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const composer = document.getElementById('composerForm');
+    const input = document.getElementById('composerInput');
+    const messages = document.getElementById('messages');
+    const scrollArea = document.getElementById('conversationScroll');
+    const agentState = document.getElementById('agentState');
+    const toast = document.getElementById('toast');
+    const otherChoicePanel = document.getElementById('otherChoicePanel');
+    const otherChoiceInput = document.getElementById('otherChoiceInput');
+    let toastTimer;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('visible');
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => toast.classList.remove('visible'), 2600);
+    }
+
+    function openDialog(id) {
+      const dialog = document.getElementById(id);
+      if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+    }
+
+    document.querySelectorAll('[data-open]').forEach((button) => {
+      button.addEventListener('click', () => openDialog(button.dataset.open));
+    });
+
+    document.querySelectorAll('[data-close]').forEach((button) => {
+      button.addEventListener('click', () => button.closest('dialog').close());
+    });
+
+    document.querySelectorAll('dialog').forEach((dialog) => {
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+    });
+
+    document.querySelectorAll('[data-prompt]').forEach((button) => {
+      button.addEventListener('click', () => {
+        input.value = button.dataset.prompt;
+        input.focus();
+      });
+    });
+
+    document.querySelectorAll('.choice-option').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.choice-option').forEach((option) => option.classList.remove('selected'));
+        button.classList.add('selected');
+        const isOther = button.hasAttribute('data-other-choice');
+        otherChoicePanel.hidden = !isOther;
+        if (isOther) {
+          window.setTimeout(() => otherChoiceInput.focus(), 0);
+          showToast('Share the idea in your own words. Bliss will keep it inside this decision.');
+          return;
+        }
+        showToast(`${button.dataset.choice} is now the proposed choice. Nothing has been confirmed yet.`);
+      });
+    });
+
+    otherChoicePanel.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const value = otherChoiceInput.value.trim();
+      if (!value) {
+        otherChoiceInput.focus();
+        return;
+      }
+
+      const userMessage = document.createElement('article');
+      userMessage.className = 'message user';
+      userMessage.innerHTML = '<div class="bubble"><p></p></div><span class="avatar maya" aria-label="Maya">M</span>';
+      userMessage.querySelector('p').textContent = value;
+      messages.appendChild(userMessage);
+      otherChoicePanel.hidden = true;
+      otherChoiceInput.value = '';
+      agentState.textContent = 'Understanding your idea…';
+      scrollArea.scrollTop = scrollArea.scrollHeight;
+
+      window.setTimeout(() => {
+        const agentMessage = document.createElement('article');
+        agentMessage.className = 'message agent';
+        agentMessage.innerHTML = '<span class="bliss-orb" aria-hidden="true">b</span><div class="bubble"><p>That belongs in this decision too. I will not force it into Harbor House or Field Notes. Let me understand what matters most about your idea, then I can compare it fairly and record the reason if you choose it.</p></div>';
+        messages.appendChild(agentMessage);
+        agentState.textContent = 'Ready when you are';
+        scrollArea.scrollTop = scrollArea.scrollHeight;
+        showToast('Your idea is now part of this decision thread.');
+      }, 620);
+    });
+
+    document.querySelector('[data-action="calendar"]').addEventListener('click', () => {
+      showToast('Bliss would first ask for a preferred time, then show the exact calendar event for approval.');
+    });
+
+    document.querySelector('[data-action="sources"]').addEventListener('click', () => {
+      showToast('Every preference opens its source message and can be corrected.');
+    });
+
+    document.getElementById('confirmationButton').addEventListener('click', (event) => {
+      const status = document.getElementById('theoStatus');
+      status.classList.remove('waiting');
+      status.innerHTML = '<i></i>Theo · confirmed';
+      event.currentTarget.textContent = 'Decision confirmed ✓';
+      event.currentTarget.disabled = true;
+      document.querySelector('.phase-pill').textContent = 'Decision made';
+      showToast('Decision confirmed. Bliss can now create the next tasks and prepare approved actions.');
+    });
+
+    document.getElementById('approveEmail').addEventListener('click', () => {
+      document.getElementById('emailDialog').close();
+      const badge = document.getElementById('actionBadge');
+      badge.textContent = 'Sent';
+      badge.style.color = '#3d5146';
+      badge.style.background = 'var(--sage-wash)';
+      showToast('Email sent once. Bliss will track the reply in this photography thread.');
+    });
+
+    document.getElementById('saveMoment').addEventListener('click', (event) => {
+      document.getElementById('momentCard').classList.add('saved');
+      event.currentTarget.textContent = 'Saved to your story ✓';
+      showToast('Moment saved. You can add a photo or edit the wording anytime.');
+    });
+
+    composer.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const value = input.value.trim();
+      if (!value) return;
+
+      const userMessage = document.createElement('article');
+      userMessage.className = 'message user';
+      userMessage.innerHTML = `<div class="bubble"><p></p></div><span class="avatar maya" aria-label="Maya">M</span>`;
+      userMessage.querySelector('p').textContent = value;
+      messages.appendChild(userMessage);
+      input.value = '';
+      agentState.textContent = 'Thinking with your shared context…';
+      scrollArea.scrollTop = scrollArea.scrollHeight;
+
+      window.setTimeout(() => {
+        const agentMessage = document.createElement('article');
+        agentMessage.className = 'message agent';
+        agentMessage.innerHTML = '<span class="bliss-orb" aria-hidden="true">b</span><div class="bubble"><p>I would keep this inside the photographer decision. I can help you compare the tradeoff, turn the result into tasks, or prepare the exact next action for approval. Which would reduce the most pressure right now?</p></div>';
+        messages.appendChild(agentMessage);
+        agentState.textContent = 'Ready when you are';
+        scrollArea.scrollTop = scrollArea.scrollHeight;
+      }, 720);
+    });
+
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = `${Math.min(input.scrollHeight, 120)}px`;
+    });
+  </script>
+</body>
+</html>

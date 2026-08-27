@@ -67,6 +67,60 @@
     "you": "You",
     "partner": "Your partner"
   },
+  "firstHome": {
+    "brand": "Bliss",
+    "loading": "Opening your shared space…",
+    "you": "You",
+    "partner": "Partner",
+    "couple": "{first} & {second}",
+    "coupleFallback": "Your shared space",
+    "sharedSpace": "Your shared planning space",
+    "invite": "Invite your partner",
+    "inviteCopied": "Partner invite copied",
+    "inviteError": "The invite could not be created. Try again.",
+    "journey": {
+      "eyebrow": "Our wedding journey",
+      "title": "14 chapters, one story",
+      "body": "Beginning with what matters to you",
+      "label": "Fourteen wedding chapters",
+      "status": "Chapter 01 · Vision"
+    },
+    "welcomeEyebrow": "Welcome to your shared space",
+    "welcome": "{names}, this is where your story takes shape.",
+    "welcomeBody": "We'll settle the decisions that matter across fourteen chapters, at your pace. Bliss brings useful context when it helps, keeps both voices visible, and remembers why each choice felt right.",
+    "visionFallback": "We're still discovering what the day could feel like.",
+    "heard": {
+      "title": "What we heard from you",
+      "edit": "Edit this understanding",
+      "quote": "“{vision}”",
+      "save": "Save this understanding",
+      "saving": "Saving…",
+      "note": "This is a starting point, not a locked decision. Bliss will refine it as both of you share more."
+    },
+    "correctionReason": "The couple corrected their onboarding starting point.",
+    "saved": "Saved as your current starting point.",
+    "notAdded": "Not added yet",
+    "open": "Still completely open",
+    "notNarrowed": "Not narrowed down yet",
+    "openQuestion": "An open question",
+    "oneStep": "One step at a time",
+    "beginning": {
+      "eyebrow": "Your beginning",
+      "title": "A few things we know",
+      "engaged": "Engaged",
+      "timing": "Wedding timing",
+      "place": "Place",
+      "guests": "Guest shape",
+      "support": "How Bliss helps"
+    },
+    "first": {
+      "eyebrow": "First chapter",
+      "title": "Shape the shared vision",
+      "body": "Start with what each of you hopes to feel, protect, and remember. No budget or guest-list decisions yet.",
+      "action": "Talk it through with Bliss →",
+      "note": "This conversation will refine the starting point above. It will not silently turn it into a decision."
+    }
+  },
   "milestone": {
     "quarter": "A quarter of the way. You've already made more decisions than you realize.",
     "half": "Halfway. Look back at everything you've settled.",

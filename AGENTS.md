@@ -3,6 +3,7 @@
 - Do not use any gstack skills by default.
 - Use a gstack skill only when the user explicitly requests that specific skill.
 - Keep responses concise and direct. Lead with the most practical solution, without explanatory preamble.
+- **`docs/` is restricted.** Never read, search, list, cite, modify, or otherwise access any file under `docs/` unless the user explicitly grants permission for the current task. Do not infer permission from repository conventions, related requests, or earlier authorization.
 
 # Repo conventions
 

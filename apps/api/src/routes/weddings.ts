@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import { db } from '../db'
-import { users, weddings, weddingMembers, modules, tasks, activityFeed, scheduleIssues } from '../db/schema'
+import { users, weddings, weddingMembers, modules, tasks, activityFeed, scheduleIssues, memoryClaims } from '../db/schema'
 import { eq, or, and, sql, desc } from 'drizzle-orm'
 import { requireAuth, requireWeddingAccess } from '../middleware/auth'
 import { generateQuestsForWedding } from '../services/quest-generator'
@@ -17,6 +17,15 @@ const CULTURES = [
 ] as const
 
 const onboardingSchema = z.object({
+  ownerDisplayName: z.string().trim().min(1).max(100).optional(),
+  partnerDisplayName: z.string().trim().min(1).max(100).optional(),
+  engagementDate: z.string().date().optional(),
+  weddingTiming: z.enum(['date', 'season', 'open']).optional(),
+  intakeClaims: z.array(z.object({
+    key: z.enum(['feeling', 'date_horizon', 'place', 'guest_shape', 'support_style']),
+    kind: z.enum(['fact', 'preference', 'priority']),
+    value: z.string().trim().min(1).max(2_000),
+  }).strict()).max(5).optional(),
   weddingDate: z.string().optional(),
   // Two-letter USPS code. Required for marriage-license rules, which are state-level.
   state: z.string().length(2).toUpperCase().optional(),
@@ -60,6 +69,9 @@ export async function weddingRoutes(app: FastifyInstance) {
       .insert(weddings)
       .values({
         weddingDate: body.weddingDate ?? null,
+        engagementDate: body.engagementDate ?? null,
+        partnerDisplayName: body.partnerDisplayName ?? null,
+        weddingTiming: body.weddingTiming ?? null,
         state: body.state ?? null,
         city: body.city ?? null,
         currency: 'USD',
@@ -87,6 +99,31 @@ export async function weddingRoutes(app: FastifyInstance) {
       role: 'owner',
     })
 
+    if (body.ownerDisplayName) {
+      await db.update(users).set({
+        displayName: body.ownerDisplayName,
+        updatedAt: new Date(),
+      }).where(eq(users.id, userId))
+    }
+
+    if (body.intakeClaims?.length) {
+      await db.insert(memoryClaims).values(body.intakeClaims.map(claim => ({
+        weddingId: wedding!.id,
+        decisionId: null,
+        subjectType: 'couple' as const,
+        subjectId: null,
+        kind: claim.kind,
+        key: `intake.${claim.key}`,
+        value: claim.value,
+        source: 'explicit' as const,
+        confidenceBasisPoints: 10_000,
+        status: 'confirmed' as const,
+        evidenceMessageIds: [],
+        createdBy: userId,
+        supersedesId: null,
+      })))
+    }
+
     const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1)
 
     await generateQuestsForWedding(wedding!.id, {
@@ -108,10 +145,17 @@ export async function weddingRoutes(app: FastifyInstance) {
   }, async (req, reply) => {
     const { weddingId } = req.params as any
     const body = onboardingSchema.partial().parse(req.body)
+    const { ownerDisplayName, intakeClaims: _intakeClaims, ...weddingPatch } = body
+
+    if (ownerDisplayName) {
+      const userId = (req as any).userId as string
+      await db.update(users).set({ displayName: ownerDisplayName, updatedAt: new Date() })
+        .where(eq(users.id, userId))
+    }
 
     const [updated] = await db
       .update(weddings)
-      .set({ ...body, updatedAt: new Date() })
+      .set({ ...weddingPatch, updatedAt: new Date() })
       .where(eq(weddings.id, weddingId))
       .returning()
 

@@ -14,6 +14,7 @@ describe('trace privacy boundary', () => {
         toolCalls: [{
           name: 'propose_decision',
           input: { reason: 'A private family reason', externalActions: [{ body: 'secret' }] },
+          providerContext: { geminiThoughtSignature: 'opaque-provider-secret' },
         }],
       },
       startedAt: now,
@@ -21,6 +22,7 @@ describe('trace privacy boundary', () => {
     })
     expect(JSON.stringify(safe)).not.toContain('Private relationship')
     expect(JSON.stringify(safe)).not.toContain('private family')
+    expect(JSON.stringify(safe)).not.toContain('opaque-provider-secret')
     expect(safe.output).toEqual({
       hasText: true,
       textLength: 62,

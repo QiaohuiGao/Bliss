@@ -129,6 +129,112 @@
       }
     }
   },
+  "conversation": {
+    "brand": "Bliss",
+    "couple": "{selfName} & {partnerName}",
+    "coupleFallback": "Your shared beginning",
+    "ready": "Ready when you are",
+    "enough": "This is enough for now",
+    "talkLabel": "Setting up with Bliss",
+    "title": "Let's start where",
+    "titleEmphasis": "you actually are.",
+    "intro": "You do not have to answer like a planner. Start with what feels true; Bliss will turn it into a path only when it helps.",
+    "orb": "b",
+    "welcome": "{coupleName}, I'm glad you're here.",
+    "avatar": "Y",
+    "thinking": "Thinking about what you just said…",
+    "skip": "Skip this one",
+    "skipped": "We can leave that open. Nothing useful depends on forcing an answer today.",
+    "inputLabel": "Reply to Bliss",
+    "placeholder": "Answer in your own words…",
+    "finishedPlaceholder": "You have shared enough to begin",
+    "send": "Send",
+    "note": "Nothing here is locked in. Bliss only records what you confirm.",
+    "finishedNote": "You can keep talking in your workspace. Everything here remains editable.",
+    "error": "Your starting point could not be saved. Check your connection and try again.",
+    "steps": {
+      "feeling": {
+        "progress": "Finding your compass",
+        "question": "Before dates or lists: when you picture the day from the inside—not how it looks—what do you hope the two of you feel?",
+        "reply": "I'm hearing “{answer}.” I'll use that as a compass when choices get noisy, not as a theme you have to defend.",
+        "claimLabel": "Starting point · feeling",
+        "claimNote": "A compass for later choices, not a theme to lock in.",
+        "chips": {
+          "relaxed": "Relaxed and unhurried",
+          "alive": "Alive and full of people",
+          "intimate": "Intimate and deeply personal",
+          "different": "We picture it differently"
+        }
+      },
+      "date": {
+        "progress": "Giving the story a horizon",
+        "question": "Looking ahead, is there already a date or season in view, or does the calendar still feel completely open?",
+        "reply": "“{answer}” gives us enough of a horizon. I'll tell you when timing changes a choice; until then, nothing needs to feel urgent.",
+        "claimLabel": "Fact · wedding horizon",
+        "claimNote": "Bliss schedules from this only after you confirm it.",
+        "chips": {
+          "june": "June 2027",
+          "season": "A season, not a date",
+          "open": "Still completely open"
+        }
+      },
+      "place": {
+        "progress": "Finding a possible setting",
+        "question": "Is there a place pulling you already—a city, a region, somewhere near family—or is that open too?",
+        "reply": "I'll hold “{answer}” as a direction, not a commitment. Local rules and venue information can wait until the place is real enough to need them.",
+        "claimLabel": "Fact · possible location",
+        "claimNote": "Brings in local and legal information only when it becomes relevant.",
+        "chips": {
+          "hudson": "Hudson Valley, NY",
+          "family": "Somewhere near family",
+          "open": "No idea yet"
+        }
+      },
+      "people": {
+        "progress": "Understanding the circle around you",
+        "question": "When you imagine the room around you, does it feel small and close, lively and generous, or is guest count something you see differently?",
+        "reply": "That gives the celebration a shape without turning anyone into a number. “{answer}” is enough for now.",
+        "claimLabel": "Starting point · guest shape",
+        "claimNote": "A planning range, not a final guest count.",
+        "chips": {
+          "small": "Small and close",
+          "hundred": "Around 100 people",
+          "large": "A big, generous celebration",
+          "different": "We see this differently"
+        }
+      },
+      "support": {
+        "progress": "Choosing how Bliss shows up",
+        "question": "One last thing: when planning gets complicated, what kind of help would feel most supportive from Bliss?",
+        "reply": "I can do that: {answer}. I'll keep this as a preference you can change, and I won't confuse being helpful with taking over.",
+        "claimLabel": "Preference · planning support",
+        "claimNote": "Bliss uses this to pace questions and recommendations.",
+        "chips": {
+          "next": "Give us one clear next step",
+          "options": "Bring options, then let us talk",
+          "conflict": "Help us work through disagreements",
+          "learn": "We'll learn as we go"
+        }
+      }
+    },
+    "knows": {
+      "title": "What Bliss knows",
+      "body": "Every line came from something one of you said. Correct anything that is wrong—corrections stick.",
+      "empty": "Nothing yet. This fills in as you talk.",
+      "source": "You said this"
+    },
+    "chapters": {
+      "title": "The fourteen chapters",
+      "touched": "{count} touched",
+      "body": "Answering here quietly opens the chapters this affects. None become work until you decide something."
+    },
+    "done": {
+      "title": "That is plenty to start",
+      "body": "Bliss has enough to be useful. What you shared arrives as an editable starting point, not a locked decision.",
+      "action": "See what carries into our workspace →",
+      "saving": "Building your workspace…"
+    }
+  },
   "generating": {
     "title": "Building your plan…",
     "body": "Laying out your quests and working backward from {date}."

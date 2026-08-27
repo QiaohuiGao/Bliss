@@ -7,7 +7,7 @@ import {
 import { runAgentLoop } from '../harness/loop'
 import { createAttireTools } from '../packs/attire'
 import { createPhotographerTools, type VendorSearchExecutor } from '../packs/photographer'
-import { createQuestScopingTools } from '../packs/quest-scoping'
+import { createQuestScopingTools, getQuestScopingOverview } from '../packs/quest-scoping'
 import type { DecisionProposalStore } from '../proposals/store'
 import type {
   AgentModel,
@@ -184,13 +184,27 @@ export async function runQuestScopingEvalSuite(
     detail: requirement.pattern.test(bundle.prompt) ? undefined : 'Required policy is absent from the prompt artifact',
   }))
   const cases: EvalCheckResult[] = []
+  const authoredQuestionKeys = new Set(
+    getQuestScopingOverview(config.questKey, {}).questions.map(question => question.questionKey),
+  )
+  const defaultQuestionKey = authoredQuestionKeys.values().next().value as string
   for (const evalCase of config.cases) {
+    const scriptedQuestionKey = evalCase.script.flatMap(result =>
+      'error' in result ? [] : result.toolCalls ?? [],
+    ).map(call => {
+      const input = call.input as { questionKey?: unknown }
+      return typeof input?.questionKey === 'string' ? input.questionKey : null
+    }).find((value): value is string => value !== null)
+    const questionKey = scriptedQuestionKey && authoredQuestionKeys.has(scriptedQuestionKey)
+      ? scriptedQuestionKey
+      : defaultQuestionKey
     const store = new CapturingProposalStore()
     const trace = new CapturingTrace()
     const run = await runAgentLoop({
       model: new ScriptedEvalModel(evalCase.script),
       tools: createQuestScopingTools({
         questKey: config.questKey,
+        questionKey,
         resolverInput: {},
         activeAnswers: {},
         proposalStore: store,

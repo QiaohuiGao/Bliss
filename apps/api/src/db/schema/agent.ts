@@ -22,17 +22,24 @@ export const planningThreads = pgTable('planning_threads', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   weddingId: text('wedding_id').notNull().references(() => weddings.id, { onDelete: 'cascade' }),
   questKey: text('quest_key').notNull(),
+  // Decision threads are permanently scoped to one authored question. Null is
+  // reserved for non-decision intake and system threads.
+  questionKey: text('question_key'),
   title: text('title').notNull(),
   status: text('status').notNull().default('open').$type<
-    'open' | 'exploring' | 'contested' | 'ready' | 'resolved' | 'parked'
+    'open' | 'exploring' | 'contested' | 'ready' | 'parked'
   >(),
   openedBy: text('opened_by').references(() => users.id),
-  resolvedDecisionId: text('resolved_decision_id'),
+  // The database column name is retained for migration compatibility. Its
+  // presence is independent of the conversation status above.
+  currentDecisionId: text('resolved_decision_id'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }, table => ({
   weddingStatusIdx: index('planning_threads_wedding_status_idx')
     .on(table.weddingId, table.status),
+  weddingQuestionIdx: uniqueIndex('planning_threads_wedding_question_idx')
+    .on(table.weddingId, table.questKey, table.questionKey),
 }))
 
 export const threadMessages = pgTable('thread_messages', {

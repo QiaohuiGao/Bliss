@@ -5,7 +5,7 @@ import { parseExternalActionPayload } from '../actions/contracts'
 import { AgentGuardrailError } from '../errors'
 import { photographerStyleSchema, vendorSearchQuerySchema } from '../providers/vendor-search'
 import type { DecisionProposalStore } from '../proposals/store'
-import { decisionPacketSchema, type AgentTool, type AgentToolContext } from '../types'
+import { decisionPacketJsonSchema, decisionPacketSchema, type AgentTool, type AgentToolContext } from '../types'
 import { referencedAnswerKeys } from '../../content/predicates'
 
 export const PHOTOGRAPHER_QUEST_KEY = 'vendor_team'
@@ -106,16 +106,7 @@ export function createPhotographerTools(options: PhotographerToolOptions): Agent
     definition: {
       name: 'propose_decision',
       description: 'Create a Photographer Decision Packet. Proposal only; it cannot contact vendors.',
-      inputSchema: {
-        type: 'object',
-        additionalProperties: false,
-        required: [
-          'schemaVersion', 'threadId', 'questKey', 'questionKey', 'state',
-          'summary', 'proposedChoice', 'reason', 'alternativesConsidered',
-          'memberInputs', 'taskEffects', 'memoryEffects', 'externalActions',
-          'vendorEffects', 'momentCandidate',
-        ],
-      },
+      inputSchema: decisionPacketJsonSchema,
     },
     terminal: true,
     async execute(input, context) {

@@ -4,7 +4,12 @@ import { z } from 'zod'
 import { AgentGuardrailError, normalizedAgentError } from '../agent/errors'
 import { attachMomentAsset } from '../agent/memory/assets'
 import { loadMemoryProfile } from '../agent/memory/profile'
-import { correctMemoryClaim } from '../agent/memory/corrections'
+import {
+  acceptProposedClaim,
+  correctMemoryClaim,
+  loadProposedClaims,
+  rejectProposedClaim,
+} from '../agent/memory/corrections'
 import {
   configuredMediaUploadProvider,
   parseMediaObjectReference,
@@ -60,6 +65,33 @@ export async function memoryRoutes(app: FastifyInstance) {
   app.get('/weddings/:weddingId/memory', access, async (req, reply) => {
     const { weddingId } = req.params as { weddingId: string }
     return reply.send(await loadMemoryProfile(weddingId))
+  })
+
+  // Inferences the assistant has not had confirmed. Deliberately a separate endpoint
+  // from `GET /memory`: that projection is what agent runs retrieve, and an unaccepted
+  // guess must not reach a prompt.
+  app.get('/weddings/:weddingId/memory/proposed', access, async (req, reply) => {
+    const { weddingId } = req.params as { weddingId: string }
+    return reply.send(await loadProposedClaims(weddingId))
+  })
+
+  app.post('/weddings/:weddingId/memory/:claimId/accept', access, async (req, reply) => {
+    const { weddingId, claimId } = req.params as { weddingId: string; claimId: string }
+    const userId = (req as any).userId as string
+    const accepted = await acceptProposedClaim({ weddingId, claimId, userId })
+    if (!accepted) {
+      return reply.status(409).send({ error: 'Memory claim is missing or is no longer proposed' })
+    }
+    return reply.send(accepted)
+  })
+
+  app.post('/weddings/:weddingId/memory/:claimId/reject', access, async (req, reply) => {
+    const { weddingId, claimId } = req.params as { weddingId: string; claimId: string }
+    const rejected = await rejectProposedClaim({ weddingId, claimId })
+    if (!rejected) {
+      return reply.status(409).send({ error: 'Memory claim is missing or is no longer proposed' })
+    }
+    return reply.send(rejected)
   })
 
   app.post('/weddings/:weddingId/memory/:claimId/correct', access, async (req, reply) => {

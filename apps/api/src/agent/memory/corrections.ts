@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, isNull } from 'drizzle-orm'
 import { db } from '../../db'
 import { memoryClaims, planningThreads, threadMessages } from '../../db/schema'
 
@@ -75,4 +75,91 @@ export async function correctMemoryClaim(input: {
     }).returning()
     return replacement
   })
+}
+
+/**
+ * Accept an inference the assistant proposed.
+ *
+ * This is the deferred half of the write path: `committer.ts` stores an inferred claim
+ * as `proposed` and deliberately does *not* retire whatever is currently confirmed for
+ * the same `(subject, key)`. Retiring it is this function's job, because it is the
+ * couple's acceptance — not the model's confidence — that makes an inference active.
+ */
+export async function acceptProposedClaim(input: {
+  weddingId: string
+  claimId: string
+  userId: string
+}) {
+  return db.transaction(async tx => {
+    const [claim] = await tx
+      .select()
+      .from(memoryClaims)
+      .where(and(
+        eq(memoryClaims.id, input.claimId),
+        eq(memoryClaims.weddingId, input.weddingId),
+        eq(memoryClaims.status, 'proposed'),
+      ))
+      .limit(1)
+    if (!claim) return null
+
+    const [current] = await tx
+      .select({ id: memoryClaims.id })
+      .from(memoryClaims)
+      .where(and(
+        eq(memoryClaims.weddingId, input.weddingId),
+        eq(memoryClaims.subjectType, claim.subjectType),
+        claim.subjectId
+          ? eq(memoryClaims.subjectId, claim.subjectId)
+          : isNull(memoryClaims.subjectId),
+        eq(memoryClaims.key, claim.key),
+        eq(memoryClaims.status, 'confirmed'),
+      ))
+      .limit(1)
+    if (current) {
+      await tx
+        .update(memoryClaims)
+        .set({ status: 'superseded' })
+        .where(eq(memoryClaims.id, current.id))
+    }
+
+    const [accepted] = await tx
+      .update(memoryClaims)
+      .set({ status: 'confirmed', supersedesId: current?.id ?? null })
+      .where(and(eq(memoryClaims.id, claim.id), eq(memoryClaims.status, 'proposed')))
+      .returning()
+    return accepted ?? null
+  })
+}
+
+/**
+ * Reject an inference. The claim is retired rather than deleted: a rejected guess is
+ * the highest-value negative label this system produces, and it is the raw material
+ * for measuring how often the assistant infers wrongly.
+ */
+export async function rejectProposedClaim(input: {
+  weddingId: string
+  claimId: string
+}) {
+  const [rejected] = await db
+    .update(memoryClaims)
+    .set({ status: 'superseded' })
+    .where(and(
+      eq(memoryClaims.id, input.claimId),
+      eq(memoryClaims.weddingId, input.weddingId),
+      eq(memoryClaims.status, 'proposed'),
+    ))
+    .returning()
+  return rejected ?? null
+}
+
+/** Inferences awaiting the couple's judgement. Never enters an agent run's context. */
+export async function loadProposedClaims(weddingId: string) {
+  return db
+    .select()
+    .from(memoryClaims)
+    .where(and(
+      eq(memoryClaims.weddingId, weddingId),
+      eq(memoryClaims.status, 'proposed'),
+    ))
+    .orderBy(desc(memoryClaims.createdAt))
 }

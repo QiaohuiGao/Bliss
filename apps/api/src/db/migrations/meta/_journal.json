@@ -85,6 +85,20 @@
       "when": 1786664451717,
       "tag": "0011_skinny_korath",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1787768443660,
+      "tag": "0012_curved_iron_monger",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1787773772985,
+      "tag": "0013_awesome_katie_power",
+      "breakpoints": true
     }
   ]
 }

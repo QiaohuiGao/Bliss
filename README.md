@@ -1,38 +1,87 @@
-# Bliss — Wedding Planning App
+# Bliss — AI-Native Wedding Planning Companion
 
-A wedding planning companion for US couples that gives you one clear next step
-at a time, and is built from the ground up for couples blending two traditions.
+A wedding planning companion for two people sharing one workspace. Bliss helps a
+couple reach a decision that fits them, executes the small next actions, and
+remembers why the choice mattered — instead of generating a checklist and
+leaving them to it.
 
-Monorepo: a Next.js web app and a Fastify API.
+Monorepo: a Next.js web app and a Fastify API, with a hand-written agent runtime.
 
-## What it does
+![Bliss shared planning space](docs/images/home.png)
 
-- **14 quests** covering the full US planning arc, from budget and venue through
-  the marriage license and the day-of run of show
-- **Cultural tradition packs** — pick your heritages and Bliss adds the right
-  events, vendors, attire, and lead times. Shipping South Asian, Chinese,
-  Jewish, Korean, Nigerian, Mexican, Persian, Vietnamese, Filipino, and Greek
-- **Wedding-type pruning** — an elopement gets 8 quests, not 14. A micro wedding
-  drops guest logistics. The plan matches the wedding you're actually having
-- **Lead-time aware** — deterministic dependencies, effort, and deadlines expose
-  a plan that does not fit before the couple commits to it
+<sub>Design prototype from `prototypes/`, not a screenshot of the running app.</sub>
+
+---
+
+## The engineering thesis
+
+The model is probabilistic; the side effects are not reversible. So the agent
+**proposes**, and deterministic code **commits** after the required approval.
+Nearly every architectural decision here follows from that one line.
+
+| Concern | How it is enforced |
+|---|---|
+| Runaway loops | Four independent budgets — steps, tokens, cost, wall-clock — checked every iteration; every run ends on an explicit stop reason |
+| Hallucinated tools | Tool allowlist built from what the caller passed; unregistered calls become structured guardrail events |
+| Silent writes | The model holds no write tool. State changes flow through a Decision Packet a user confirms |
+| Duplicate real-world actions | Durable leases, bounded retries with backoff, stable provider idempotency keys |
+| Prompt regressions | 283-case release gate in CI; a non-zero exit blocks promotion |
+| Trace privacy | Per-tool allowlisted projection — traces record shape and counts, never assistant prose or reasoning |
+
+Full architecture: [docs/AGENTIC-SYSTEM-DESIGN.md](docs/AGENTIC-SYSTEM-DESIGN.md).
+Where the code lives: [docs/CODE-MAP.md](docs/CODE-MAP.md).
+
+## Agent runtime
+
+**Provider-agnostic.** Anthropic Claude and Google Gemini implement one
+`AgentModel` interface; the loop depends only on that interface. Switching
+providers is an env var, with no change to the harness, tools, packs, or evals.
+
+**Bounded loop.** [`harness/loop.ts`](apps/api/src/agent/harness/loop.ts) is just
+over 200 lines, exactly one of which calls a model — the rest is the constraint
+system around it. A run terminates as `natural`, `terminal_tool`, `max_steps`, `max_tokens`,
+`max_cost`, `timeout`, `cancelled`, `guardrail`, or `error`, and the reason is
+persisted with the run.
+
+**Commit boundary.** `propose_decision` writes to a proposal table, not to
+canonical state. `POST /decision-proposals/:id/confirm` runs
+[`DatabaseDecisionCommitter`](apps/api/src/agent/proposals/committer.ts) in one
+transaction. `commit_decision` is not an agent tool.
+
+**Scoped proposals.** A planning thread is permanently scoped to one authored
+question. The first proposal locks it; a packet targeting a different question is
+refused. Threads under the same quest progress independently — attire can be
+contested while the suit question is settled.
+
+**Four-tier memory** with per-partner attribution. A preference is stored as
+*whose* preference, an unattributed individual claim is never promoted to shared
+couple memory, and corrections supersede rather than overwrite.
+
+**Deterministic domain core.** Quest resolution, the dependency graph, and
+lead-time and workload calculation are typed code, not model output. The model is
+scoped to helping the couple decide; the plan those decisions produce is
+computed. 92 authored scoping questions with closed option sets are the branch
+keys into that resolver — which is also what makes the behavior testable.
+
+## Product
+
+- **14 quests** across the US planning arc, from budget and venue through the
+  marriage license and the day-of run of show
+- **Cultural tradition packs** — South Asian, Chinese, Jewish, Korean, Nigerian,
+  Mexican, Persian, Vietnamese, Filipino, and Greek add the right events,
+  vendors, attire, and lead times
+- **Wedding-type pruning** — an elopement gets 8 quests, not 14
+- **Contested decisions stay contested** — both partners' reasons are preserved
+  and attributed rather than flattened into one answer
+- **Lead-time aware** — a plan that does not fit is surfaced before the couple
+  commits to it
 - **Authority-bounded legal workflow** — informational, visibly disclaimed, and
-  routed back to the issuing clerk or qualified counsel instead of model memory
-- **Celebration moments** — milestone cards when a quest is complete
-- **Shared AI planning threads** — both partners can express their own reasons;
-  a disagreement stays contested instead of being flattened into one answer
-- **Decision-grounded plans** — confirmed Decision Packets update tasks, attributed
-  memory, drafts, and Moments without giving the model direct write access
-- **Private Moment photos** — direct device uploads use single-use, wedding-scoped
-  storage grants; the bucket stays private and reads receive short-lived URLs only
-  after wedding membership is checked
-- **Decision support across every base quest** — Attire and Photographer use
-  specialized packs; the other 12 quests share guarded scoping tools while keeping
-  their own authored choices, branch tasks, and release suites
+  routed back to the issuing clerk or qualified counsel, never model memory
 - **Action Center** — exact-payload approval for reminders, calendar files, email
-  drafts, provider-backed email sends, and vendor briefs; writes use durable leases,
-  bounded retries, and stable provider idempotency
-- **English-only ship, on a real i18n layer** — adding Spanish is a translation
+  drafts, provider-backed sends, and vendor briefs
+- **Private Moment photos** — single-use, wedding-scoped upload grants against a
+  private bucket; reads get short-lived URLs after membership is checked
+- **English-only ship on a real i18n layer** — adding Spanish is a translation
   job, not a refactor
 
 ## Stack
@@ -40,22 +89,22 @@ Monorepo: a Next.js web app and a Fastify API.
 | Layer | Tech |
 |-------|------|
 | API | Fastify + Bun + PostgreSQL + Drizzle ORM |
+| Agent | Hand-written harness, no agent framework |
+| Models | Anthropic Claude, Google Gemini (one interface) |
 | Web | Next.js 14 (App Router) + Tailwind CSS + next-intl |
-| i18n | Shared ICU catalogs in `packages/i18n` |
 | Auth | Clerk |
 | Deployment | API → Railway, Web → Vercel |
 
-## Monorepo structure
-
 ```
 apps/
-  api/        Fastify REST API, quest generator, content templates
+  api/        Fastify REST API, agent runtime, quest generator, content templates
   web/        Next.js web app
 packages/
   types/      Shared TypeScript types
   i18n/       Locale catalogs, content catalogs, formatters
   config/     Shared Tailwind and tsconfig
-docs/         Market research, i18n guide, glossary, cultural traditions
+docs/         Architecture, code map, runbook, market research, i18n, traditions
+prototypes/   Static design explorations
 ```
 
 ## Getting started
@@ -80,52 +129,59 @@ bucket public.
 
 ## Verification
 
+**195 tests / 557 assertions** across resolver, provider, scheduler, harness,
+pack, memory, and release suites. **283 eval cases and 188 prompt-conformance
+checks across 14 domain suites**, all passing, gating every release.
+
 ```bash
-bun run test                 # 172 resolver, provider, scheduler, harness, pack, and release tests
+bun run test                 # 195 unit and integration tests
 bun run eval:agent           # 283-case release gate across all 14 base quests
+bun run metrics:resume       # eval coverage; --days=N adds traced runtime aggregates
 bun run lint:i18n            # no CJK in code, no hardcoded JSX strings, catalog parity
 bun run verify:generation    # generates 12 wedding variants, checks every row resolves
 bun run type-check           # all workspaces
 bun run build                # all workspaces
-bun run smoke:agent          # temporary real-DB Attire flow; cleans up after itself
-bun run smoke:photographer   # temporary real-DB search/shortlist/action flow; cleans up after itself
-bun run smoke:scoping        # all 12 quests using the generic decision engine
-bun run smoke:release        # sticky canary, rollback, and kill-switch DB verification
-bun run smoke:couple         # owner-only invite and concurrent two-person join boundary
-bun run ops:agent --days=7   # bundle/model-segmented latency, cost, errors, and user feedback
 ```
 
-`verify:generation` is the useful one when changing content. It prints the quest,
-section, and task counts for each variant, so a template change shows up as a
-diff instead of a surprise. Both it and `bun run test` run the content
-self-check, which fails on a predicate that reads an answer key no scoping
-question declares — the failure mode that would otherwise silently drop tasks
-from every couple's list.
+Real-database smoke flows, each cleaning up after itself:
+
+```bash
+bun run smoke:agent          # Attire decision, memory correction, action lease/retry/idempotency
+bun run smoke:photographer   # bounded vendor search, shortlist, approved actions
+bun run smoke:scoping        # all 12 quests on the generic decision engine
+bun run smoke:release        # sticky canary, rollback, kill-switch
+bun run smoke:couple         # owner-only invite and concurrent two-person join boundary
+bun run smoke:model          # real configured model: two-turn tool-calling protocol
+bun run ops:agent --days=7   # bundle/model-segmented latency, cost, errors, feedback
+```
+
+`verify:generation` is the useful one when changing content. It prints quest,
+section, and task counts per variant, so a template change shows up as a diff
+instead of a surprise. Both it and `bun run test` run the content self-check,
+which fails on a predicate reading an answer key no scoping question declares —
+the failure mode that would otherwise silently drop tasks from every couple's
+list.
 
 ## Docs
 
 | Doc | What it covers |
 |---|---|
-| [PRD.md](PRD.md) | The product: goal, thesis, advantage, scope, principles |
-| [DESIGN.md](DESIGN.md) | How it is built: data model, resolver, scheduler, agent, API, sprints |
 | [docs/AGENTIC-SYSTEM-DESIGN.md](docs/AGENTIC-SYSTEM-DESIGN.md) | Runtime, memory, tools, observability, eval, and release architecture |
+| [docs/CODE-MAP.md](docs/CODE-MAP.md) | Where each layer lives in the tree |
 | [docs/VOICE.md](docs/VOICE.md) | Companion voice, conflict guidance, and review rubric |
-| [docs/RUNBOOK.md](docs/RUNBOOK.md) | Production configuration, providers, workers, verification, and rollback |
+| [docs/RUNBOOK.md](docs/RUNBOOK.md) | Production configuration, providers, workers, verification, rollback |
 | [docs/MARKET.md](docs/MARKET.md) | US market research: planning timeline, budget benchmarks, competitors |
 | [docs/I18N.md](docs/I18N.md) | How to add a locale, key naming, what must never be translated |
 | [docs/GLOSSARY.md](docs/GLOSSARY.md) | US wedding terminology used verbatim in UI copy |
 | [docs/CULTURAL-TRADITIONS.md](docs/CULTURAL-TRADITIONS.md) | How cultural packs work, and how to add one |
 
-Read PRD before DESIGN. `docs/other/` is personal reference material, not part of
-the spec set.
+`docs/other/` is personal reference material, not part of the spec set.
 
 ## Conventions
 
 - **Every file in this repo is written in English.** Code, comments, docs, UI
-  copy, commit messages. CI enforces it. The one exception is `docs/other/`,
-  which holds personal reference notes and is excluded from the check.
-- **No hardcoded user-facing strings.** Everything goes through
-  `packages/i18n`.
+  copy, commit messages. CI enforces it. The one exception is `docs/other/`.
+- **No hardcoded user-facing strings.** Everything goes through `packages/i18n`.
 - **Enum values are identifiers, not display strings.** Translate the label,
   never the value.
 - **Legal facts require fresh official-source provider data; lead times use

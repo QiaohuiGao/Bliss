@@ -19,8 +19,8 @@ import { AgentGuardrailError } from './errors'
 import { runAgentLoop } from './harness/loop'
 import { DatabaseTraceSink, ResilientTraceSink } from './harness/trace'
 import { loadMemoryProfile } from './memory/profile'
-import { createAttireTools, ATTIRE_QUEST_KEY } from './packs/attire'
-import { createPhotographerTools, PHOTOGRAPHER_QUEST_KEY } from './packs/photographer'
+import { createAttireTools, ATTIRE_QUESTION_KEY, ATTIRE_QUEST_KEY } from './packs/attire'
+import { createPhotographerTools, PHOTOGRAPHER_QUESTION_KEY, PHOTOGRAPHER_QUEST_KEY } from './packs/photographer'
 import { createQuestScopingTools } from './packs/quest-scoping'
 import type { VendorSearchProvider } from './providers/vendor-search'
 import { resolveArtifactBundleForWedding } from './release/store'
@@ -38,12 +38,14 @@ interface DecisionRunInput {
 
 interface DecisionPack {
   questKey: string
+  questionKey?: string
   releaseKey: string
   goal: string
   bundle: AgentArtifactBundle
   buildTools(
     wedding: typeof weddings.$inferSelect,
     activeAnswers: Record<string, string>,
+    questionKey: string,
   ): AgentTool[]
 }
 
@@ -59,6 +61,7 @@ export class AgentRuntime {
   async runAttireDecision(input: DecisionRunInput) {
     return this.runDecision(input, {
       questKey: ATTIRE_QUEST_KEY,
+      questionKey: ATTIRE_QUESTION_KEY,
       releaseKey: ATTIRE_ARTIFACT_BUNDLE.packKey,
       goal: 'Scope the gown acquisition decision and create one Decision Packet',
       bundle: ATTIRE_ARTIFACT_BUNDLE,
@@ -72,6 +75,7 @@ export class AgentRuntime {
   async runPhotographerDecision(input: DecisionRunInput, provider: VendorSearchProvider) {
     return this.runDecision(input, {
       questKey: PHOTOGRAPHER_QUEST_KEY,
+      questionKey: PHOTOGRAPHER_QUESTION_KEY,
       releaseKey: PHOTOGRAPHER_ARTIFACT_BUNDLE.packKey,
       goal: 'Define photographer coverage, run one bounded search, and propose a sourced shortlist',
       bundle: PHOTOGRAPHER_ARTIFACT_BUNDLE,
@@ -99,8 +103,9 @@ export class AgentRuntime {
       releaseKey: bundle.packKey,
       goal: `Help the couple make one grounded ${questKey} scoping decision`,
       bundle,
-      buildTools: (wedding, activeAnswers) => createQuestScopingTools({
+      buildTools: (wedding, activeAnswers, questionKey) => createQuestScopingTools({
         questKey,
+        questionKey,
         resolverInput: resolverInput(wedding),
         activeAnswers,
         proposalStore: new DatabaseDecisionProposalStore(),
@@ -125,6 +130,19 @@ export class AgentRuntime {
     if (!thread || thread.questKey !== pack.questKey) {
       throw new AgentGuardrailError('THREAD_NOT_FOUND', 'Planning thread not found for this decision pack')
     }
+    const questionKey = thread.questionKey ?? pack.questionKey
+    if (!questionKey) {
+      throw new AgentGuardrailError(
+        'QUESTION_SCOPE_REQUIRED',
+        'Choose a decision question before running this planning conversation',
+      )
+    }
+    if (pack.questionKey && questionKey !== pack.questionKey) {
+      throw new AgentGuardrailError(
+        'QUESTION_SCOPE_MISMATCH',
+        'Planning thread question does not match this specialized decision pack',
+      )
+    }
 
     const [wedding] = await db
       .select()
@@ -141,8 +159,11 @@ export class AgentRuntime {
         eq(threadMessages.weddingId, input.weddingId),
       ))
       .orderBy(asc(threadMessages.createdAt))
+
     const memoryProfile = await loadMemoryProfile(input.weddingId)
+
     const currentDecisions = await loadCurrentDecisionState(input.weddingId)
+
     const schedulePressure = await db.select({
       type: scheduleIssues.type,
       severity: scheduleIssues.severity,
@@ -160,7 +181,7 @@ export class AgentRuntime {
         eq(scheduleIssues.questKey, pack.questKey),
       ))
       .limit(8)
-    const tools = pack.buildTools(wedding, currentDecisions.answers)
+    const tools = pack.buildTools(wedding, currentDecisions.answers, questionKey)
 
     const [run] = await db
       .insert(agentRuns)
@@ -183,6 +204,16 @@ export class AgentRuntime {
 
     const messages: AgentMessage[] = [
       { role: 'system', content: activeBundle.prompt },
+      {
+        role: 'system',
+        content: `Active decision scope: ${JSON.stringify({
+          questKey: pack.questKey,
+          questionKey,
+          currentConfirmedChoice: currentDecisions.answers[questionKey] ?? null,
+          conversationStatus: thread.status,
+          currentDecisionId: thread.currentDecisionId,
+        })}. Discuss and propose only this question. Other questions may be mentioned only as context or downstream effects.`,
+      },
       {
         role: 'system',
         content: `Wedding context: ${JSON.stringify({

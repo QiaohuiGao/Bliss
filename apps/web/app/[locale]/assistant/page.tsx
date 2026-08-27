@@ -51,8 +51,10 @@ export default function AssistantPage() {
         const token = await getToken()
         const currentWedding = await api.getMyWedding(token)
         const threads = await api.getPlanningThreads(currentWedding.id, token)
-        const currentThread = threads.find(item => item.questKey === 'attire_beauty')
-          ?? await api.createPlanningThread(currentWedding.id, token)
+        const currentThread = threads.find(item =>
+          item.questKey === 'attire_beauty' && item.questionKey === 'attire.dress_acquisition'
+        )
+          ?? await api.createPlanningThread(currentWedding.id, token, 'attire_beauty', 'attire.dress_acquisition')
         const currentMessages = await api.getThreadMessages(currentWedding.id, currentThread.id, token)
         const latestProposal = await api
           .getLatestDecisionProposal(currentWedding.id, currentThread.id, token)

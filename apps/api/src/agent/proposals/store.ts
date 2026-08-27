@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from 'drizzle-orm'
+import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm'
 import { db } from '../../db'
 import {
   decisionProposals,
@@ -55,6 +55,14 @@ export class DatabaseDecisionProposalStore implements DecisionProposalStore {
         throw new AgentGuardrailError(
           'PROPOSAL_SCOPE_MISMATCH',
           'The Decision Packet does not match the active planning thread',
+        )
+      }
+      // A thread carries one decision. The first proposal locks which question that is;
+      // afterwards a revision may only revisit the same question.
+      if (thread.questionKey && packet.questionKey !== thread.questionKey) {
+        throw new AgentGuardrailError(
+          'QUESTION_SCOPE_MISMATCH',
+          'This planning thread already resolves a different question',
         )
       }
 
@@ -184,13 +192,27 @@ export class DatabaseDecisionProposalStore implements DecisionProposalStore {
         })
         .returning({ id: decisionProposals.id })
 
-      await tx
+      const [scopedThread] = await tx
         .update(planningThreads)
         .set({
+          questionKey: packet.questionKey,
           status: packet.state === 'contested' ? 'contested' : 'ready',
           updatedAt: new Date(),
         })
-        .where(eq(planningThreads.id, context.threadId))
+        .where(and(
+          eq(planningThreads.id, context.threadId),
+          or(
+            isNull(planningThreads.questionKey),
+            eq(planningThreads.questionKey, packet.questionKey),
+          ),
+        ))
+        .returning({ id: planningThreads.id })
+      if (!scopedThread) {
+        throw new AgentGuardrailError(
+          'QUESTION_SCOPE_MISMATCH',
+          'Another run locked this planning thread to a different question',
+        )
+      }
 
       return { proposalId: created!.id, version, status: 'pending' as const }
     })

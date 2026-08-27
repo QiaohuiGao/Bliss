@@ -52,8 +52,10 @@ export default function PhotographerAssistantPage() {
         const token = await getToken()
         const currentWedding = await api.getMyWedding(token)
         const threads = await api.getPlanningThreads(currentWedding.id, token)
-        const currentThread = threads.find(item => item.questKey === 'vendor_team')
-          ?? await api.createPlanningThread(currentWedding.id, token, 'vendor_team')
+        const currentThread = threads.find(item =>
+          item.questKey === 'vendor_team' && item.questionKey === 'photo.coverage'
+        )
+          ?? await api.createPlanningThread(currentWedding.id, token, 'vendor_team', 'photo.coverage')
         const [currentMessages, latestProposal] = await Promise.all([
           api.getThreadMessages(currentWedding.id, currentThread.id, token),
           api.getLatestDecisionProposal(currentWedding.id, currentThread.id, token).catch(() => null),
