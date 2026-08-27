@@ -63,6 +63,119 @@
     "quote": {
       "text": "Bliss feels like a friend who has already been through it.",
       "attribution": "Alex and Jordan, married June 2025"
+    },
+    "landing": {
+      "brandName": "Bliss",
+      "brandLabel": "Bliss home",
+      "orb": "b",
+      "signIn": "Already planning? Sign in",
+      "hero": {
+        "eyebrow": "For the two of you",
+        "line1": "You are about to plan",
+        "line2": "something that has",
+        "line3": "never existed before.",
+        "body": "A wedding is a year of small decisions made by two people who have never made them before. Bliss stays next to you for all of it — curious about what you actually want, useful when it gets heavy, and careful to remember why each choice mattered.",
+        "note": "Two people, one workspace. Nothing is hidden from each other."
+      },
+      "rings": {
+        "label": "Two rings that meet where the two of you agree",
+        "start": "Two people. One story you have not written yet.",
+        "named": "{selfName} and {partnerName}. Two voices, kept separate on purpose.",
+        "date": "The day your shared story changed direction.",
+        "ready": "Where you agree, Bliss ties the knot and remembers why."
+      },
+      "beatsLabel": "What this year can become",
+      "beats": {
+        "together": {
+          "index": "01 · Together",
+          "title": "A journey with two authors",
+          "body": "You will not always want the same thing, and that is not a problem to fix. Bliss keeps both preferences visible, names the real trade-off, and never quietly picks a side."
+        },
+        "unexpected": {
+          "index": "02 · Unexpected",
+          "title": "Room left for surprise",
+          "body": "The parts you will retell are rarely the parts you planned. Bliss handles the tedious scaffolding so there is still air in the year for something you did not see coming."
+        },
+        "kept": {
+          "index": "03 · Kept",
+          "title": "A memory that outlives the planning",
+          "body": "Every decision keeps its reason. Long after the spreadsheets are gone, you will still know why you chose the small room, the late dinner, or the song."
+        }
+      },
+      "chapters": {
+        "eyebrow": "The shape of the year",
+        "title": "Fourteen chapters, opened when you are ready",
+        "body": "Not four hundred tasks. Each chapter holds a few real decisions, and the work only appears after the two of you have shaped it.",
+        "label": "The fourteen wedding chapters",
+        "note": "Bliss will never rush you into the next chapter. Whenever you open one, it makes sure you have what you need to decide well.",
+        "items": {
+          "vision": "Vision",
+          "budget": "Budget",
+          "guests": "Guests",
+          "venue": "Venue",
+          "vendors": "Vendors",
+          "photo": "Photo",
+          "attire": "Attire",
+          "ceremony": "Ceremony",
+          "design": "Design",
+          "invites": "Invites",
+          "care": "Care",
+          "timeline": "Timeline",
+          "legal": "Legal",
+          "finale": "Finale"
+        }
+      },
+      "entry": {
+        "eyebrow": "Begin",
+        "title": "Start with your names. That is genuinely all.",
+        "body": "No plan to build, no questionnaire to survive. Bliss asks one thing at a time, and the first two are easy.",
+        "promise": {
+          "encourage": { "title": "Encourage", "body": "notice real progress without treating you like a child." },
+          "help": { "title": "Help", "body": "draft the email, compare the quotes, and do the dull parts." },
+          "support": { "title": "Support", "body": "represent both of you accurately, especially when you disagree." },
+          "remember": { "title": "Remember", "body": "keep the reason behind every choice you make." }
+        },
+        "step": {
+          "names": "Question 1 of 2",
+          "engagement": "Question 2 of 2",
+          "handoff": "Your story begins"
+        },
+        "continue": "Continue →",
+        "names": {
+          "title": "What should Bliss call you two?",
+          "body": "Your names stay attached to whatever each of you says, so neither of you disappears into a shared account.",
+          "self": "You",
+          "partner": "Your partner",
+          "selfPlaceholder": "Maya",
+          "partnerPlaceholder": "Theo",
+          "assurance": "You can invite your partner later. Nothing is shared until you do."
+        },
+        "engagement": {
+          "title": "When did you say yes?",
+          "body": "The day you got engaged becomes the first Moment in your story. Bliss counts forward from here, not down.",
+          "label": "The day it happened",
+          "skip": "I would rather not say",
+          "assurance": "You can change or remove this at any time."
+        },
+        "handoff": {
+          "greeting": "Congratulations, {selfName} and {partnerName}.",
+          "noted": "Noted — {timing}. Nothing is fixed until you confirm it.",
+          "body": "One more and then we can just talk: do you have a wedding date in mind yet, or is that still open?",
+          "timing": {
+            "date": "We have a date",
+            "season": "A season, not a date",
+            "open": "Still completely open"
+          },
+          "enter": "Enter our workspace →",
+          "assurance": "Whatever you answer, nothing gets locked in. Bliss only records what you confirm."
+        }
+      },
+      "footer": {
+        "tagline": "Bliss — a planning companion for two.",
+        "how": "How it works",
+        "privacy": "Privacy",
+        "contact": "Contact"
+      }
     }
   },
   "money": {

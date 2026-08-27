@@ -8,7 +8,7 @@ import { useContent } from '@/lib/content'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import type { ModulesResponse, ModuleWithProgress } from '@bliss/types'
-import { Lock, CheckCircle2, ChevronRight, Clock, Leaf, TreePine } from 'lucide-react'
+import { Lock, CheckCircle2, ChevronRight, Clock, Leaf, MessageCircleHeart, TreePine } from 'lucide-react'
 
 /** Keyed by templateKey. Cultural pack quests fall back to the default. */
 const QUEST_ICONS: Record<string, string> = {
@@ -78,7 +78,18 @@ export default function BoardPage() {
             <button onClick={() => router.push('/dashboard')} className="font-serif text-2xl font-light text-bliss-ink flex items-center gap-2 tracking-wider">
               <TreePine className="w-5 h-5 text-bliss-sage-dark" /> Bliss
             </button>
-            <button onClick={() => router.push('/dashboard')} className="btn-ghost text-sm">{t('common.nav.dashboard')}</button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => router.push('/assistant')}
+                className="btn-primary py-2 px-3 text-sm flex items-center gap-1.5"
+              >
+                <MessageCircleHeart className="w-4 h-4" />
+                {t('common.nav.companion')}
+              </button>
+              <button onClick={() => router.push('/dashboard')} className="btn-ghost text-sm">
+                {t('common.nav.dashboard')}
+              </button>
+            </div>
           </div>
 
           {/* Progress hero */}

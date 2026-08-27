@@ -26,6 +26,9 @@ export const memberRoleEnum = pgEnum('member_role', ['owner', 'partner'])
 export const weddings = pgTable('weddings', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   weddingDate: date('wedding_date'),
+  engagementDate: date('engagement_date'),
+  partnerDisplayName: text('partner_display_name'),
+  weddingTiming: text('wedding_timing').$type<'date' | 'season' | 'open'>(),
 
   // Location. State is required for marriage-license rules, which are state-level.
   state: char('state', { length: 2 }),

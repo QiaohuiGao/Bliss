@@ -10,7 +10,15 @@
       "Bash(curl -s -H \"Authorization: Bearer dev\" http://localhost:3001/me/wedding)",
       "Bash(curl -s -X POST http://localhost:3001/weddings -H 'Authorization: Bearer dev' -H 'Content-Type: application/json' -d '{\"weddingDate\":\"2027-01-01\",\"guestCountRange\":\"50_100\",\"styles\":[\"western\"],\"budgetMinCents\":5000000,\"budgetMaxCents\":15000000,\"venuePreferences\":[\"hotel\"],\"hasPlanner\":false}')",
       "Bash(psql -h localhost -U qiaohui -d bliss_dev -c \"DELETE FROM wedding_members; DELETE FROM modules; DELETE FROM weddings; DELETE FROM users;\")",
-      "Bash(psql -h localhost -U qiaohui -d bliss_dev -c \"DELETE FROM users;\")"
+      "Bash(psql -h localhost -U qiaohui -d bliss_dev -c \"DELETE FROM users;\")",
+      "Bash(lsof -nP -iTCP:3000 -sTCP:LISTEN)",
+      "Bash(curl -s -m 30 -X POST http://localhost:3001/weddings -H \"Authorization: Bearer dev\" -H \"Content-Type: application/json\" -d '{\"weddingDate\":\"2027-06-12\",\"state\":\"CA\",\"city\":\"Oakland\",\"weddingType\":\"traditional\",\"weeklyCapacityHours\":5,\"guestCountExact\":110,\"styles\":[\"garden\",\"modern\"],\"budgetTier\":\"40k_75k\",\"budgetTotalCents\":5500000,\"venuePreferences\":[\"garden_park\"],\"hasPlanner\":false,\"plannerType\":\"none\",\"cultures\":[\"chinese\"]}')",
+      "Bash(bun -e ' *)",
+      "Bash(git check-ignore *)",
+      "Bash(awk -F= '/^GEMINI_API_KEY=/{print \"GEMINI_API_KEY: set, \" length\\($2\\) \" chars, prefix \" substr\\($2,1,3\\)}' .env)",
+      "Bash(curl -s -m 180 -X POST http://localhost:3001/weddings/fe6bc61d-27d3-415e-84b5-535fd1ffbe3a/threads/0042bc57-7768-4dbe-8702-3a9568836c7f/attire/run -H 'Authorization: Bearer dev')",
+      "Bash(sed -n '/planningThreads = pgTable/,/^}/p' agent.ts)",
+      "Bash(sed -n '/threadMessages = pgTable/,/^}/p' agent.ts)"
     ]
   }
 }

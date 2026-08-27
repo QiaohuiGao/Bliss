@@ -5,10 +5,11 @@ import { resolveTree, tasksForQuest, type ResolverInput } from '../../services/q
 import { parseExternalActionPayload } from '../actions/contracts'
 import { AgentGuardrailError } from '../errors'
 import type { DecisionProposalStore } from '../proposals/store'
-import { decisionPacketSchema, type AgentTool } from '../types'
+import { decisionPacketJsonSchema, decisionPacketSchema, type AgentTool } from '../types'
 
 export interface QuestScopingToolOptions {
   questKey: string
+  questionKey: string
   resolverInput: Omit<ResolverInput, 'answers'>
   activeAnswers: Record<string, string>
   proposalStore: DecisionProposalStore
@@ -25,6 +26,7 @@ const qualifies = (template: QuestTemplate, questionKey: string) =>
 export function getQuestScopingOverview(
   questKey: string,
   activeAnswers: Record<string, string>,
+  activeQuestionKey?: string,
 ) {
   const template = QUEST_TEMPLATES.find(item => item.key === questKey)
   if (!template?.scopingQuestions?.length) {
@@ -49,7 +51,7 @@ export function getQuestScopingOverview(
         source: confirmed ? 'confirmed' as const : 'assumed' as const,
         allowsDefer: question.allowsDefer,
       }
-    }),
+    }).filter(question => !activeQuestionKey || question.questionKey === activeQuestionKey),
   }
 }
 
@@ -77,7 +79,13 @@ export function createQuestScopingTools(options: QuestScopingToolOptions): Agent
   const questions = new Map(template.scopingQuestions.map(question => {
     const questionKey = qualifies(template, question.key)
     return [questionKey, question] as const
-  }))
+  }).filter(([questionKey]) => questionKey === options.questionKey))
+  if (questions.size !== 1) {
+    throw new AgentGuardrailError(
+      'INVALID_QUESTION',
+      'The active question is not authored for this quest',
+    )
+  }
   const offeredTasks = new Map<string, Set<string>>()
 
   const questionTool: AgentTool = {
@@ -88,7 +96,7 @@ export function createQuestScopingTools(options: QuestScopingToolOptions): Agent
     },
     parallelSafe: true,
     async execute() {
-      return getQuestScopingOverview(template.key, options.activeAnswers)
+      return getQuestScopingOverview(template.key, options.activeAnswers, options.questionKey)
     },
   }
 
@@ -138,16 +146,7 @@ export function createQuestScopingTools(options: QuestScopingToolOptions): Agent
     definition: {
       name: 'propose_decision',
       description: 'Create one user-visible Decision Packet for one authored question. This does not commit changes.',
-      inputSchema: {
-        type: 'object',
-        additionalProperties: false,
-        required: [
-          'schemaVersion', 'threadId', 'questKey', 'questionKey', 'state',
-          'summary', 'proposedChoice', 'reason', 'alternativesConsidered',
-          'memberInputs', 'taskEffects', 'memoryEffects', 'externalActions',
-          'vendorEffects', 'momentCandidate',
-        ],
-      },
+      inputSchema: decisionPacketJsonSchema,
     },
     terminal: true,
     async execute(input, context) {

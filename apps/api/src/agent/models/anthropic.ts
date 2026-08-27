@@ -130,10 +130,3 @@ export class AnthropicAgentModel implements AgentModel {
     }
   }
 }
-
-export function configuredAgentModel(): AgentModel | null {
-  const apiKey = process.env['ANTHROPIC_API_KEY']
-  const model = process.env['ANTHROPIC_MODEL']
-  if (!apiKey || !model) return null
-  return new AnthropicAgentModel({ apiKey, model })
-}

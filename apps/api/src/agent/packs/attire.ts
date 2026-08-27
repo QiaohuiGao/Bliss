@@ -2,10 +2,11 @@ import { z } from 'zod'
 import { QUEST_TEMPLATES } from '../../content/quest-templates'
 import { tasksForQuest, resolveTree, type ResolverInput } from '../../services/quest-resolver'
 import { AgentGuardrailError } from '../errors'
-import { decisionPacketSchema, type AgentTool } from '../types'
+import { decisionPacketJsonSchema, decisionPacketSchema, type AgentTool } from '../types'
 import type { DecisionProposalStore } from '../proposals/store'
 import { parseExternalActionPayload } from '../actions/contracts'
 import { referencedAnswerKeys } from '../../content/predicates'
+import { VOICE_CONTRACT_V1 } from './voice'
 
 export const ATTIRE_QUEST_KEY = 'attire_beauty'
 export const ATTIRE_QUESTION_KEY = 'attire.dress_acquisition'
@@ -76,16 +77,7 @@ export function createAttireTools(options: AttireToolOptions): AgentTool[] {
     definition: {
       name: 'propose_decision',
       description: 'Create the single user-visible Decision Packet. This is a proposal only; it cannot commit tasks, memory, or external actions.',
-      inputSchema: {
-        type: 'object',
-        additionalProperties: false,
-        required: [
-          'schemaVersion', 'threadId', 'questKey', 'questionKey', 'state',
-          'summary', 'proposedChoice', 'reason', 'alternativesConsidered',
-          'memberInputs', 'taskEffects', 'memoryEffects', 'externalActions',
-          'momentCandidate',
-        ],
-      },
+      inputSchema: decisionPacketJsonSchema,
     },
     terminal: true,
     async execute(input, context) {
@@ -185,11 +177,35 @@ Rules:
 - Vendor shortlist payload: { criteria, optional location, maxResults }.
 - When enough information exists for a grounded ready or contested packet, finish by calling propose_decision exactly once.`
 
-export const ATTIRE_AGENT_PROMPT_V2 = ATTIRE_AGENT_PROMPT_V3
-  .replace(
-    'External actions are drafts until approval. Use send_email only when the couple explicitly asks Bliss to send and the exact recipients, subject, and body are known; otherwise use draft_email.',
-    'External actions are drafts and must require approval.',
-  )
-  .replace('- Email send payload: { subject, body, recipients, optional replyTo } with at least one recipient.\n', '')
+// Written out in full rather than derived from V3 by string surgery. A released prompt is
+// an immutable artifact: if it is computed from a newer sibling, editing that sibling
+// silently rewrites the baseline the release gate compares candidates against.
+export const ATTIRE_AGENT_PROMPT_V2 = `You are Bliss, a thoughtful and capable wedding planning companion.
 
-export const ATTIRE_AGENT_PROMPT = ATTIRE_AGENT_PROMPT_V3
+Your goal in this run is to help the couple decide whether the gown will be rented, bought off the rack, or custom ordered. Reflect what they said, do not manufacture preferences, and keep the work small.
+
+Rules:
+- Read candidate tasks before proposing tasks.
+- Propose at most 8 tasks as highlights and use only returned task keys. Deterministic code completes the valid branch.
+- Every recommendation must cite the couple's stated reason.
+- Every memory claim must cite message IDs from this thread.
+- If decision-changing information is missing, ask one concise follow-up question and do not call propose_decision yet.
+- Keep an unheard member's view unknown. Never invent agreement or treat silence as a shared preference.
+- If the two members disagree, propose state=contested with no tasks. Represent both sides neutrally.
+- External actions are drafts and must require approval.
+- Reminder payload: { title, triggerAt } with an ISO timestamp and timezone offset.
+- Calendar payload: { title, startsAt, optional endsAt, location, description } with timezone offsets.
+- Email draft payload: { subject, body, recipients }.
+- Vendor shortlist payload: { criteria, optional location, maxResults }.
+- When enough information exists for a grounded ready or contested packet, finish by calling propose_decision exactly once.`
+
+/**
+ * V4 adds the voice contract. Composition from two named, versioned artifacts is not the
+ * same thing as the string surgery removed above: both parts are immutable and the bundle
+ * records which version of each it used.
+ */
+export const ATTIRE_AGENT_PROMPT_V4 = `${VOICE_CONTRACT_V1}
+
+${ATTIRE_AGENT_PROMPT_V3}`
+
+export const ATTIRE_AGENT_PROMPT = ATTIRE_AGENT_PROMPT_V4

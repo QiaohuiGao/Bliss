@@ -9,7 +9,7 @@ and `docs/AGENTIC-SYSTEM-DESIGN.md`.
 | Capability | Required configuration |
 |---|---|
 | Core app | PostgreSQL, Clerk, `WEB_URL`, `NEXT_PUBLIC_API_URL` |
-| AI decisions | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
+| AI decisions | `AGENT_MODEL_PROVIDER` plus the selected provider's API key and model |
 | Operations | strong independent `CRON_SECRET` and `OPS_SECRET` |
 | Private Moment photos | private S3/R2 bucket and all `MEDIA_S3_*` variables |
 | Photographer search | `VENDOR_SEARCH_ENDPOINT`, `VENDOR_SEARCH_TOKEN` |
@@ -18,6 +18,10 @@ and `docs/AGENTIC-SYSTEM-DESIGN.md`.
 
 The provider-backed features fail closed when their configuration is absent.
 They do not substitute model memory, fake results, or a local write.
+
+Set `AGENT_MODEL_PROVIDER=gemini` with `GEMINI_API_KEY` and `GEMINI_MODEL`, or
+set it to `anthropic` with `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL`. Gemini is
+the default in `.env.example`; Anthropic remains available as a fallback.
 
 Set `NODE_ENV=production`. Non-production mode intentionally uses a development
 identity and relaxes wedding membership checks; it must never be used on a public
@@ -102,6 +106,7 @@ bun run smoke:photographer
 bun run smoke:scoping
 bun run smoke:couple
 bun run smoke:release
+bun run smoke:model
 ```
 
 If model quality regresses, stop the affected pack or capability first, restore

@@ -2,6 +2,8 @@ import { strict as assert } from 'node:assert'
 import { and, eq, inArray } from 'drizzle-orm'
 import { AgentRuntime } from '../src/agent/runtime'
 import { DatabaseDecisionCommitter } from '../src/agent/proposals/committer'
+import { DatabaseDecisionProposalStore } from '../src/agent/proposals/store'
+import { ATTIRE_QUESTION_KEY } from '../src/agent/packs/attire'
 import { correctMemoryClaim } from '../src/agent/memory/corrections'
 import { loadMemoryProfile } from '../src/agent/memory/profile'
 import { attachMomentAsset } from '../src/agent/memory/assets'
@@ -258,6 +260,39 @@ try {
     eq(decisionProposals.status, 'pending'),
   )).limit(1)
   assert.ok(proposal)
+
+  // A thread carries one decision. The first proposal locks which question that is.
+  const [lockedThread] = await db
+    .select({ questionKey: planningThreads.questionKey })
+    .from(planningThreads)
+    .where(eq(planningThreads.id, thread!.id))
+    .limit(1)
+  assert.equal(lockedThread!.questionKey, ATTIRE_QUESTION_KEY)
+
+  await assert.rejects(
+    () => new DatabaseDecisionProposalStore().create(
+      { runId: run.runId, weddingId: weddingId!, userId: userId!, threadId: thread!.id },
+      {
+        schemaVersion: 1,
+        threadId: thread!.id,
+        questKey: 'attire_beauty',
+        questionKey: 'attire.suit_acquisition',
+        state: 'contested',
+        summary: 'A second question must not retarget a locked thread',
+        proposedChoice: null,
+        reason: null,
+        alternativesConsidered: [],
+        memberInputs: [],
+        taskEffects: [],
+        memoryEffects: [],
+        externalActions: [],
+        vendorEffects: [],
+        momentCandidate: null,
+      },
+    ),
+    (error: unknown) => error instanceof AgentGuardrailError
+      && error.code === 'QUESTION_SCOPE_MISMATCH',
+  )
 
   const committer = new DatabaseDecisionCommitter()
   const key = crypto.randomUUID()
@@ -546,6 +581,7 @@ try {
   console.log(`  schedule decision reopens: ${timeConflicts.length}`)
   console.log(`  authored dependency edges: ${dependencyEdges.length}`)
   console.log('  decision revision: append-only supersession + branch replacement')
+  console.log(`  thread question scope: locked to ${ATTIRE_QUESTION_KEY}; cross-question proposal refused`)
 } finally {
   if (weddingId) await db.delete(weddings).where(eq(weddings.id, weddingId))
   if (userId) await db.delete(users).where(eq(users.id, userId))

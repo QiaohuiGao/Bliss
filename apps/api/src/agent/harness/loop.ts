@@ -43,10 +43,18 @@ const jsonForMessage = (value: unknown) => {
   }
 }
 
+/**
+ * The bounded tool-use loop. A run may only end through `finish`, so every exit
+ * carries a stop reason the caller can record and act on.
+ */
 export async function runAgentLoop(input: RunAgentLoopInput): Promise<AgentLoopResult> {
+  // Local copy: the caller's assembled context must survive this run unmutated.
   const messages = [...input.messages]
+  // The allowlist. A tool the caller did not pass is not callable, whatever the model asks for.
   const toolsByName = new Map(input.tools.map(tool => [tool.definition.name, tool]))
   const controller = new AbortController()
+  // `timedOut` distinguishes our own deadline from a caller cancellation; both abort the
+  // same controller, so the flag is the only way to tell them apart afterwards.
   let timedOut = false
   const timeout = setTimeout(() => {
     timedOut = true
@@ -76,12 +84,16 @@ export async function runAgentLoop(input: RunAgentLoopInput): Promise<AgentLoopR
 
   try {
     while (true) {
+      // Step 1 · budget gate. Checked before spending anything, so an exhausted run
+      // cannot buy one more model call on its way out.
       if (input.signal?.aborted) return finish('cancelled')
       if (timedOut) return finish('timeout')
       if (steps >= input.limits.maxSteps) return finish('max_steps')
       if (inputTokens + outputTokens >= input.limits.maxTokens) return finish('max_tokens')
       if (costMicros >= input.limits.maxCostMicros) return finish('max_cost')
 
+      // Step 2 · call the model. Counted before the call, so a provider that hangs or
+      // throws still consumes a step and cannot be retried forever.
       steps += 1
       const modelStartedAt = new Date()
       let response
@@ -100,11 +112,13 @@ export async function runAgentLoop(input: RunAgentLoopInput): Promise<AgentLoopR
           startedAt: modelStartedAt,
           endedAt,
         })
+        // An aborted call surfaces as a provider error; report why we aborted, not that.
         if (timedOut) return finish('timeout')
         if (input.signal?.aborted) return finish('cancelled')
         return finish('error')
       }
 
+      // Step 3 · account for what the call cost, then record the span.
       inputTokens += response.usage?.inputTokens ?? 0
       outputTokens += response.usage?.outputTokens ?? 0
       costMicros += response.usage?.costMicros ?? 0
@@ -120,6 +134,8 @@ export async function runAgentLoop(input: RunAgentLoopInput): Promise<AgentLoopR
         costMicros: response.usage?.costMicros,
       })
 
+      // Step 4 · append the turn before any early return, so a run that stops on budget
+      // still leaves a transcript the next run can resume from.
       if (response.text || response.toolCalls.length > 0) {
         messages.push({
           role: 'assistant',
@@ -128,13 +144,19 @@ export async function runAgentLoop(input: RunAgentLoopInput): Promise<AgentLoopR
         })
       }
 
+      // Step 5 · stop conditions. Re-check the spend budgets now that this call is
+      // accounted for: overspending should not also buy the tool calls it asked for.
       if (inputTokens + outputTokens > input.limits.maxTokens) return finish('max_tokens')
       if (costMicros > input.limits.maxCostMicros) return finish('max_cost')
+      // No tool call means the model has nothing left to do. This is the healthy exit.
       if (response.toolCalls.length === 0) return finish('natural')
 
+      // Step 6 · dispatch tools.
       for (const call of response.toolCalls) {
         const tool = toolsByName.get(call.name)
         const startedAt = new Date()
+        // A hallucinated tool name means the model is working from an assumption we did
+        // not give it. End the run rather than let it improvise around a rejection.
         if (!tool) {
           const error = new AgentGuardrailError(
             'TOOL_NOT_ALLOWED',
@@ -169,6 +191,8 @@ export async function runAgentLoop(input: RunAgentLoopInput): Promise<AgentLoopR
             toolCallId: call.id,
             content: jsonForMessage(result),
           })
+          // A terminal tool is the run's whole purpose (a Decision Packet). Once it lands
+          // there is nothing more to reason about, so stop instead of paying for a wrap-up turn.
           if (tool.terminal) return finish('terminal_tool', result)
         } catch (error) {
           const normalized = normalizedAgentError(error)
@@ -180,6 +204,8 @@ export async function runAgentLoop(input: RunAgentLoopInput): Promise<AgentLoopR
             startedAt,
             endedAt: new Date(),
           })
+          // The model is told what failed so it can adapt; a retryable failure (a flaky
+          // provider) earns another turn, a rule violation does not.
           messages.push({
             role: 'tool',
             toolCallId: call.id,
@@ -190,6 +216,7 @@ export async function runAgentLoop(input: RunAgentLoopInput): Promise<AgentLoopR
       }
     }
   } finally {
+    // Runs exit from many places; the timer and listener are released from exactly one.
     clearTimeout(timeout)
     input.signal?.removeEventListener('abort', cancel)
   }

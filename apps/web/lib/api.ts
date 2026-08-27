@@ -3,7 +3,7 @@ import type {
   DashboardResponse, OnboardingPayload, ModuleCelebration, Milestone,
   TaskPhoto, TaskVendor,
   PlanningThread, ThreadMessage, DecisionProposal, AttireAgentRunResult,
-  QuestScopingOverview,
+  QuestScopingOverview, QuestProgress,
   ConfirmDecisionResult,
   MemoryProfile, MemoryProfileClaim, BlissMoment, MomentAsset,
   ExternalAction, ApprovedActionResult, AgentFeedback,
@@ -126,15 +126,19 @@ export const api = {
     weddingId: string,
     token: string,
     questKey: 'attire_beauty' | 'vendor_team' | 'foundation' | 'venue_date' | 'wedding_party' | 'guests_stationery' | 'guest_experience' | 'food_beverage' | 'design_flowers' | 'ceremony' | 'registry_rings_honeymoon' | 'legal' | 'pre_wedding_events' | 'final_30_and_day_of' = 'attire_beauty',
+    questionKey?: string,
   ) =>
     apiFetch<PlanningThread>(`/weddings/${weddingId}/threads`, {
       method: 'POST',
-      body: JSON.stringify({ questKey }),
+      body: JSON.stringify({ questKey, questionKey }),
       token,
     }),
 
   getPlanningThreads: (weddingId: string, token: string) =>
     apiFetch<PlanningThread[]>(`/weddings/${weddingId}/threads`, { token }),
+
+  getQuestProgress: (weddingId: string, token: string) =>
+    apiFetch<QuestProgress[]>(`/weddings/${weddingId}/quest-progress`, { token }),
 
   getQuestScoping: (weddingId: string, questKey: string, token: string) =>
     apiFetch<QuestScopingOverview>(`/weddings/${weddingId}/quests/${questKey}/scoping`, { token }),

@@ -18,7 +18,9 @@
     "smoke:scoping": "bun run scripts/smoke-quest-scoping-agent.ts",
     "smoke:release": "bun run scripts/smoke-agent-release.ts",
     "smoke:couple": "bun run scripts/smoke-couple-workspace.ts",
-    "ops:agent": "bun run scripts/agent-ops-report.ts"
+    "smoke:model": "bun run scripts/smoke-model-provider.ts",
+    "ops:agent": "bun run scripts/agent-ops-report.ts",
+    "metrics:resume": "bun run scripts/resume-metrics.ts"
   },
   "dependencies": {
     "@bliss/types": "workspace:*",

@@ -23,6 +23,7 @@
     "smoke:scoping": "cd apps/api && bun run smoke:scoping",
     "smoke:release": "cd apps/api && bun run smoke:release",
     "smoke:couple": "cd apps/api && bun run smoke:couple",
+    "smoke:model": "cd apps/api && bun run smoke:model",
     "ops:agent": "cd apps/api && bun run ops:agent --"
   },
   "devDependencies": {

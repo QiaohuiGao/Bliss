@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Bliss — Onboarding</title>
+  <style>
+    /*
+     * Bliss onboarding. Continues bliss-landing.html: same tokens, same rings,
+     * same voice.
+     *
+     * The thesis: onboarding is not a form, it is the first conversation. So
+     * the screen is split into what Bliss ASKS (left) and what Bliss NOW KNOWS
+     * (right). Every answer becomes a visible, attributed, correctable claim —
+     * the same memory model the product runs on, shown from minute one.
+     *
+     * Two rules the layout enforces rather than merely states:
+     *   1. Never pushy — there is a permanent "this is enough for now" exit,
+     *      and no step is required.
+     *   2. Resourceful — after an answer, Bliss returns something USEFUL
+     *      (a lead time, a license window), never a new task.
+     */
+    :root {
+      --canvas: #eceeec;
+      --paper: #f8f9f7;
+      --paper-strong: #ffffff;
+      --ink: #242b2f;
+      --muted: #6d7474;
+      --quiet: #9ba19f;
+      --line: #dce0dc;
+      --line-strong: #c8cec9;
+      --violet: #52677a;
+      --violet-deep: #344958;
+      --violet-wash: #e9eef1;
+      --coral: #a16f68;
+      --coral-wash: #f4eae8;
+      --sage: #6f8175;
+      --sage-wash: #eaf0ec;
+      --amber: #a48655;
+      --amber-wash: #f4eee3;
+      --shadow: 0 22px 55px rgba(39, 47, 51, 0.11);
+      --shadow-small: 0 8px 24px rgba(39, 47, 51, 0.08);
+      --display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      --body: "Avenir Next", Avenir, "Segoe UI", Helvetica, Arial, sans-serif;
+      --utility: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-width: 320px; background: var(--canvas); }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--canvas);
+      font-family: var(--body);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { color: inherit; }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(82, 103, 122, 0.26);
+      outline-offset: 2px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0;
+      color: var(--muted);
+      font-family: var(--utility);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--violet);
+    }
+
+    .bliss-orb {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      border-radius: 12px 12px 12px 4px;
+      color: white;
+      background: var(--violet);
+      box-shadow: 0 7px 16px rgba(82, 103, 122, 0.23);
+      font-family: var(--display);
+      font-size: 17px;
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    /* ── Shell ──────────────────────────────────────────────────────────── */
+
+    .shell {
+      width: min(1320px, calc(100% - 28px));
+      min-height: calc(100vh - 28px);
+      margin: 14px auto;
+      overflow: hidden;
+      border: 1px solid rgba(203, 211, 223, 0.92);
+      border-radius: 30px;
+      background: rgba(248, 249, 247, 0.96);
+      box-shadow: var(--shadow);
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: 200px minmax(0, 1fr) 200px;
+      align-items: center;
+      gap: 20px;
+      min-height: 68px;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.86);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      text-decoration: none;
+    }
+
+    .brand-mark { position: relative; width: 31px; height: 25px; }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      width: 17px;
+      height: 17px;
+      border: 2px solid;
+      border-radius: 50%;
+    }
+
+    .brand-mark::before { left: 1px; border-color: var(--violet); }
+    .brand-mark::after { right: 1px; border-color: var(--coral); }
+
+    /* Progress reads as a sentence, not a percentage bar: there is no score to
+       chase, only a number of things Bliss now understands. */
+    .top-progress {
+      justify-self: center;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .pips { display: flex; gap: 5px; }
+
+    .pip {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--line-strong);
+      transition: background 350ms ease, transform 350ms ease;
+    }
+
+    .pip.filled { background: var(--violet); }
+    .pip.active { background: var(--coral); transform: scale(1.35); }
+
+    /* The permanent, non-punishing exit. */
+    .leave-button {
+      justify-self: end;
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      color: var(--muted);
+      background: white;
+      font-size: 11px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: border-color 170ms ease, color 170ms ease;
+    }
+
+    .leave-button:hover { border-color: var(--line-strong); color: var(--ink); }
+
+    .body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 372px;
+      min-height: calc(100vh - 96px);
+    }
+
+    /* ── Conversation ───────────────────────────────────────────────────── */
+
+    .talk {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: var(--paper-strong);
+    }
+
+    .talk-scroll {
+      flex: 1;
+      overflow: auto;
+      padding: 34px clamp(20px, 4vw, 60px) 20px;
+    }
+
+    .talk-inner { max-width: 640px; margin: 0 auto; }
+
+    .opening { margin-bottom: 30px; }
+
+    .opening h1 {
+      margin: 13px 0 0;
+      font-family: var(--display);
+      font-size: clamp(30px, 3.2vw, 43px);
+      font-weight: 500;
+      line-height: 1.03;
+      letter-spacing: -0.045em;
+    }
+
+    .opening h1 em { color: var(--violet-deep); font-style: italic; font-weight: 500; }
+
+    .opening p { margin: 13px 0 0; max-width: 520px; color: var(--muted); font-size: 13px; }
+
+    .turns { display: grid; gap: 17px; }
+
+    .turn { display: grid; gap: 11px; }
+
+    .turn-agent { grid-template-columns: 32px minmax(0, 1fr); align-items: start; }
+
+    .turn-user { grid-template-columns: minmax(0, 1fr) 30px; justify-items: end; margin-left: min(12vw, 110px); }
+
+    .bubble {
+      width: fit-content;
+      max-width: 100%;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      border-radius: 6px 16px 16px 16px;
+      background: var(--paper);
+      box-shadow: 0 4px 12px rgba(42, 53, 72, 0.04);
+      font-size: 13px;
+    }
+
+    .bubble p { margin: 0; }
+    .bubble p + p { margin-top: 8px; }
+
+    .turn-user .bubble {
+      color: white;
+      border-color: var(--ink);
+      border-radius: 16px 6px 16px 16px;
+      background: var(--ink);
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: white;
+      background: var(--violet);
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .enter { animation: fadeUp 460ms cubic-bezier(0.16, 0.84, 0.3, 1) both; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(9px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* Resourceful, not pushy: an answer earns information, never a new task. */
+    .useful {
+      margin-top: 11px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+    }
+
+    .useful-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 13px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .useful-top strong { font-size: 10px; }
+
+    .useful-source {
+      color: var(--violet-deep);
+      font-family: var(--utility);
+      font-size: 8px;
+      font-weight: 750;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .useful-row {
+      display: grid;
+      grid-template-columns: 116px minmax(0, 1fr);
+      gap: 12px;
+      padding: 10px 13px;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+    }
+
+    .useful-row:last-child { border-bottom: 0; }
+    .useful-row dt { color: var(--muted); font-weight: 700; }
+    .useful-row dd { margin: 0; color: var(--ink); }
+
+    .useful-note {
+      display: flex;
+      gap: 8px;
+      padding: 10px 13px;
+      color: #50665a;
+      background: var(--sage-wash);
+      font-size: 10px;
+    }
+
+    .thinking {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      color: var(--muted);
+      background: var(--paper);
+      font-size: 11px;
+    }
+
+    .thinking i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sage);
+      animation: pulse 1.1s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.35; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    /* ── Composer ───────────────────────────────────────────────────────── */
+
+    .composer-shell {
+      position: sticky;
+      bottom: 0;
+      padding: 11px clamp(20px, 4vw, 60px) 20px;
+      border-top: 1px solid rgba(220, 226, 235, 0.88);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(18px);
+    }
+
+    .composer-inner { max-width: 640px; margin: 0 auto; }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+
+    .chip {
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      color: var(--muted);
+      background: white;
+      font-size: 11px;
+      cursor: pointer;
+      transition: color 170ms ease, border-color 170ms ease, background 170ms ease;
+    }
+
+    .chip:hover {
+      color: var(--violet-deep);
+      border-color: #aebac2;
+      background: var(--violet-wash);
+    }
+
+    .chip-skip { color: var(--quiet); border-style: dashed; }
+
+    .composer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: 17px;
+      background: white;
+      box-shadow: 0 9px 30px rgba(39, 47, 51, 0.09);
+      transition: border-color 170ms ease, box-shadow 170ms ease;
+    }
+
+    .composer:focus-within {
+      border-color: #a2b0b9;
+      box-shadow: 0 9px 30px rgba(82, 103, 122, 0.13);
+    }
+
+    .composer textarea {
+      width: 100%;
+      min-height: 36px;
+      max-height: 110px;
+      padding: 8px 6px 5px;
+      resize: none;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+      background: transparent;
+      font-size: 13px;
+    }
+
+    .composer textarea::placeholder { color: var(--quiet); }
+
+    .send-button {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 11px;
+      color: white;
+      background: var(--violet);
+      box-shadow: 0 6px 15px rgba(82, 103, 122, 0.23);
+      cursor: pointer;
+    }
+
+    .composer-note { margin: 9px 0 0; color: var(--quiet); font-size: 10px; text-align: center; }
+
+    /* ── What Bliss now knows ───────────────────────────────────────────── */
+
+    .knows {
+      padding: 24px 20px 26px;
+      overflow: auto;
+      border-left: 1px solid var(--line);
+      background: rgba(246, 247, 245, 0.84);
+    }
+
+    .knows-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .knows-head strong { font-family: var(--display); font-size: 20px; letter-spacing: -0.025em; }
+    .knows-head span { color: var(--muted); font-family: var(--utility); font-size: 9px; font-weight: 750; }
+
+    .knows > p { margin: 0 0 15px; color: var(--muted); font-size: 11px; }
+
+    .claims { display: grid; gap: 7px; }
+
+    .claim {
+      position: relative;
+      padding: 11px 12px 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: white;
+      animation: fadeUp 460ms cubic-bezier(0.16, 0.84, 0.3, 1) both;
+    }
+
+    /* Attribution is a colour, exactly as in the workspace. */
+    .claim::before {
+      content: "";
+      position: absolute;
+      top: 11px;
+      bottom: 11px;
+      left: 0;
+      width: 2px;
+      border-radius: 0 2px 2px 0;
+      background: var(--violet);
+    }
+
+    .claim[data-who="both"]::before { background: linear-gradient(180deg, var(--violet) 0 50%, var(--coral) 50%); }
+    .claim[data-who="b"]::before { background: var(--coral); }
+    .claim[data-who="assumed"]::before { background: var(--line-strong); }
+
+    .claim-top {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 4px;
+    }
+
+    .claim-kind {
+      color: var(--muted);
+      font-family: var(--utility);
+      font-size: 8px;
+      font-weight: 750;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .claim-source {
+      margin-left: auto;
+      padding: 3px 6px;
+      border-radius: 99px;
+      color: var(--violet-deep);
+      background: var(--violet-wash);
+      font-size: 8px;
+      font-weight: 750;
+    }
+
+    /* An assumption must never look like a confirmed decision. */
+    .claim[data-who="assumed"] .claim-source { color: #765e38; background: var(--amber-wash); }
+
+    .claim strong { display: block; font-size: 12px; }
+    .claim p { margin: 2px 0 0; color: var(--muted); font-size: 10px; }
+
+    .claim-fix {
+      margin-top: 6px;
+      padding: 0;
+      border: 0;
+      color: var(--violet-deep);
+      background: transparent;
+      font-size: 9px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .knows-empty {
+      padding: 22px 14px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 13px;
+      color: var(--quiet);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .chapters-mini { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); }
+
+    .chapters-mini h3 {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 11px;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .chapters-mini h3 span { color: var(--muted); font-size: 10px; font-weight: 500; }
+
+    .mini-arc {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(14, minmax(0, 1fr));
+      gap: 2px;
+      padding-top: 3px;
+    }
+
+    .mini-arc::before {
+      content: "";
+      position: absolute;
+      top: 7px;
+      right: 8px;
+      left: 8px;
+      height: 1px;
+      background: var(--line-strong);
+    }
+
+    .mini-dot {
+      position: relative;
+      z-index: 1;
+      justify-self: center;
+      width: 9px;
+      height: 9px;
+      border: 2px solid rgba(246, 247, 245, 1);
+      border-radius: 50%;
+      background: var(--line-strong);
+      box-shadow: 0 0 0 1px var(--line-strong);
+      transition: background 400ms ease, box-shadow 400ms ease;
+    }
+
+    .mini-dot.touched { background: var(--amber); box-shadow: 0 0 0 1px var(--amber); }
+
+    .chapters-mini p { margin: 12px 0 0; color: var(--quiet); font-size: 10px; }
+
+    .done-panel {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #a9c2b6;
+      border-radius: 16px;
+      background: var(--sage-wash);
+      animation: fadeUp 500ms cubic-bezier(0.16, 0.84, 0.3, 1) both;
+    }
+
+    .done-panel strong { display: block; font-family: var(--display); font-size: 17px; letter-spacing: -0.02em; }
+    .done-panel p { margin: 5px 0 12px; color: #50665a; font-size: 11px; }
+
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      min-height: 40px;
+      padding: 0 14px;
+      border: 1px solid var(--violet);
+      border-radius: 12px;
+      color: white;
+      background: var(--violet);
+      box-shadow: 0 7px 16px rgba(82, 103, 122, 0.19);
+      font-size: 11px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform 170ms ease, box-shadow 170ms ease;
+    }
+
+    .primary-button:hover { transform: translateY(-1px); box-shadow: var(--shadow-small); }
+
+    /* ── Responsive ─────────────────────────────────────────────────────── */
+
+    @media (max-width: 1080px) {
+      .body { grid-template-columns: minmax(0, 1fr) 320px; }
+    }
+
+    @media (max-width: 900px) {
+      .body { display: block; }
+      .knows { border-left: 0; border-top: 1px solid var(--line); }
+      .top { grid-template-columns: 1fr auto; }
+      .top-progress { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: 100%; min-height: 100vh; margin: 0; border: 0; border-radius: 0; }
+      .talk-scroll { padding: 24px 14px 16px; }
+      .composer-shell { padding: 10px 14px 16px; }
+      .knows { padding: 20px 14px 26px; }
+      .useful-row { grid-template-columns: 1fr; gap: 2px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="top">
+      <a class="brand" href="#" aria-label="Bliss">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Bliss</span>
+      </a>
+
+      <div class="top-progress">
+        <span class="pips" id="pips" aria-hidden="true">
+          <span class="pip active"></span>
+          <span class="pip"></span>
+          <span class="pip"></span>
+          <span class="pip"></span>
+          <span class="pip"></span>
+        </span>
+        <span id="progressText">Getting to know you</span>
+      </div>
+
+      <button class="leave-button" type="button" id="leaveButton">This is enough for now</button>
+    </header>
+
+    <div class="body">
+      <section class="talk" aria-label="Setting up with Bliss">
+        <div class="talk-scroll" id="talkScroll">
+          <div class="talk-inner">
+            <div class="opening">
+              <p class="eyebrow">Maya &amp; Theo · Engaged May 30, 2026</p>
+              <h1>Let's start where <em>you actually are.</em></h1>
+              <p>You do not have to answer like a planner. Start with what feels true; Bliss will turn it into a path only when it helps.</p>
+            </div>
+
+            <div class="turns" id="turns">
+              <article class="turn turn-agent enter">
+                <span class="bliss-orb" aria-hidden="true">b</span>
+                <div class="bubble">
+                  <p>Maya and Theo, I’m glad you’re here.</p>
+                  <p>Before dates or lists: when you picture the day from the inside—not how it looks—what do you hope the two of you feel?</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer-shell">
+          <div class="composer-inner">
+            <div class="chip-row" id="chipRow"></div>
+            <form class="composer" id="composer">
+              <textarea id="composerInput" rows="1" aria-label="Reply to Bliss" placeholder="Answer in your own words…"></textarea>
+              <button class="send-button" type="submit" aria-label="Send">↑</button>
+            </form>
+            <p class="composer-note" id="composerNote">Nothing here is locked in. Bliss only records what you confirm.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="knows" aria-labelledby="knowsTitle">
+        <div class="knows-head">
+          <strong id="knowsTitle">What Bliss knows</strong>
+          <span id="claimCount">0</span>
+        </div>
+        <p>Every line came from something one of you said. Correct anything that is wrong — corrections stick.</p>
+
+        <div class="claims" id="claims">
+          <div class="knows-empty" id="knowsEmpty">Nothing yet. This fills in as you talk.</div>
+        </div>
+
+        <section class="chapters-mini">
+          <h3>The fourteen chapters <span id="touchedCount">0 touched</span></h3>
+          <div class="mini-arc" id="miniArc" aria-hidden="true"></div>
+          <p>Answering here quietly opens the chapters this affects. None of them become work until you decide something.</p>
+        </section>
+
+        <div id="donePanelSlot"></div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    /*
+     * Scripted onboarding. Each step declares the question, the quick replies,
+     * what Bliss learns from an answer, and — where it is genuinely useful —
+     * one sourced fact returned to the couple.
+     */
+    const STEPS = [
+      {
+        id: 'feeling',
+        progress: 'Finding your compass',
+        chips: ['Relaxed and unhurried', 'Alive and full of people', 'Intimate and deeply personal', 'We picture it differently'],
+        claim: (answer) => ({
+          who: 'both',
+          kind: 'Starting point · feeling',
+          value: answer,
+          note: 'A compass for later choices, not a theme to lock in.',
+        }),
+        touch: [0, 6, 8],
+        reply: (answer) => ({
+          text: answer.toLowerCase().includes('differently')
+            ? 'That is useful to know this early. I will keep both pictures open instead of blending them into an answer neither of you gave.'
+            : `I’m hearing “${answer.toLowerCase()}.” I’ll use that as a compass when choices get noisy—not as a theme you have to defend.`,
+          next: 'Looking ahead, is there already a date or season in view, or does the calendar still feel completely open?',
+        }),
+      },
+      {
+        id: 'date',
+        progress: 'Giving the story a horizon',
+        chips: ['June 2027', 'A season, not a date', 'Still completely open'],
+        claim: (answer) => ({
+          who: 'both',
+          kind: 'Fact · wedding date',
+          value: answer,
+          note: 'Everything Bliss schedules will count back from this only after you confirm it.',
+        }),
+        touch: [1, 4, 11, 12],
+        reply: (answer) => ({
+          text: answer.toLowerCase().includes('open')
+            ? 'Open is a real answer. I can keep the plan useful without inventing a deadline for you.'
+            : `${answer} gives us enough of a horizon. I’ll tell you when timing changes a choice; until then, nothing needs to feel urgent.`,
+          next: 'Is there a place pulling you already—a city, a region, somewhere near family—or is that open too?',
+        }),
+      },
+      {
+        id: 'place',
+        progress: 'Finding a possible setting',
+        chips: ['Hudson Valley, NY', 'Somewhere near family', 'No idea yet'],
+        claim: (answer) => ({
+          who: 'both',
+          kind: 'Fact · location',
+          value: answer,
+          note: 'Helps Bliss bring in local and legal information only when relevant.',
+        }),
+        touch: [1, 3, 9],
+        reply: (answer) => ({
+          text: answer.toLowerCase().includes('no idea')
+            ? 'Then I’ll leave the map blank. When you are ready, we can compare places by what matters to you instead of opening an endless venue search.'
+            : `I’ll hold “${answer}” as a direction, not a commitment. Local rules and venue information can wait until the place is real enough to need them.`,
+          next: 'When you imagine the room around you, does it feel small and close, lively and generous, or is guest count one of the things you see differently?',
+        }),
+      },
+      {
+        id: 'people',
+        progress: 'Understanding the circle around you',
+        chips: ['Small and close', 'Around 100 people', 'A big, generous celebration', 'We see this differently'],
+        claim: (answer) => ({
+          who: 'both',
+          kind: answer.toLowerCase().includes('differently') ? 'Open question · guest shape' : 'Starting point · guest shape',
+          value: answer,
+          note: answer.toLowerCase().includes('differently') ? 'Both positions stay open until each person is heard.' : 'A planning range, not a final guest count.',
+        }),
+        touch: [2, 5, 7, 8],
+        reply: (answer) => ({
+          text: answer.toLowerCase().includes('differently')
+            ? 'That is a real trade-off, not a problem to solve in one message. I’ll keep it open and later help you compare what each version protects.'
+            : `That gives the celebration a shape without turning anyone into a number. “${answer}” is enough for now.`,
+          next: 'One last thing: when planning gets complicated, what kind of help would feel most supportive from Bliss?',
+        }),
+      },
+      {
+        id: 'support',
+        progress: 'Choosing how Bliss shows up',
+        chips: ['Give us one clear next step', 'Bring options, then let us talk', 'Help us work through disagreements', 'We’ll learn as we go'],
+        claim: (answer) => ({
+          who: 'both',
+          kind: 'Preference · planning support',
+          value: answer,
+          note: 'Bliss will use this to pace questions and recommendations.',
+        }),
+        touch: [0, 4, 10, 13],
+        reply: (answer) => ({
+          text: `I can do that: ${answer.toLowerCase()}. I’ll keep this as a preference you can change, and I won’t confuse being helpful with taking over.`,
+          next: null,
+        }),
+      },
+    ];
+
+    const CHAPTERS = 14;
+
+    const turns = document.getElementById('turns');
+    const talkScroll = document.getElementById('talkScroll');
+    const chipRow = document.getElementById('chipRow');
+    const composer = document.getElementById('composer');
+    const input = document.getElementById('composerInput');
+    const claims = document.getElementById('claims');
+    const knowsEmpty = document.getElementById('knowsEmpty');
+    const claimCount = document.getElementById('claimCount');
+    const miniArc = document.getElementById('miniArc');
+    const touchedCount = document.getElementById('touchedCount');
+    const pips = document.getElementById('pips');
+    const progressText = document.getElementById('progressText');
+    const donePanelSlot = document.getElementById('donePanelSlot');
+    const leaveButton = document.getElementById('leaveButton');
+    const composerNote = document.getElementById('composerNote');
+
+    let stepIndex = 0;
+    let claimTotal = 0;
+    const confirmedClaims = [];
+    const touched = new Set();
+
+    for (let i = 0; i < CHAPTERS; i += 1) {
+      const dot = document.createElement('span');
+      dot.className = 'mini-dot';
+      miniArc.appendChild(dot);
+    }
+
+    const dots = Array.from(miniArc.children);
+
+    function scrollDown() {
+      window.requestAnimationFrame(() => { talkScroll.scrollTop = talkScroll.scrollHeight; });
+    }
+
+    function renderChips() {
+      chipRow.innerHTML = '';
+      const step = STEPS[stepIndex];
+      if (!step) return;
+
+      step.chips.forEach((label) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip';
+        chip.textContent = label;
+        chip.addEventListener('click', () => answer(label));
+        chipRow.appendChild(chip);
+      });
+
+      const skip = document.createElement('button');
+      skip.type = 'button';
+      skip.className = 'chip chip-skip';
+      skip.textContent = 'Skip this one';
+      skip.addEventListener('click', () => advance(null));
+      chipRow.appendChild(skip);
+    }
+
+    function addUserTurn(text) {
+      const node = document.createElement('article');
+      node.className = 'turn turn-user enter';
+      node.innerHTML = '<div class="bubble"><p></p></div><span class="avatar" aria-label="You">M</span>';
+      node.querySelector('p').textContent = text;
+      turns.appendChild(node);
+      scrollDown();
+    }
+
+    function addThinking() {
+      const node = document.createElement('article');
+      node.className = 'turn turn-agent enter';
+      node.id = 'thinkingTurn';
+      node.innerHTML = '<span class="bliss-orb" aria-hidden="true">b</span><span class="thinking"><i aria-hidden="true"></i>Thinking about what you just said…</span>';
+      turns.appendChild(node);
+      scrollDown();
+      return node;
+    }
+
+    function usefulMarkup(useful) {
+      if (!useful) return '';
+      const rows = useful.rows
+        .map(([label, value]) => `<div class="useful-row"><dt>${label}</dt><dd>${value}</dd></div>`)
+        .join('');
+      return `<div class="useful">
+          <div class="useful-top"><strong>${useful.title}</strong><span class="useful-source">${useful.source}</span></div>
+          <dl style="margin:0">${rows}</dl>
+          <p class="useful-note"><span aria-hidden="true">◆</span><span>${useful.note}</span></p>
+        </div>`;
+    }
+
+    function addAgentTurn(reply) {
+      const node = document.createElement('article');
+      node.className = 'turn turn-agent enter';
+      const next = reply.next ? `<p>${reply.next}</p>` : '';
+      node.innerHTML = `<span class="bliss-orb" aria-hidden="true">b</span>
+        <div><div class="bubble"><p>${reply.text}</p>${next}</div>${usefulMarkup(reply.useful)}</div>`;
+      turns.appendChild(node);
+      scrollDown();
+    }
+
+    function addClaim(claim) {
+      knowsEmpty.remove?.();
+      confirmedClaims.push(claim);
+      const node = document.createElement('article');
+      node.className = 'claim';
+      node.dataset.who = claim.who;
+      node.innerHTML = `<div class="claim-top"><span class="claim-kind">${claim.kind}</span><span class="claim-source">You said this</span></div>
+        <strong></strong><p>${claim.note}</p><button class="claim-fix" type="button">Correct this</button>`;
+      node.querySelector('strong').textContent = claim.value;
+      claims.appendChild(node);
+      claimTotal += 1;
+      claimCount.textContent = String(claimTotal);
+    }
+
+    function markTouched(list) {
+      (list || []).forEach((i) => {
+        touched.add(i);
+        dots[i]?.classList.add('touched');
+      });
+      touchedCount.textContent = `${touched.size} touched`;
+    }
+
+    function syncPips() {
+      Array.from(pips.children).forEach((pip, i) => {
+        pip.classList.toggle('filled', i < stepIndex);
+        pip.classList.toggle('active', i === stepIndex);
+      });
+      progressText.textContent = STEPS[stepIndex]?.progress ?? 'Ready when you are';
+    }
+
+    function finish() {
+      chipRow.innerHTML = '';
+      composerNote.textContent = 'You can keep talking here, or go into your workspace. Both work.';
+      donePanelSlot.innerHTML = `<div class="done-panel">
+          <strong>That is plenty to start</strong>
+          <p>Bliss has enough to be useful. What you shared will arrive as an editable starting point, not a locked decision.</p>
+          <button class="primary-button" id="openWorkspace" type="button">See what carries into our workspace →</button>
+        </div>`;
+      document.getElementById('openWorkspace').addEventListener('click', () => {
+        const draft = {
+          couple: ['Maya', 'Theo'],
+          engagedOn: 'May 30, 2026',
+          claims: confirmedClaims,
+          createdAt: new Date().toISOString(),
+        };
+        localStorage.setItem('blissPrototypeDraft', JSON.stringify(draft));
+        window.location.href = 'bliss-first-home.html';
+      });
+      syncPips();
+    }
+
+    function advance(claim, touch) {
+      if (claim) addClaim(claim);
+      markTouched(touch);
+      stepIndex += 1;
+      syncPips();
+      if (stepIndex >= STEPS.length) { finish(); return; }
+      renderChips();
+    }
+
+    function answer(text) {
+      const step = STEPS[stepIndex];
+      if (!step) return;
+
+      addUserTurn(text);
+      chipRow.innerHTML = '';
+      const thinking = addThinking();
+
+      window.setTimeout(() => {
+        thinking.remove();
+        addAgentTurn(step.reply(text));
+        advance(step.claim(text), step.touch);
+      }, 780);
+    }
+
+    composer.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const value = input.value.trim();
+      if (!value) return;
+      input.value = '';
+      input.style.height = 'auto';
+      answer(value);
+    });
+
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = `${Math.min(input.scrollHeight, 110)}px`;
+    });
+
+    leaveButton.addEventListener('click', () => {
+      addAgentTurn({
+        text: 'Of course. I will keep what you have told me and pick this up whenever you come back. Nothing expires.',
+        next: null,
+      });
+      chipRow.innerHTML = '';
+      finish();
+    });
+
+    renderChips();
+    syncPips();
+  </script>
+</body>
+</html>

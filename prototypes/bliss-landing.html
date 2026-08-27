@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Bliss — Welcome</title>
+  <style>
+    /*
+     * Bliss landing. Same design language as bliss-agent-workspace.html:
+     * identical tokens, identical type roles, same two-ring brand mark.
+     *
+     * One idea carries the page: the mark is also the animation and also the
+     * progress indicator. Two rings arrive separately, converge as the couple
+     * gives their names, and the shared lens fills once they mark the day they
+     * said yes. Everything else stays quiet.
+     */
+    :root {
+      --canvas: #eceeec;
+      --paper: #f8f9f7;
+      --paper-strong: #ffffff;
+      --ink: #242b2f;
+      --muted: #6d7474;
+      --quiet: #9ba19f;
+      --line: #dce0dc;
+      --line-strong: #c8cec9;
+      --violet: #52677a;
+      --violet-deep: #344958;
+      --violet-wash: #e9eef1;
+      --coral: #a16f68;
+      --coral-wash: #f4eae8;
+      --sage: #6f8175;
+      --sage-wash: #eaf0ec;
+      --amber: #a48655;
+      --amber-wash: #f4eee3;
+      --shadow: 0 22px 55px rgba(39, 47, 51, 0.11);
+      --shadow-small: 0 8px 24px rgba(39, 47, 51, 0.08);
+      --display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      --body: "Avenir Next", Avenir, "Segoe UI", Helvetica, Arial, sans-serif;
+      --utility: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-width: 320px; background: var(--canvas); }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font-family: var(--body);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    button:focus-visible,
+    input:focus-visible,
+    a:focus-visible {
+      outline: 3px solid rgba(82, 103, 122, 0.26);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0;
+      color: var(--muted);
+      font-family: var(--utility);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--violet);
+    }
+
+    /* ── Shell ──────────────────────────────────────────────────────────── */
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      height: 76px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      color: var(--ink);
+      text-decoration: none;
+      font-family: var(--display);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 31px;
+      height: 25px;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      width: 17px;
+      height: 17px;
+      border: 2px solid;
+      border-radius: 50%;
+    }
+
+    .brand-mark::before { left: 1px; border-color: var(--violet); }
+    .brand-mark::after { right: 1px; border-color: var(--coral); }
+
+    .header-link {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .header-link:hover { color: var(--ink); }
+
+    /* ── Hero ───────────────────────────────────────────────────────────── */
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 420px;
+      align-items: center;
+      gap: 56px;
+      padding: 30px 0 84px;
+    }
+
+    .hero-copy { max-width: 560px; }
+
+    .hero h1 {
+      margin: 14px 0 0;
+      font-family: var(--display);
+      font-size: clamp(38px, 4.6vw, 62px);
+      font-weight: 500;
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+    }
+
+    .hero h1 em {
+      color: var(--violet-deep);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .hero-copy > p {
+      max-width: 480px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* Line-by-line reveal: one orchestrated entrance, not scattered effects. */
+    .reveal {
+      display: block;
+      overflow: hidden;
+    }
+
+    .reveal > span {
+      display: block;
+      transform: translateY(102%);
+      animation: rise 900ms cubic-bezier(0.16, 0.84, 0.3, 1) forwards;
+    }
+
+    .reveal:nth-of-type(1) > span { animation-delay: 620ms; }
+    .reveal:nth-of-type(2) > span { animation-delay: 730ms; }
+    .reveal:nth-of-type(3) > span { animation-delay: 840ms; }
+
+    @keyframes rise { to { transform: translateY(0); } }
+
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 800ms cubic-bezier(0.16, 0.84, 0.3, 1) forwards;
+    }
+
+    .hero .eyebrow.fade-up { animation-delay: 420ms; }
+    .hero-copy > p.fade-up { animation-delay: 1000ms; }
+    .hero-note.fade-up { animation-delay: 1120ms; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(9px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .hero-note {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 26px 0 0;
+      color: var(--quiet);
+      font-size: 12px;
+    }
+
+    .hero-note i {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--sage);
+    }
+
+    /* ── The rings: mark, animation, and progress in one object ─────────── */
+
+    .rings {
+      position: relative;
+      justify-self: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .rings svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+    .ring {
+      fill: none;
+      stroke-width: 1.6;
+      stroke-dasharray: 396;
+      stroke-dashoffset: 396;
+      animation: draw 1500ms cubic-bezier(0.32, 0.72, 0.24, 1) 160ms forwards;
+    }
+
+    .ring-a { stroke: var(--violet); }
+    .ring-b { stroke: var(--coral); animation-delay: 320ms; }
+
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+
+    /* Each group slides inward as the couple answers. */
+    .ring-group {
+      transition: transform 900ms cubic-bezier(0.16, 0.84, 0.3, 1);
+    }
+
+    .group-a { transform: translateX(-30px); }
+    .group-b { transform: translateX(30px); }
+
+    .rings[data-step="names"] .group-a { transform: translateX(-22px); }
+    .rings[data-step="names"] .group-b { transform: translateX(22px); }
+    .rings[data-step="date"] .group-a,
+    .rings[data-step="ready"] .group-a { transform: translateX(-18px); }
+    .rings[data-step="date"] .group-b,
+    .rings[data-step="ready"] .group-b { transform: translateX(18px); }
+
+    /* The shared lens: the only place the two colours meet. */
+    .lens {
+      opacity: 0;
+      transition: opacity 700ms ease;
+    }
+
+    .rings[data-step="date"] .lens,
+    .rings[data-step="ready"] .lens { opacity: 1; }
+
+    .knot {
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+      transform: scale(0.4);
+      transition: opacity 500ms ease, transform 600ms cubic-bezier(0.2, 1.5, 0.4, 1);
+    }
+
+    .rings[data-step="ready"] .knot { opacity: 1; transform: scale(1); }
+
+    .ring-caption {
+      margin: 20px auto 0;
+      max-width: 300px;
+      color: var(--quiet);
+      font-size: 11px;
+      text-align: center;
+      transition: opacity 400ms ease;
+    }
+
+    /* ── Story beats ────────────────────────────────────────────────────── */
+
+    .beats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-bottom: 90px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--line);
+      overflow: hidden;
+    }
+
+    .beat {
+      padding: 30px 26px 34px;
+      background: var(--paper);
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 700ms ease, transform 700ms cubic-bezier(0.16, 0.84, 0.3, 1);
+    }
+
+    .beat.in { opacity: 1; transform: none; }
+    .beat:nth-child(2) { transition-delay: 110ms; }
+    .beat:nth-child(3) { transition-delay: 220ms; }
+
+    /* The numerals are real: this is the order the year actually happens in. */
+    .beat-index {
+      color: var(--quiet);
+      font-family: var(--utility);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+    }
+
+    .beat h2 {
+      margin: 12px 0 8px;
+      font-family: var(--display);
+      font-size: 25px;
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -0.032em;
+    }
+
+    .beat p { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .beat:nth-child(2) .beat-index { color: #9c8065; }
+    .beat:nth-child(3) .beat-index { color: #6b8073; }
+
+    /* ── Fourteen chapters, quietly ─────────────────────────────────────── */
+
+    .chapters {
+      margin-bottom: 90px;
+      padding: 34px 32px 36px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--paper-strong);
+      box-shadow: var(--shadow-small);
+    }
+
+    .chapters-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 26px;
+    }
+
+    .chapters h2 {
+      margin: 11px 0 0;
+      font-family: var(--display);
+      font-size: 29px;
+      font-weight: 500;
+      letter-spacing: -0.035em;
+    }
+
+    .chapters-head p {
+      max-width: 380px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .chapter-arc {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(14, minmax(0, 1fr));
+      gap: 2px;
+      padding-top: 16px;
+    }
+
+    .chapter-arc::before {
+      content: "";
+      position: absolute;
+      top: 21px;
+      right: 16px;
+      left: 16px;
+      height: 1px;
+      background: var(--line-strong);
+    }
+
+    .chapter {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      justify-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    .chapter-dot {
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--paper-strong);
+      border-radius: 50%;
+      background: var(--line-strong);
+      box-shadow: 0 0 0 1px var(--line-strong);
+      transition: background 300ms ease, box-shadow 300ms ease, transform 300ms ease;
+    }
+
+    .chapter:hover .chapter-dot {
+      background: var(--violet);
+      box-shadow: 0 0 0 1px var(--violet);
+      transform: scale(1.25);
+    }
+
+    .chapter-name {
+      overflow: hidden;
+      max-width: 100%;
+      color: var(--quiet);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-align: center;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: color 300ms ease;
+    }
+
+    .chapter:hover .chapter-name { color: var(--ink); }
+
+    .chapters-foot {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 28px 0 0;
+      padding: 12px 15px;
+      border-left: 2px solid var(--sage);
+      color: #50665a;
+      background: var(--sage-wash);
+      font-size: 12px;
+    }
+
+    /* ── Entry: one question at a time ──────────────────────────────────── */
+
+    .entry {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 460px;
+      align-items: center;
+      gap: 56px;
+      margin-bottom: 96px;
+    }
+
+    .entry-copy h2 {
+      margin: 12px 0 0;
+      max-width: 420px;
+      font-family: var(--display);
+      font-size: clamp(29px, 3vw, 40px);
+      font-weight: 500;
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+    }
+
+    .entry-copy > p {
+      max-width: 400px;
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .promise {
+      display: grid;
+      gap: 9px;
+      margin: 26px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .promise li {
+      display: grid;
+      grid-template-columns: 15px 1fr;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .promise b { color: var(--ink); font-weight: 700; }
+
+    .promise i {
+      margin-top: 5px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--violet);
+    }
+
+    .promise li:nth-child(2) i { background: var(--coral); }
+    .promise li:nth-child(3) i { background: var(--sage); }
+    .promise li:nth-child(4) i { background: var(--amber); }
+
+    .entry-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--paper-strong);
+      box-shadow: var(--shadow);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .card-step {
+      color: var(--muted);
+      font-family: var(--utility);
+      font-size: 9px;
+      font-weight: 750;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .bliss-orb {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 12px 12px 12px 4px;
+      color: white;
+      background: var(--violet);
+      box-shadow: 0 7px 16px rgba(82, 103, 122, 0.23);
+      font-family: var(--display);
+      font-size: 17px;
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .card-body { padding: 22px 20px 20px; }
+
+    .question {
+      display: none;
+      animation: fadeUp 500ms cubic-bezier(0.16, 0.84, 0.3, 1) both;
+    }
+
+    .question.active { display: block; }
+
+    .question h3 {
+      margin: 0;
+      font-family: var(--display);
+      font-size: 25px;
+      font-weight: 500;
+      line-height: 1.12;
+      letter-spacing: -0.032em;
+    }
+
+    .question > p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .field-pair {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      color: var(--ink);
+      background: white;
+      font-size: 13px;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .field input::placeholder { color: var(--quiet); }
+
+    .field input:focus {
+      border-color: #a2b0b9;
+      box-shadow: 0 0 0 4px rgba(82, 103, 122, 0.09);
+      outline: none;
+    }
+
+    .field-a input:focus { border-color: var(--violet); }
+    .field-b input:focus { border-color: var(--coral); }
+
+    .amp {
+      padding-bottom: 12px;
+      color: var(--quiet);
+      font-family: var(--display);
+      font-size: 19px;
+      font-style: italic;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-top: 22px;
+    }
+
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 18px;
+      border: 1px solid var(--violet);
+      border-radius: 12px;
+      color: white;
+      background: var(--violet);
+      box-shadow: 0 7px 16px rgba(82, 103, 122, 0.19);
+      font-size: 11px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform 170ms ease, box-shadow 170ms ease, opacity 170ms ease;
+    }
+
+    .primary-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-small);
+    }
+
+    .primary-button:disabled { cursor: not-allowed; opacity: 0.42; }
+
+    .text-button {
+      padding: 0;
+      border: 0;
+      color: var(--violet-deep);
+      background: transparent;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .assurance {
+      margin: 14px 0 0;
+      color: var(--quiet);
+      font-size: 10px;
+    }
+
+    /* Handoff into the workspace conversation. */
+    .handoff { display: none; }
+    .handoff.active { display: block; animation: fadeUp 600ms cubic-bezier(0.16, 0.84, 0.3, 1) both; }
+
+    /* The card header already identifies Bliss; a second orb beside the bubble
+       would just repeat it. */
+    .agent-line > .bliss-orb { display: none; }
+
+    .bubble {
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      border-radius: 6px 16px 16px 16px;
+      background: var(--paper);
+      font-size: 13px;
+    }
+
+    .bubble p { margin: 0; }
+    .bubble p + p { margin-top: 8px; }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      color: var(--muted);
+      background: white;
+      font-size: 11px;
+      cursor: pointer;
+      transition: color 170ms ease, border-color 170ms ease, background 170ms ease;
+    }
+
+    .chip:hover {
+      color: var(--violet-deep);
+      border-color: #aebac2;
+      background: var(--violet-wash);
+    }
+
+    /* ── Footer ─────────────────────────────────────────────────────────── */
+
+    .site-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 26px 0 40px;
+      border-top: 1px solid var(--line);
+      color: var(--quiet);
+      font-size: 11px;
+    }
+
+    .site-footer nav { display: flex; gap: 18px; }
+    .site-footer a { color: var(--quiet); text-decoration: none; }
+    .site-footer a:hover { color: var(--ink); }
+
+    /* ── Responsive ─────────────────────────────────────────────────────── */
+
+    @media (max-width: 1020px) {
+      .hero, .entry { grid-template-columns: minmax(0, 1fr); gap: 44px; }
+      .hero { padding-bottom: 64px; }
+      .rings { max-width: 330px; order: -1; }
+      .entry-card { order: -1; }
+      .beats { grid-template-columns: 1fr; }
+      .chapters-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .chapters-head p { text-align: left; }
+    }
+
+    @media (max-width: 640px) {
+      .page { width: calc(100% - 24px); }
+      .chapter-name { display: none; }
+      .chapter-arc { padding-top: 8px; }
+      .chapter-arc::before { top: 13px; }
+      .chapters { padding: 26px 20px 28px; }
+      .field-pair { grid-template-columns: 1fr; }
+      .amp { display: none; }
+      .site-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        animation-iteration-count: 1 !important;
+      }
+      .reveal > span { transform: none; }
+      .beat { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Bliss">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Bliss</span>
+      </a>
+      <a class="header-link" href="#entry">Already planning? Sign in</a>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow fade-up">For the two of you</p>
+        <h1>
+          <span class="reveal"><span>You are about to plan</span></span>
+          <span class="reveal"><span>something that has</span></span>
+          <span class="reveal"><span><em>never existed before.</em></span></span>
+        </h1>
+        <p class="fade-up">A wedding is a year of small decisions made by two people who have never made them before. Bliss stays next to you for all of it — curious about what you actually want, useful when it gets heavy, and careful to remember why each choice mattered.</p>
+        <p class="hero-note fade-up"><i aria-hidden="true"></i>Two people, one workspace. Nothing is hidden from each other.</p>
+      </div>
+
+      <div class="rings" id="rings" data-step="start">
+        <svg viewBox="0 0 400 260" role="img" aria-labelledby="ringsTitle">
+          <title id="ringsTitle">Two rings that meet where the two of you agree</title>
+          <defs>
+            <clipPath id="lensClip">
+              <circle cx="170" cy="130" r="63"></circle>
+            </clipPath>
+            <linearGradient id="lensFill" x1="0" x2="1">
+              <stop offset="0%" stop-color="#52677a" stop-opacity="0.16"></stop>
+              <stop offset="100%" stop-color="#a16f68" stop-opacity="0.16"></stop>
+            </linearGradient>
+          </defs>
+
+          <g class="ring-group group-a">
+            <circle class="ring ring-a" cx="170" cy="130" r="63"></circle>
+          </g>
+
+          <g class="ring-group group-b">
+            <g class="lens" clip-path="url(#lensClip)">
+              <circle cx="230" cy="130" r="63" fill="url(#lensFill)"></circle>
+            </g>
+            <circle class="ring ring-b" cx="230" cy="130" r="63"></circle>
+          </g>
+
+          <circle class="knot" cx="200" cy="130" r="5" fill="#52677a"></circle>
+        </svg>
+        <p class="ring-caption" id="ringCaption">Two people. One story you have not written yet.</p>
+      </div>
+    </section>
+
+    <section class="beats" aria-label="What this year is">
+      <article class="beat">
+        <p class="beat-index">01 · TOGETHER</p>
+        <h2>A journey with two authors</h2>
+        <p>You will not always want the same thing, and that is not a problem to fix. Bliss keeps both of your preferences visible, names the real trade-off, and never quietly picks a side.</p>
+      </article>
+      <article class="beat">
+        <p class="beat-index">02 · UNEXPECTED</p>
+        <h2>Room left for surprise</h2>
+        <p>The parts you will retell are rarely the parts you planned. Bliss handles the tedious scaffolding so there is still air in the year for something you did not see coming.</p>
+      </article>
+      <article class="beat">
+        <p class="beat-index">03 · KEPT</p>
+        <h2>A memory that outlives the planning</h2>
+        <p>Every decision keeps its reason. Long after the spreadsheets are gone, you will still know why you chose the small room, the late dinner, the song.</p>
+      </article>
+    </section>
+
+    <section class="chapters" aria-labelledby="chaptersTitle">
+      <div class="chapters-head">
+        <div>
+          <p class="eyebrow">The shape of the year</p>
+          <h2 id="chaptersTitle">Fourteen chapters, opened when you are ready</h2>
+        </div>
+        <p>Not four hundred tasks. Each chapter is one real decision, and the work only appears after the two of you have settled it.</p>
+      </div>
+
+      <div class="chapter-arc" aria-label="The fourteen chapters">
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Vision</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Budget</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Guests</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Venue</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Vendors</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Photo</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Attire</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Ceremony</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Design</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Invites</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Care</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Timeline</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Legal</span></div>
+        <div class="chapter"><span class="chapter-dot"></span><span class="chapter-name">Finale</span></div>
+      </div>
+
+      <p class="chapters-foot"><span aria-hidden="true">◆</span><span>Bliss will never rush you into the next chapter. It just makes sure that whenever you open one, you already have what you need to decide well.</span></p>
+    </section>
+
+    <section class="entry" id="entry">
+      <div class="entry-copy">
+        <p class="eyebrow">Begin</p>
+        <h2>Start with your names. That is genuinely all.</h2>
+        <p>No plan to build, no questionnaire to survive. Bliss asks one thing at a time, and the first two are easy.</p>
+
+        <ul class="promise">
+          <li><i aria-hidden="true"></i><span><b>Encourage</b> — notice real progress, without treating you like a child.</span></li>
+          <li><i aria-hidden="true"></i><span><b>Help</b> — draft the email, compare the quotes, do the dull parts.</span></li>
+          <li><i aria-hidden="true"></i><span><b>Support</b> — represent both of you accurately, especially when you disagree.</span></li>
+          <li><i aria-hidden="true"></i><span><b>Remember</b> — keep the reason behind every choice you make.</span></li>
+        </ul>
+      </div>
+
+      <div class="entry-card">
+        <div class="card-top">
+          <span class="bliss-orb" aria-hidden="true">b</span>
+          <span class="card-step" id="cardStep">Question 1 of 2</span>
+        </div>
+
+        <div class="card-body">
+          <section class="question active" id="q-names" aria-labelledby="qNamesTitle">
+            <h3 id="qNamesTitle">What should Bliss call you two?</h3>
+            <p>Your names stay attached to whatever each of you says, so neither of you disappears into a shared account.</p>
+
+            <div class="field-pair">
+              <div class="field field-a">
+                <label for="nameA">You</label>
+                <input id="nameA" type="text" autocomplete="given-name" placeholder="Maya">
+              </div>
+              <span class="amp" aria-hidden="true">&amp;</span>
+              <div class="field field-b">
+                <label for="nameB">Your partner</label>
+                <input id="nameB" type="text" autocomplete="off" placeholder="Theo">
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <button class="primary-button" id="namesNext" type="button" disabled>Continue →</button>
+            </div>
+            <p class="assurance">You can invite your partner later. Nothing is shared until you do.</p>
+          </section>
+
+          <section class="question" id="q-date" aria-labelledby="qDateTitle">
+            <h3 id="qDateTitle">When did you say yes?</h3>
+            <p>The day you got engaged becomes the first Moment in your story. Bliss counts forward from here, not down.</p>
+
+            <div class="field" style="margin-top:20px">
+              <label for="engagedOn">The day it happened</label>
+              <input id="engagedOn" type="date">
+            </div>
+
+            <div class="card-actions">
+              <button class="primary-button" id="dateNext" type="button" disabled>Continue →</button>
+              <button class="text-button" id="skipDate" type="button">I would rather not say</button>
+            </div>
+            <p class="assurance">You can change or remove this at any time.</p>
+          </section>
+
+          <section class="handoff" id="handoff" aria-live="polite">
+            <div class="agent-line">
+              <span class="bliss-orb" aria-hidden="true">b</span>
+              <div class="bubble">
+                <p id="greeting">Congratulations, you two.</p>
+                <p>One more and then we can just talk: do you have a wedding date in mind yet, or is that still open?</p>
+              </div>
+            </div>
+
+            <div class="chip-row">
+              <button class="chip" type="button">We have a date</button>
+              <button class="chip" type="button">A season, not a date</button>
+              <button class="chip" type="button">Still completely open</button>
+            </div>
+
+            <div class="card-actions">
+              <button class="primary-button" type="button">Enter our workspace →</button>
+            </div>
+            <p class="assurance">Whatever you answer, nothing gets locked in. Bliss only records what you confirm.</p>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <span>Bliss — a planning companion for two.</span>
+      <nav>
+        <a href="#">How it works</a>
+        <a href="#">Privacy</a>
+        <a href="#">Contact</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script>
+    const rings = document.getElementById('rings');
+    const ringCaption = document.getElementById('ringCaption');
+    const cardStep = document.getElementById('cardStep');
+
+    const nameA = document.getElementById('nameA');
+    const nameB = document.getElementById('nameB');
+    const namesNext = document.getElementById('namesNext');
+    const engagedOn = document.getElementById('engagedOn');
+    const dateNext = document.getElementById('dateNext');
+    const skipDate = document.getElementById('skipDate');
+    const greeting = document.getElementById('greeting');
+
+    const qNames = document.getElementById('q-names');
+    const qDate = document.getElementById('q-date');
+    const handoff = document.getElementById('handoff');
+
+    // Story beats reveal as they are reached, once.
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.25 });
+
+    document.querySelectorAll('.beat').forEach((beat) => observer.observe(beat));
+
+    function bothNames() {
+      return nameA.value.trim() !== '' && nameB.value.trim() !== '';
+    }
+
+    function syncNames() {
+      namesNext.disabled = !bothNames();
+    }
+
+    [nameA, nameB].forEach((input) => input.addEventListener('input', syncNames));
+
+    engagedOn.addEventListener('input', () => {
+      dateNext.disabled = engagedOn.value === '';
+    });
+
+    function show(section, step, caption) {
+      [qNames, qDate].forEach((node) => node.classList.remove('active'));
+      handoff.classList.remove('active');
+      section.classList.add(section === handoff ? 'active' : 'active');
+      rings.dataset.step = step;
+      ringCaption.textContent = caption;
+    }
+
+    namesNext.addEventListener('click', () => {
+      show(qDate, 'names', `${nameA.value.trim()} and ${nameB.value.trim()}. Two voices, kept separate on purpose.`);
+      cardStep.textContent = 'Question 2 of 2';
+      engagedOn.focus();
+    });
+
+    function toHandoff() {
+      const a = nameA.value.trim();
+      const b = nameB.value.trim();
+      greeting.textContent = `Congratulations, ${a} and ${b}.`;
+      show(handoff, 'ready', 'Where you agree, Bliss ties the knot and remembers why.');
+      cardStep.textContent = 'Your story begins';
+    }
+
+    dateNext.addEventListener('click', () => {
+      rings.dataset.step = 'date';
+      window.setTimeout(toHandoff, 420);
+    });
+
+    skipDate.addEventListener('click', toHandoff);
+
+    document.querySelectorAll('.chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        greeting.textContent = `Noted — ${chip.textContent.toLowerCase()}. Nothing is fixed until you confirm it.`;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -110,6 +110,9 @@ export interface User {
 export interface Wedding {
   id: string
   weddingDate: string | null
+  engagementDate: string | null
+  partnerDisplayName: string | null
+  weddingTiming: 'date' | 'season' | 'open' | null
   /** Two-letter USPS code. Drives marriage-license rules, which are state-level. */
   state: string | null
   city: string | null
@@ -411,6 +414,11 @@ export interface ScheduleIssue {
 }
 
 export interface OnboardingPayload {
+  ownerDisplayName?: string
+  partnerDisplayName?: string
+  engagementDate?: string
+  weddingTiming?: 'date' | 'season' | 'open'
+  intakeClaims?: OnboardingIntakeClaim[]
   weddingDate?: string
   state?: string
   city?: string
@@ -430,6 +438,12 @@ export interface OnboardingPayload {
   specialNeeds?: string[]
 }
 
+export interface OnboardingIntakeClaim {
+  key: 'feeling' | 'date_horizon' | 'place' | 'guest_shape' | 'support_style'
+  kind: 'fact' | 'preference' | 'priority'
+  value: string
+}
+
 // ─── Agent planning ───────────────────────────────────────────────────────────
 
 export type PlanningThreadStatus =
@@ -437,17 +451,17 @@ export type PlanningThreadStatus =
   | 'exploring'
   | 'contested'
   | 'ready'
-  | 'resolved'
   | 'parked'
 
 export interface PlanningThread {
   id: string
   weddingId: string
   questKey: string
+  questionKey: string | null
   title: string
   status: PlanningThreadStatus
   openedBy: string | null
-  resolvedDecisionId: string | null
+  currentDecisionId: string | null
   createdAt: string
   updatedAt: string
 }
@@ -465,6 +479,28 @@ export interface QuestScopingOverview {
     source: 'confirmed' | 'assumed'
     allowsDefer: boolean
   }>
+}
+
+export type QuestionProgressStatus =
+  | 'not_started'
+  | PlanningThreadStatus
+  | 'confirmed'
+
+export type QuestProgressStatus = 'not_started' | 'in_progress' | 'completed'
+
+export interface QuestionProgress {
+  questionKey: string
+  status: QuestionProgressStatus
+  threadId: string | null
+  currentDecisionId: string | null
+}
+
+export interface QuestProgress {
+  questKey: string
+  status: QuestProgressStatus
+  confirmedCount: number
+  totalCount: number
+  questions: QuestionProgress[]
 }
 
 export interface ThreadMessage {

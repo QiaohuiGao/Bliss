@@ -92,6 +92,7 @@ bun run smoke:photographer   # temporary real-DB search/shortlist/action flow; c
 bun run smoke:scoping        # all 12 quests using the generic decision engine
 bun run smoke:release        # sticky canary, rollback, and kill-switch DB verification
 bun run smoke:couple         # owner-only invite and concurrent two-person join boundary
+bun run smoke:model          # real configured model: two-turn tool-calling protocol check
 bun run ops:agent --days=7   # bundle/model-segmented latency, cost, errors, and user feedback
 ```
 
