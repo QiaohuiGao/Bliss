@@ -1,8 +1,10 @@
 {
   "framework": "nextjs",
   "buildCommand": "cd ../.. && bun run build --filter=@bliss/web",
-  "outputDirectory": "apps/web/.next",
-  "env": {
-    "NEXT_PUBLIC_API_URL": "@bliss-api-url"
-  }
+  "outputDirectory": ".next",
+  "crons": [
+    { "path": "/api/cron/reminders", "schedule": "*/5 * * * *" },
+    { "path": "/api/cron/external-actions", "schedule": "*/5 * * * *" },
+    { "path": "/api/cron/media-uploads", "schedule": "17 * * * *" }
+  ]
 }
