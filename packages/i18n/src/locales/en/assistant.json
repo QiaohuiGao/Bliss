@@ -81,6 +81,22 @@
     "chaptersTitle": "14 connected chapters",
     "chaptersBody": "Bliss keeps decisions connected across the whole plan.",
     "chaptersLabel": "Wedding chapters",
+    "chapter": {
+      "foundation": "Foundation",
+      "venue_date": "Venue",
+      "vendor_team": "Vendors",
+      "wedding_party": "Party",
+      "attire_beauty": "Attire",
+      "guests_stationery": "Invites",
+      "guest_experience": "Guest care",
+      "food_beverage": "Food",
+      "design_flowers": "Design",
+      "ceremony": "Ceremony",
+      "registry_rings_honeymoon": "Life after",
+      "legal": "Legal",
+      "pre_wedding_events": "Events",
+      "final_30_and_day_of": "Finale"
+    },
     "decisionsMade": "decisions made",
     "currentChapter": "Current chapter · {number}",
     "questionsTitle": "Decisions in this chapter",
@@ -113,7 +129,91 @@
     "otherPrompt": "What are you imagining instead?",
     "otherPlaceholder": "A possibility, feeling, concern, or idea that is not shown above…",
     "shareIdea": "Share this with Bliss →",
-    "decisionDraft": "Decision draft"
+    "decisionDraft": "Decision draft",
+    "notifications": "Notifications",
+    "decisionCount": "{count} decisions made",
+    "agentReady": "Ready when you are",
+    "prototypeIntroTitle": "Let’s choose what belongs in your story.",
+    "prototypeIntroBody": "Bliss keeps your separate preferences visible, finds the common ground, and helps you resolve one honest tradeoff at a time.",
+    "attach": "Attach a photo or file",
+    "capabilities": {
+      "title": "Bliss can help here",
+      "tryOne": "Try one",
+      "context": {
+        "title": "Bring useful context",
+        "body": "See examples and practical facts",
+        "prompt": "Bring us the most useful context for this decision, without pushing us toward an answer."
+      },
+      "compare": {
+        "title": "Compare possibilities",
+        "body": "Make the real tradeoffs visible",
+        "prompt": "Help us compare the possibilities for this decision and explain the tradeoffs clearly."
+      },
+      "next": {
+        "title": "Prepare the next step",
+        "body": "Nothing happens without approval",
+        "prompt": "Prepare the smallest useful next step after this decision, but do not take action without our approval."
+      },
+      "remember": {
+        "title": "Remember the reason",
+        "body": "Keep why this mattered",
+        "prompt": "Help us name what we will want to remember about making this decision together."
+      }
+    },
+    "understanding": {
+      "title": "What I understand about both of you",
+      "sources": "{count} source messages",
+      "firstOpen": "Your view is still open. Bliss will keep it separate until you share it.",
+      "secondOpen": "Your partner’s view is still open. Bliss will not invent an answer for them.",
+      "sharedGround": "Shared ground:",
+      "sharedOpen": "Nothing is assumed to be shared until both of you make it clear."
+    },
+    "prompts": {
+      "agree": {
+        "label": "Help us agree",
+        "prompt": "Help us understand where we already agree and what one tradeoff is still open."
+      },
+      "questions": {
+        "label": "Prepare useful questions",
+        "prompt": "What are the few questions that would genuinely help us make this decision?"
+      },
+      "next": {
+        "label": "What changes next?",
+        "prompt": "Show us what this decision would change in our plan before we confirm it."
+      }
+    },
+    "dock": {
+      "title": "Decision dock",
+      "exploring": "Exploring",
+      "number": "Decision {number} · {chapter}",
+      "selected": "Your current direction",
+      "explore": "Explore this possibility",
+      "otherBody": "Share the idea you already have in mind",
+      "writeOwn": "Write your own",
+      "otherBoundary": "Bliss keeps this inside this exact decision thread and will not force it into one of the options above.",
+      "why": "Why this may fit you",
+      "whyFallback": "Bliss will explain the fit only after hearing what matters to both of you.",
+      "memberReady": "{name} · ready",
+      "memberReviewing": "{name} · reviewing",
+      "continue": "Continue with Bliss →"
+    },
+    "actions": {
+      "title": "Ready for you",
+      "count": "{count} approvals",
+      "noneType": "No prepared action",
+      "approval": "Needs approval",
+      "prepared": "A next action is prepared",
+      "empty": "Nothing is waiting on you yet",
+      "body": "Exact details stay visible and nothing is sent, scheduled, or shared until you approve it.",
+      "review": "Open Action Center →"
+    },
+    "moment": {
+      "title": "Worth remembering",
+      "suggested": "Suggested",
+      "emptyTitle": "The reason behind this choice",
+      "emptyBody": "When a decision becomes meaningful, Bliss will suggest the part of the story worth keeping.",
+      "open": "Open our Moments"
+    }
   },
   "legalLookup": {
     "verifiedTitle": "Verified marriage-license rules",

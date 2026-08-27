@@ -1,6 +1,6 @@
 'use client'
 
-import { type FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { type CSSProperties, type FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import type {
   ConfirmDecisionResult,
   DecisionProposal,
@@ -13,7 +13,7 @@ import type {
   Wedding,
 } from '@bliss/types'
 import { useLocale, useTranslations } from 'next-intl'
-import { Check, ExternalLink, Send } from 'lucide-react'
+import { Bell, Check, ExternalLink, Paperclip, Send } from 'lucide-react'
 import { useRouter } from '@/i18n/routing'
 import { api } from '@/lib/api'
 import { useContent } from '@/lib/content'
@@ -62,6 +62,7 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
   const [draft, setDraft] = useState('')
   const [otherQuestionKey, setOtherQuestionKey] = useState<string | null>(null)
   const [otherDraft, setOtherDraft] = useState('')
+  const [selectedChoice, setSelectedChoice] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [working, setWorking] = useState(false)
   const [confirming, setConfirming] = useState(false)
@@ -276,6 +277,10 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
       ?? null
   }, [scoping, thread?.questionKey])
 
+  useEffect(() => {
+    setSelectedChoice(activeQuestion?.source === 'confirmed' ? activeQuestion.currentChoice : null)
+  }, [activeQuestion?.currentChoice, activeQuestion?.questionKey, activeQuestion?.source])
+
   if (!isScopableQuest(questKey)) {
     return <EmptyState body={t('questScoping.unsupported')} onBack={() => router.push('/board')} />
   }
@@ -287,97 +292,98 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
   const confirmedTotal = progress.reduce((total, item) => total + item.confirmedCount, 0)
   const questionStatus = (questionKey: string): QuestionProgressStatus =>
     activeQuestProgress?.questions.find(item => item.questionKey === questionKey)?.status ?? 'not_started'
-  const choiceLabel = (questionKey: string, value: string) => {
-    const option = scoping.questions.find(question => question.questionKey === questionKey)
-      ?.options.find(item => item.value === value)
-    return content(option?.labelI18nKey ?? null, value.replaceAll('_', ' '))
-  }
   const dateLabel = wedding.weddingDate
     ? new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(`${wedding.weddingDate}T12:00:00`))
     : t('workspace.dateOpen')
+  const totalDecisions = progress.reduce((total, item) => total + item.totalCount, 0)
+  const decisionPercent = totalDecisions > 0 ? Math.round((confirmedTotal / totalDecisions) * 100) : 0
+  const currentChapterNumber = JOURNEY_QUESTS.indexOf(questKey as typeof JOURNEY_QUESTS[number]) + 1
+  const sourceCount = messages.filter(message => message.authorType === 'user').length
+  const firstInput = proposal?.memberInputs[0]?.stance ?? t('workspace.understanding.firstOpen')
+  const secondInput = proposal?.memberInputs[1]?.stance ?? t('workspace.understanding.secondOpen')
+  const sharedGround = proposal?.reason ?? t('workspace.understanding.sharedOpen')
+  const preparedAction = proposal?.externalActions[0] ?? null
 
   return (
     <div className={styles.app}>
-      <header className={styles.topbar}>
-        <div className={styles.logo}><span className={styles.logoMark}>b</span><span>{t('workspace.brand')}</span></div>
-        <div className={styles.weddingName}>
-          <strong>{t('workspace.couple', couple)}</strong>
-          <span>{dateLabel}{wedding.city ? ` · ${wedding.city}` : ''}</span>
-        </div>
-        <div className={styles.topActions}>
-          <div className={styles.avatarStack} aria-label={t('workspace.members')}>
-            <span className={styles.avatar}>{couple.first.slice(0, 1).toUpperCase()}</span>
-            <span className={styles.avatar}>{couple.second.slice(0, 1).toUpperCase()}</span>
+      <div className={styles.appShell}>
+        <header className={styles.appHeader}>
+          <div className={styles.brand}><span className={styles.brandMark} aria-hidden="true" /><span>{t('workspace.brand')}</span></div>
+          <div className={styles.weddingIdentity}>
+            <strong>{t('workspace.couple', couple)}</strong>
+            <span>{dateLabel}{wedding.city ? ` · ${wedding.city}` : ''}</span>
           </div>
-          <button type="button" className={styles.quietButton} onClick={() => router.push('/board')}>
-            {t('workspace.allPlanning')}
-          </button>
-        </div>
-      </header>
+          <div className={styles.headerActions}>
+            <div className={styles.presence} aria-label={t('workspace.members')}>
+              <span className={`${styles.avatar} ${styles.firstAvatar}`}>{couple.first.slice(0, 1).toUpperCase()}</span>
+              <span className={`${styles.avatar} ${styles.secondAvatar}`}>{couple.second.slice(0, 1).toUpperCase()}</span>
+            </div>
+            <button type="button" className={styles.notesButton} onClick={() => router.push('/board')}>{t('workspace.allPlanning')}</button>
+            <button type="button" className={styles.iconButton} aria-label={t('workspace.notifications')}><Bell size={15} /></button>
+          </div>
+        </header>
 
-      <section className={styles.journey} aria-label={t('workspace.journeyLabel')}>
-        <div className={styles.journeyTitle}>
-          <span className={styles.microLabel}>{t('workspace.ourWedding')}</span>
-          <strong>{t('workspace.chaptersTitle')}</strong>
-          <small>{t('workspace.chaptersBody')}</small>
-        </div>
-        <nav className={styles.chapterTrack} aria-label={t('workspace.chaptersLabel')}>
-          {JOURNEY_QUESTS.map(chapterKey => {
-            const chapterProgress = progress.find(item => item.questKey === chapterKey)
-            const href = chapterKey === 'attire_beauty'
-              ? '/assistant'
-              : chapterKey === 'vendor_team'
-                ? '/assistant/photographer'
-                : `/assistant/quest/${chapterKey}`
-            return (
-              <button
-                key={chapterKey}
-                type="button"
-                className={styles.chapter}
-                data-status={chapterProgress?.status ?? 'not_started'}
-                aria-current={chapterKey === questKey ? 'step' : undefined}
-                title={content(`quest.${chapterKey}.title`, chapterKey.replaceAll('_', ' '))}
-                onClick={() => router.push(href)}
-              >
-                <span className={styles.chapterDot} />
-                <span className={styles.chapterName}>{content(`quest.${chapterKey}.title`, chapterKey.replaceAll('_', ' '))}</span>
-              </button>
-            )
-          })}
-        </nav>
-        <div className={styles.journeyProgress}>
-          <strong>{confirmedTotal}</strong>
-          <span>{t('workspace.decisionsMade')}</span>
-        </div>
-      </section>
+        <section className={styles.journeyBar} aria-label={t('workspace.journeyLabel')}>
+          <div className={styles.journeyCopy}>
+            <p className={styles.eyebrow}>{t('workspace.ourWedding')}</p>
+            <strong>{t('workspace.chaptersTitle')}</strong>
+            <span>{t('workspace.chaptersBody')}</span>
+          </div>
+          <nav
+            className={styles.journeyTrack}
+            aria-label={t('workspace.chaptersLabel')}
+            style={{ '--journey-progress': `${decisionPercent}%` } as CSSProperties}
+          >
+            {JOURNEY_QUESTS.map(chapterKey => {
+              const chapterProgress = progress.find(item => item.questKey === chapterKey)
+              const href = chapterKey === 'attire_beauty'
+                ? '/assistant'
+                : chapterKey === 'vendor_team'
+                  ? '/assistant/photographer'
+                  : `/assistant/quest/${chapterKey}`
+              return (
+                <button
+                  key={chapterKey}
+                  type="button"
+                  className={styles.questNode}
+                  data-status={chapterProgress?.status ?? 'not_started'}
+                  aria-current={chapterKey === questKey ? 'step' : undefined}
+                  title={content(`quest.${chapterKey}.title`, chapterKey.replaceAll('_', ' '))}
+                  onClick={() => router.push(href)}
+                >
+                  <span className={styles.questDot} />
+                  <span className={styles.questLabel}>{t(`workspace.chapter.${chapterKey}`)}</span>
+                </button>
+              )
+            })}
+          </nav>
+          <div className={styles.journeyScore}>
+            <strong>{decisionPercent}%</strong>
+            <span>{t('workspace.decisionCount', { count: confirmedTotal })}</span>
+          </div>
+        </section>
 
-      <div className={styles.workspace}>
-        <aside className={styles.questPanel}>
-          <header className={styles.questHead}>
-            <span className={styles.microLabel}>{t('workspace.currentChapter', { number: JOURNEY_QUESTS.indexOf(questKey as typeof JOURNEY_QUESTS[number]) + 1 })}</span>
-            <h1>{content(scoping.titleI18nKey, questKey)}</h1>
-            <p>{content(scoping.subtitleI18nKey, t('questScoping.genericSubtitle'))}</p>
-          </header>
-          <section className={styles.questionProgress}>
-            <h2 className={styles.panelTitle}>
-              {t('workspace.questionsTitle')}
-              <span>{t('workspace.questionCount', { confirmed: activeQuestProgress?.confirmedCount ?? 0, total: scoping.questions.length })}</span>
-            </h2>
-            <ol className={styles.questions}>
+        <div className={styles.workspace}>
+          <aside className={styles.questRail}>
+            <p className={styles.eyebrow}>{t('workspace.currentChapter', { number: currentChapterNumber })}</p>
+            <h1 className={styles.questTitle}>{content(scoping.titleI18nKey, questKey)}</h1>
+            <p className={styles.questSubtitle}>{content(scoping.subtitleI18nKey, t('questScoping.genericSubtitle'))}</p>
+
+            <ol className={styles.phaseList}>
               {scoping.questions.map((question, index) => {
                 const status = questionStatus(question.questionKey)
                 return (
                   <li key={question.questionKey}>
                     <button
                       type="button"
-                      className={styles.questionButton}
+                      className={styles.phaseItem}
                       data-status={status}
                       data-active={activeQuestion?.questionKey === question.questionKey}
                       onClick={() => void openQuestion(question.questionKey)}
                       disabled={working}
                     >
-                      <span className={styles.questionMark}>{status === 'confirmed' ? '✓' : index + 1}</span>
-                      <span className={styles.questionCopy}>
+                      <span className={styles.phaseMark}>{status === 'confirmed' ? '✓' : index + 1}</span>
+                      <span className={styles.phaseCopy}>
                         <strong>{content(question.promptI18nKey, question.questionKey)}</strong>
                         <span>{t(`workspace.questionStatus.${status}`)}</span>
                       </span>
@@ -386,139 +392,229 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
                 )
               })}
             </ol>
-          </section>
-          <div className={styles.questNote}>
-            <strong>{t('workspace.resourceTitle')}</strong>
-            {t('workspace.resourceBody')}
-          </div>
-        </aside>
 
-        <main className={styles.mainPanel}>
-          <header className={styles.threadHeader}>
-            <div className={styles.threadIdentity}>
-              <span className={styles.agentMark}>b</span>
-              <span>
-                <strong>{activeQuestion ? content(activeQuestion.promptI18nKey, activeQuestion.questionKey) : content(scoping.titleI18nKey, questKey)}</strong>
-                <span>{thread ? t('workspace.permanentThread') : t('workspace.chooseQuestion')}</span>
-              </span>
-            </div>
-            <div className={styles.agentCycle} aria-label={t('workspace.cycleLabel')}>
-              <span className={styles.cycleStage} data-state="done">{t('workspace.cycle.understand')}</span>
-              <span className={styles.cycleStage} data-state={proposal ? 'done' : 'current'}>{t('workspace.cycle.decide')}</span>
-              <span className={styles.cycleStage} data-state={confirmation ? 'current' : undefined}>{t('workspace.cycle.act')}</span>
-              <span className={styles.cycleStage}>{t('workspace.cycle.remember')}</span>
-            </div>
-          </header>
+            <section className={styles.capabilityBox}>
+              <h2 className={styles.sectionHeading}>{t('workspace.capabilities.title')}<span>{t('workspace.capabilities.tryOne')}</span></h2>
+              <div className={styles.capabilityList}>
+                {(['context', 'compare', 'next', 'remember'] as const).map((capability, index) => (
+                  <button
+                    key={capability}
+                    type="button"
+                    className={styles.capability}
+                    disabled={!activeQuestion || working}
+                    onClick={() => activeQuestion && void openQuestion(activeQuestion.questionKey, t(`workspace.capabilities.${capability}.prompt`))}
+                  >
+                    <span className={styles.capabilityIcon}>{['⌕', '≍', '→', '◇'][index]}</span>
+                    <span><strong>{t(`workspace.capabilities.${capability}.title`)}</strong><small>{t(`workspace.capabilities.${capability}.body`)}</small></span>
+                    <span className={styles.capabilityArrow}>›</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          </aside>
 
-          <div className={styles.conversation}>
-            <div className={styles.conversationInner}>
-              <header className={styles.intro}>
-                <span className={styles.microLabel}>{t('workspace.companionLabel')}</span>
-                <h2>{t('workspace.introTitle')}</h2>
-                <p>{t('workspace.introBody')}</p>
+          <section className={styles.conversation}>
+            <header className={styles.conversationHeader}>
+              <div className={styles.threadName}>
+                <span className={styles.blissOrb}>b</span>
+                <span>
+                  <strong>{activeQuestion ? content(activeQuestion.promptI18nKey, activeQuestion.questionKey) : content(scoping.titleI18nKey, questKey)}</strong>
+                  <span>{thread ? t('workspace.permanentThread') : t('workspace.chooseQuestion')}</span>
+                </span>
+              </div>
+              <span className={styles.thinkingState}>{working ? t('composer.thinking') : t('workspace.agentReady')}</span>
+            </header>
+
+            <div className={styles.conversationScroll}>
+              <header className={styles.conversationIntro}>
+                <p className={styles.eyebrow}>{t('workspace.companionLabel')}</p>
+                <h2>{t('workspace.prototypeIntroTitle')}</h2>
+                <p>{t('workspace.prototypeIntroBody')}</p>
               </header>
 
-              {questKey === 'legal' && <LegalAuthorityCard lookup={legalLookup} locale={locale} />}
+              <section className={styles.understandingCard}>
+                <header className={styles.cardHeader}>
+                  <strong>{t('workspace.understanding.title')}</strong>
+                  <span className={styles.sourceLink}>{t('workspace.understanding.sources', { count: sourceCount })}</span>
+                </header>
+                <div className={styles.coupleInputs}>
+                  <section className={`${styles.memberView} ${styles.firstMember}`}>
+                    <div className={styles.memberLabel}><i />{couple.first}</div>
+                    <p>{firstInput}</p>
+                  </section>
+                  <div className={styles.sharedKnot}><span>&amp;</span></div>
+                  <section className={`${styles.memberView} ${styles.secondMember}`}>
+                    <div className={styles.memberLabel}><i />{couple.second}</div>
+                    <p>{secondInput}</p>
+                  </section>
+                </div>
+                <div className={styles.sharedPriority}><strong>{t('workspace.understanding.sharedGround')}</strong><span>{sharedGround}</span></div>
+              </section>
 
-              {activeQuestion && (
-                <section className={styles.questionStarter}>
-                  <strong>{content(activeQuestion.promptI18nKey, activeQuestion.questionKey)}</strong>
-                  <p>{content(activeQuestion.helpI18nKey, t('workspace.questionHelpFallback'))}</p>
-                  <div className={styles.choices}>
-                    {activeQuestion.options.map(option => {
-                      const label = content(option.labelI18nKey, option.value)
-                      return (
-                        <button
-                          key={option.value}
-                          type="button"
-                          className={styles.choice}
-                          data-current={activeQuestion.currentChoice === option.value}
-                          disabled={working}
-                          onClick={() => void openQuestion(activeQuestion.questionKey, t('questScoping.leaning', { choice: label }))}
-                        >
-                          {label}
-                        </button>
-                      )
-                    })}
-                    <button
-                      type="button"
-                      className={`${styles.choice} ${styles.choiceOther}`}
-                      onClick={() => {
-                        setOtherQuestionKey(activeQuestion.questionKey)
-                        setOtherDraft('')
-                      }}
-                    >
-                      {t('workspace.otherChoice')}
-                    </button>
-                  </div>
-                  {otherQuestionKey === activeQuestion.questionKey && (
-                    <form className={styles.otherPanel} onSubmit={event => void sendOtherIdea(event, activeQuestion.questionKey)}>
-                      <label htmlFor="other-idea">{t('workspace.otherPrompt')}</label>
-                      <textarea
-                        id="other-idea"
-                        value={otherDraft}
-                        onChange={event => setOtherDraft(event.target.value)}
-                        placeholder={t('workspace.otherPlaceholder')}
-                        maxLength={12_000}
-                        autoFocus
-                      />
-                      <div className={styles.otherActions}>
-                        <button type="submit" className={styles.primary} disabled={!otherDraft.trim() || working}>
-                          {working ? t('composer.thinking') : t('workspace.shareIdea')}
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                </section>
-              )}
+              {questKey === 'legal' && <LegalAuthorityCard lookup={legalLookup} locale={locale} />}
 
               <section className={styles.messages} aria-live="polite">
                 {messages.filter(message => message.authorType === 'user' || message.authorType === 'assistant').map(message => (
                   <MessageBubble key={message.id} message={message} initials={couple.first.slice(0, 1).toUpperCase()} />
                 ))}
               </section>
-              {working && (
-                <div className={styles.thinking}><span className={styles.agentMark}>b</span>{t('composer.thinking')}</div>
-              )}
-              {proposal && (
-                <DecisionSheet
-                  proposal={proposal}
-                  choiceLabel={proposal.proposedChoice ? choiceLabel(proposal.questionKey, proposal.proposedChoice) : null}
-                  confirmation={confirmation}
-                  confirming={confirming}
-                  feedbackState={feedbackState}
-                  onConfirm={confirmProposal}
-                  onFeedback={submitFeedback}
-                />
-              )}
+              {working && <div className={styles.thinking}><span className={styles.blissOrb}>b</span>{t('composer.thinking')}</div>}
+              {proposal?.taskEffects.length ? (
+                <section className={styles.planEffects}>
+                  <strong>{t('decision.tasks')}</strong>
+                  {proposal.taskEffects.map(task => (
+                    <span key={task.taskKey}><Check size={12} />{content(`quest.${proposal.questKey}.task.${task.taskKey}.title`, task.taskKey.replaceAll('_', ' '))}</span>
+                  ))}
+                </section>
+              ) : null}
               {error && <div className={styles.error}>{error}</div>}
               <div ref={endRef} />
             </div>
-          </div>
 
-          <footer className={styles.composerArea}>
-            <form onSubmit={sendMessage} className={styles.composer}>
-              <textarea
-                ref={composerRef}
-                value={draft}
-                onChange={event => setDraft(event.target.value)}
-                onKeyDown={event => {
-                  if (event.key === 'Enter' && !event.shiftKey) {
-                    event.preventDefault()
-                    void sendMessage()
-                  }
-                }}
-                rows={1}
-                maxLength={12_000}
-                placeholder={thread ? t('composer.placeholder') : t('workspace.chooseQuestion')}
-                disabled={!thread || working}
-              />
-              <button type="submit" className={styles.send} disabled={!thread || !draft.trim() || working} aria-label={t('composer.send')}>
-                <Send size={15} />
-              </button>
-            </form>
-          </footer>
-        </main>
+            <footer className={styles.composerShell}>
+              <div className={styles.promptRow}>
+                {(['agree', 'questions', 'next'] as const).map(prompt => (
+                  <button
+                    key={prompt}
+                    type="button"
+                    className={styles.promptChip}
+                    disabled={!activeQuestion || working}
+                    onClick={() => activeQuestion && void openQuestion(activeQuestion.questionKey, t(`workspace.prompts.${prompt}.prompt`))}
+                  >
+                    {t(`workspace.prompts.${prompt}.label`)}
+                  </button>
+                ))}
+              </div>
+              <form onSubmit={sendMessage} className={styles.composer}>
+                <button type="button" className={styles.attachButton} aria-label={t('workspace.attach')}><Paperclip size={15} /></button>
+                <textarea
+                  ref={composerRef}
+                  value={draft}
+                  onChange={event => setDraft(event.target.value)}
+                  onKeyDown={event => {
+                    if (event.key === 'Enter' && !event.shiftKey) {
+                      event.preventDefault()
+                      void sendMessage()
+                    }
+                  }}
+                  rows={1}
+                  maxLength={12_000}
+                  placeholder={thread ? t('composer.placeholder') : t('workspace.chooseQuestion')}
+                  disabled={!thread || working}
+                />
+                <button type="submit" className={styles.sendButton} disabled={!thread || !draft.trim() || working} aria-label={t('composer.send')}><Send size={15} /></button>
+              </form>
+            </footer>
+          </section>
+
+          <aside className={styles.decisionDock}>
+            <div className={styles.dockHeading}>
+              <strong>{t('workspace.dock.title')}</strong>
+              <span className={styles.phasePill}>{proposal ? t(`decision.${proposal.state}`) : t('workspace.dock.exploring')}</span>
+            </div>
+
+            {activeQuestion && (
+              <article className={styles.decisionCard}>
+                <p className={styles.decisionNumber}>{t('workspace.dock.number', { number: currentChapterNumber, chapter: content(scoping.titleI18nKey, questKey) })}</p>
+                <h2>{content(activeQuestion.promptI18nKey, activeQuestion.questionKey)}</h2>
+                <p>{content(activeQuestion.helpI18nKey, t('workspace.questionHelpFallback'))}</p>
+
+                {activeQuestion.options.map(option => {
+                  const label = content(option.labelI18nKey, option.value)
+                  const selected = selectedChoice === option.value
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={styles.choiceOption}
+                      data-selected={selected}
+                      disabled={working}
+                      onClick={() => {
+                        setSelectedChoice(option.value)
+                        void openQuestion(activeQuestion.questionKey, t('questScoping.leaning', { choice: label }))
+                      }}
+                    >
+                      <span className={styles.choiceRadio} />
+                      <span><strong>{label}</strong><small>{selected ? t('workspace.dock.selected') : t('workspace.dock.explore')}</small></span>
+                    </button>
+                  )
+                })}
+
+                <button
+                  type="button"
+                  className={styles.choiceOption}
+                  data-other="true"
+                  data-selected={otherQuestionKey === activeQuestion.questionKey}
+                  onClick={() => {
+                    setSelectedChoice(null)
+                    setOtherQuestionKey(activeQuestion.questionKey)
+                    setOtherDraft('')
+                  }}
+                >
+                  <span className={styles.choiceRadio} />
+                  <span><strong>{t('workspace.otherChoice')}</strong><small>{t('workspace.dock.otherBody')}</small></span>
+                  <span>{t('workspace.dock.writeOwn')}</span>
+                </button>
+
+                {otherQuestionKey === activeQuestion.questionKey && (
+                  <form className={styles.otherChoicePanel} onSubmit={event => void sendOtherIdea(event, activeQuestion.questionKey)}>
+                    <label htmlFor="other-idea">{t('workspace.otherPrompt')}</label>
+                    <textarea id="other-idea" value={otherDraft} onChange={event => setOtherDraft(event.target.value)} placeholder={t('workspace.otherPlaceholder')} maxLength={12_000} autoFocus />
+                    <small>{t('workspace.dock.otherBoundary')}</small>
+                    <div className={styles.otherChoiceActions}><button type="submit" disabled={!otherDraft.trim() || working}>{working ? t('composer.thinking') : t('workspace.shareIdea')}</button></div>
+                  </form>
+                )}
+
+                <div className={styles.whyFit}><strong>{t('workspace.dock.why')}</strong>{proposal?.reason ?? t('workspace.dock.whyFallback')}</div>
+                <div className={styles.memberConfirmations}>
+                  <span className={styles.memberStatus}><i />{t('workspace.dock.memberReady', { name: couple.first })}</span>
+                  <span className={`${styles.memberStatus} ${styles.waitingStatus}`}><i />{t('workspace.dock.memberReviewing', { name: couple.second })}</span>
+                </div>
+                {proposal?.status === 'confirmed' || confirmation ? (
+                  <button type="button" className={styles.primaryButton} disabled>{t('decision.confirmed')}</button>
+                ) : proposal?.state === 'ready' ? (
+                  <button type="button" className={styles.primaryButton} onClick={confirmProposal} disabled={confirming}>{confirming ? t('decision.confirming') : t('decision.confirm')}</button>
+                ) : (
+                  <button
+                    type="button"
+                    className={styles.primaryButton}
+                    onClick={() => thread ? composerRef.current?.focus() : void openQuestion(activeQuestion.questionKey)}
+                    disabled={working}
+                  >
+                    {t('workspace.dock.continue')}
+                  </button>
+                )}
+                {proposal?.agentRunId && (
+                  <div className={styles.feedback}>
+                    {feedbackState === 'sent' ? t('feedback.thanks') : (
+                      <><span>{t('feedback.question')}</span><button type="button" onClick={() => void submitFeedback(1)} disabled={feedbackState === 'saving'}>{t('feedback.yes')}</button><button type="button" onClick={() => void submitFeedback(-1)} disabled={feedbackState === 'saving'}>{t('feedback.notQuite')}</button></>
+                    )}
+                  </div>
+                )}
+              </article>
+            )}
+
+            <section className={styles.dockSection}>
+              <h3 className={styles.sectionHeading}>{t('workspace.actions.title')}<span>{t('workspace.actions.count', { count: proposal?.externalActions.length ?? 0 })}</span></h3>
+              <article className={styles.actionCard}>
+                <div className={styles.actionMeta}><span className={styles.actionType}>{preparedAction ? t(`actions.kind.${preparedAction.kind}`) : t('workspace.actions.noneType')}</span><span className={styles.approvalBadge}>{t('workspace.actions.approval')}</span></div>
+                <h3>{preparedAction ? t('workspace.actions.prepared') : t('workspace.actions.empty')}</h3>
+                <p>{t('workspace.actions.body')}</p>
+                <button type="button" className={styles.secondaryButton} onClick={() => router.push('/actions')}>{t('workspace.actions.review')}</button>
+              </article>
+            </section>
+
+            <section className={styles.dockSection}>
+              <h3 className={styles.sectionHeading}>{t('workspace.moment.title')}<span>{t('workspace.moment.suggested')}</span></h3>
+              <article className={styles.momentCard}>
+                <p className={styles.eyebrow}>{t('decision.moment')}</p>
+                <h3>{proposal?.momentCandidate?.title ?? t('workspace.moment.emptyTitle')}</h3>
+                <p>{proposal?.momentCandidate?.narrative ?? t('workspace.moment.emptyBody')}</p>
+                <button type="button" className={styles.textButton} onClick={() => router.push('/moments')}>{t('workspace.moment.open')}</button>
+              </article>
+            </section>
+          </aside>
+        </div>
       </div>
     </div>
   )
@@ -527,86 +623,10 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
 function MessageBubble({ message, initials }: { message: ThreadMessage; initials: string }) {
   const isBliss = message.authorType === 'assistant'
   return (
-    <article className={`${styles.message} ${isBliss ? '' : styles.messageUser}`}>
-      {isBliss && <span className={styles.agentMark}>b</span>}
+    <article className={styles.message} data-author={isBliss ? 'assistant' : 'user'}>
+      {isBliss && <span className={styles.blissOrb}>b</span>}
       <div className={styles.bubble}>{message.content}</div>
-      {!isBliss && <span className={`${styles.avatar} ${styles.messageAvatar}`}>{initials}</span>}
-    </article>
-  )
-}
-
-function DecisionSheet({
-  proposal,
-  choiceLabel,
-  confirmation,
-  confirming,
-  feedbackState,
-  onConfirm,
-  onFeedback,
-}: {
-  proposal: DecisionProposal
-  choiceLabel: string | null
-  confirmation: ConfirmDecisionResult | null
-  confirming: boolean
-  feedbackState: 'idle' | 'saving' | 'sent'
-  onConfirm: () => void
-  onFeedback: (rating: -1 | 1) => void
-}) {
-  const t = useTranslations('assistant')
-  const content = useContent()
-  const confirmed = proposal.status === 'confirmed' || Boolean(confirmation)
-  return (
-    <article className={styles.decisionSheet}>
-      <header className={styles.sheetHeader}>
-        <strong>{t('workspace.decisionDraft')}</strong>
-        <span className={styles.sheetState}>{t(`decision.${proposal.state}`)}</span>
-      </header>
-      <div className={styles.sheetBody}>
-        {choiceLabel && <h3>{choiceLabel}</h3>}
-        <p>{proposal.summary}</p>
-        {proposal.reason && <p><strong>{proposal.reason}</strong></p>}
-        {proposal.taskEffects.length > 0 && (
-          <ul className={styles.effects}>
-            {proposal.taskEffects.map(task => (
-              <li key={task.taskKey} className={styles.effect}>
-                <Check size={13} />
-                <span>
-                  <strong>{content(`quest.${proposal.questKey}.task.${task.taskKey}.title`, task.taskKey.replaceAll('_', ' '))}</strong>
-                  <span>{task.rationale}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-        {proposal.momentCandidate && (
-          <div className={styles.moment}>
-            <strong>{t('decision.moment')} · {proposal.momentCandidate.title}</strong>
-            <p>{proposal.momentCandidate.narrative}</p>
-          </div>
-        )}
-      </div>
-      <footer className={styles.sheetFooter}>
-        {proposal.agentRunId && (
-          <div className={styles.feedback}>
-            {feedbackState === 'sent' ? t('feedback.thanks') : (
-              <>
-                <span>{t('feedback.question')}</span>
-                <button type="button" onClick={() => onFeedback(1)} disabled={feedbackState === 'saving'}>{t('feedback.yes')}</button>
-                <button type="button" onClick={() => onFeedback(-1)} disabled={feedbackState === 'saving'}>{t('feedback.notQuite')}</button>
-              </>
-            )}
-          </div>
-        )}
-        {confirmed ? (
-          <span className={styles.confirmed}>{t('decision.confirmed')}</span>
-        ) : proposal.state === 'ready' ? (
-          <button type="button" className={styles.primary} onClick={onConfirm} disabled={confirming}>
-            {confirming ? t('decision.confirming') : t('decision.confirm')}
-          </button>
-        ) : (
-          <span className={styles.confirmed}>{t('decision.keepTalking')}</span>
-        )}
-      </footer>
+      {!isBliss && <span className={`${styles.avatar} ${styles.firstAvatar}`}>{initials}</span>}
     </article>
   )
 }
