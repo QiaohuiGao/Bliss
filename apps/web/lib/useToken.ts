@@ -7,11 +7,9 @@ export function useToken() {
   const { getToken } = useAuth()
 
   return useCallback(async (): Promise<string> => {
-    try {
-      const token = await getToken()
-      return token ?? 'dev'
-    } catch {
-      return 'dev'
-    }
+    const token = await getToken()
+    if (token) return token
+    if (process.env.NODE_ENV === 'development') return 'dev'
+    throw new Error('Authentication required')
   }, [getToken])
 }

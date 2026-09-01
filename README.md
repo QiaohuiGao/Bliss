@@ -7,9 +7,26 @@ leaving them to it.
 
 Monorepo: a Next.js web app and a Fastify API, with a hand-written agent runtime.
 
+## Live production
+
+**Production app:** [Open Bliss on Vercel](https://bliss-bliss-72c2.vercel.app/)
+
+This deployment runs the prototype-backed product UI from `apps/web` against
+the deployed Railway API. It includes the animated landing experience, real
+Clerk authentication, onboarding, the couple home, and question-scoped
+workspaces across the 14-quest journey.
+
+| Surface | Verified behavior |
+|---|---|
+| Landing and authentication | Public routes render the prototype product experience |
+| Signed-in product routes | Server-protected and returned to the requested page after sign-in |
+| Question workspaces | One permanent thread per authored question, with independent conversation and decision state |
+| API connection | Railway health, database, agent, private media, exact CORS, and unauthorized boundaries verified |
+| Release checks | Automated tests plus deployed route, auth, CORS, readiness, and cron canaries |
+
 ![Bliss shared planning space](docs/images/home.png)
 
-<sub>Design prototype from `prototypes/`, not a screenshot of the running app.</sub>
+<sub>The image is a design reference; the linked preview is the running implementation.</sub>
 
 ---
 
@@ -65,8 +82,12 @@ keys into that resolver — which is also what makes the behavior testable.
 
 ## Product
 
+- **Prototype-backed product experience** — animated landing, real auth,
+  onboarding, couple home, and focused decision workspaces now run in `apps/web`
 - **14 quests** across the US planning arc, from budget and venue through the
   marriage license and the day-of run of show
+- **Permanent question threads** — each authored question restores the same
+  conversation while quest progress remains a separate roll-up
 - **Cultural tradition packs** — South Asian, Chinese, Jewish, Korean, Nigerian,
   Mexican, Persian, Vietnamese, Filipino, and Greek add the right events,
   vendors, attire, and lead times
@@ -93,7 +114,7 @@ keys into that resolver — which is also what makes the behavior testable.
 | Models | Anthropic Claude, Google Gemini (one interface) |
 | Web | Next.js 14 (App Router) + Tailwind CSS + next-intl |
 | Auth | Clerk |
-| Deployment | API → Railway, Web → Vercel |
+| Deployment | API → Railway, Web → [production](https://bliss-bliss-72c2.vercel.app/) |
 
 ```
 apps/
@@ -129,16 +150,22 @@ bucket public.
 
 ## Verification
 
-**195 tests / 557 assertions** across resolver, provider, scheduler, harness,
-pack, memory, and release suites. **283 eval cases and 188 prompt-conformance
+**218 tests / 616 assertions** across web authentication, resolver, provider,
+scheduler, harness, pack, memory, and release suites. **283 eval cases and 188 prompt-conformance
 checks across 14 domain suites**, all passing, gating every release.
 
+The linked preview has also been checked at the deployment boundary: public
+pages return product HTML, signed-out product routes redirect to the local
+sign-in page with their return URL intact, and unauthenticated cron requests are
+rejected.
+
 ```bash
-bun run test                 # 195 unit and integration tests
+bun run test                 # 218 unit and integration tests
 bun run eval:agent           # 283-case release gate across all 14 base quests
 bun run metrics:resume       # eval coverage; --days=N adds traced runtime aggregates
 bun run lint:i18n            # no CJK in code, no hardcoded JSX strings, catalog parity
 bun run verify:generation    # generates 12 wedding variants, checks every row resolves
+bun run verify:production    # probes web auth, API auth/CORS, readiness, and cron boundaries
 bun run type-check           # all workspaces
 bun run build                # all workspaces
 ```

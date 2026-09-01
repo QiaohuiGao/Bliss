@@ -1,0 +1,7 @@
+# Local credentials must never be included in deployment source archives.
+railway.env
+vercel.env
+.env
+.env.*
+apps/**/.env
+apps/**/.env.*

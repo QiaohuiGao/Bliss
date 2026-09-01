@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-import { and, asc, desc, eq, inArray } from 'drizzle-orm'
+import { and, asc, desc, eq, inArray, isNull } from 'drizzle-orm'
 import { z } from 'zod'
 import { AgentGuardrailError, normalizedAgentError } from '../agent/errors'
 import { attachMomentAsset } from '../agent/memory/assets'
@@ -16,6 +16,7 @@ import {
 } from '../agent/providers/media-upload'
 import { db } from '../db'
 import {
+  memoryClaims,
   momentAssets,
   moments,
 } from '../db/schema'
@@ -27,6 +28,27 @@ const correctionSchema = z.object({
 }).refine(body => Object.prototype.hasOwnProperty.call(body, 'value'), {
   message: 'A corrected value is required',
 })
+
+const intakeMemoryKeySchema = z.enum([
+  'feeling',
+  'date_horizon',
+  'place',
+  'guest_shape',
+  'support_style',
+])
+
+const intakeMemorySchema = z.object({
+  value: z.string().trim().min(1).max(2_000),
+  reason: z.string().trim().min(1).max(1_000),
+}).strict()
+
+const intakeMemoryKinds = {
+  feeling: 'priority',
+  date_horizon: 'fact',
+  place: 'fact',
+  guest_shape: 'fact',
+  support_style: 'preference',
+} as const
 
 const momentStatusSchema = z.object({
   status: z.enum(['suggested', 'saved', 'dismissed']),
@@ -73,6 +95,60 @@ export async function memoryRoutes(app: FastifyInstance) {
   app.get('/weddings/:weddingId/memory/proposed', access, async (req, reply) => {
     const { weddingId } = req.params as { weddingId: string }
     return reply.send(await loadProposedClaims(weddingId))
+  })
+
+  // Intake can be skipped. This endpoint lets the couple add a missing starting
+  // point later, while routing edits of an existing claim through the same
+  // auditable correction path used everywhere else.
+  app.put('/weddings/:weddingId/memory/intake/:key', access, async (req, reply) => {
+    const { weddingId, key: rawKey } = req.params as { weddingId: string; key: string }
+    const key = intakeMemoryKeySchema.parse(rawKey)
+    const userId = (req as any).userId as string
+    const body = intakeMemorySchema.parse(req.body)
+    const memoryKey = `intake.${key}`
+    const [existing] = await db
+      .select({ id: memoryClaims.id })
+      .from(memoryClaims)
+      .where(and(
+        eq(memoryClaims.weddingId, weddingId),
+        eq(memoryClaims.subjectType, 'couple'),
+        isNull(memoryClaims.subjectId),
+        eq(memoryClaims.key, memoryKey),
+        eq(memoryClaims.status, 'confirmed'),
+      ))
+      .orderBy(desc(memoryClaims.createdAt))
+      .limit(1)
+
+    if (existing) {
+      const corrected = await correctMemoryClaim({
+        weddingId,
+        claimId: existing.id,
+        userId,
+        value: body.value,
+        reason: body.reason,
+      })
+      if (!corrected) {
+        return reply.status(409).send({ error: 'Memory claim changed while it was being updated' })
+      }
+      return reply.send(corrected)
+    }
+
+    const [created] = await db.insert(memoryClaims).values({
+      weddingId,
+      decisionId: null,
+      subjectType: 'couple',
+      subjectId: null,
+      kind: intakeMemoryKinds[key],
+      key: memoryKey,
+      value: body.value,
+      source: 'explicit',
+      confidenceBasisPoints: 10_000,
+      status: 'confirmed',
+      evidenceMessageIds: [],
+      createdBy: userId,
+      supersedesId: null,
+    }).returning()
+    return reply.status(201).send(created)
   })
 
   app.post('/weddings/:weddingId/memory/:claimId/accept', access, async (req, reply) => {

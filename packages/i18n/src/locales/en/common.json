@@ -176,6 +176,28 @@
         "privacy": "Privacy",
         "contact": "Contact"
       }
+    },
+    "auth": {
+      "brand": "Bliss",
+      "back": "Back to the beginning",
+      "eyebrow": "A shared space for two",
+      "signUpTitle": "Keep the beginning you just made.",
+      "signInTitle": "Come back to your shared story.",
+      "signUpBody": "Your account keeps each person's voice attached to what they said, while every confirmed decision stays visible to both of you.",
+      "signInBody": "Everything Bliss has learned, every open question, and every reason behind a choice is waiting where you left it.",
+      "named": "{selfName} & {partnerName}",
+      "unnamed": "Two voices. One shared journey.",
+      "voiceOne": "Your view stays yours",
+      "voiceTwo": "Your partner's view stays theirs",
+      "shared": "Only confirmed ground becomes shared",
+      "modeLabel": "Account access",
+      "createAccount": "Create account",
+      "signIn": "Sign in",
+      "signUpPanel": "Create your private planning space",
+      "signInPanel": "Open your planning space",
+      "signUpNote": "After this, Bliss will continue the conversation you started.",
+      "signInNote": "You will return to the latest chapter in your plan.",
+      "privacy": "Private by default. Nothing is sent or shared without your approval."
     }
   },
   "money": {

@@ -12,27 +12,19 @@ import type {
   ThreadMessage,
   Wedding,
 } from '@bliss/types'
+import { QUEST_KEYS } from '@bliss/types'
 import { useLocale, useTranslations } from 'next-intl'
-import { Bell, Check, ExternalLink, Paperclip, Send } from 'lucide-react'
+import { Bell, Check, ClipboardList, ExternalLink, Paperclip, Send } from 'lucide-react'
 import { useRouter } from '@/i18n/routing'
 import { api } from '@/lib/api'
 import { useContent } from '@/lib/content'
 import { useToken } from '@/lib/useToken'
 import styles from './workspace.module.css'
 
-const SCOPABLE_QUESTS = [
-  'foundation', 'venue_date', 'wedding_party', 'guests_stationery',
-  'guest_experience', 'food_beverage', 'design_flowers', 'ceremony',
-  'registry_rings_honeymoon', 'legal', 'pre_wedding_events', 'final_30_and_day_of',
-] as const
+const SCOPABLE_QUESTS = QUEST_KEYS
 type ScopableQuest = typeof SCOPABLE_QUESTS[number]
 
-const JOURNEY_QUESTS = [
-  'foundation', 'venue_date', 'vendor_team', 'wedding_party', 'attire_beauty',
-  'guests_stationery', 'guest_experience', 'food_beverage', 'design_flowers',
-  'ceremony', 'registry_rings_honeymoon', 'legal', 'pre_wedding_events',
-  'final_30_and_day_of',
-] as const
+const JOURNEY_QUESTS = QUEST_KEYS
 
 function isScopableQuest(value: string): value is ScopableQuest {
   return (SCOPABLE_QUESTS as readonly string[]).includes(value)
@@ -171,7 +163,9 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
     setFeedbackState('idle')
     const created = await api.createThreadMessage(wedding.id, target.id, message, token)
     setMessages(current => [...current, { ...created, isCurrentUser: true }])
-    const run = await api.runQuestScopingAgent(wedding.id, target.id, token)
+    const run = target.questKey === 'attire_beauty' && target.questionKey === 'attire.dress_acquisition'
+      ? await api.runAttireAgent(wedding.id, target.id, token)
+      : await api.runQuestScopingAgent(wedding.id, target.id, token)
     if (run.stopReason !== 'natural' && run.stopReason !== 'terminal_tool') {
       throw new Error(t('state.error'))
     }
@@ -318,8 +312,11 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
               <span className={`${styles.avatar} ${styles.firstAvatar}`}>{couple.first.slice(0, 1).toUpperCase()}</span>
               <span className={`${styles.avatar} ${styles.secondAvatar}`}>{couple.second.slice(0, 1).toUpperCase()}</span>
             </div>
-            <button type="button" className={styles.notesButton} onClick={() => router.push('/board')}>{t('workspace.allPlanning')}</button>
-            <button type="button" className={styles.iconButton} aria-label={t('workspace.notifications')}><Bell size={15} /></button>
+            <button type="button" className={styles.notesButton} aria-label={t('workspace.allPlanning')} onClick={() => router.push('/board')}>
+              <span className={styles.notesLabel}>{t('workspace.allPlanning')}</span>
+              <ClipboardList className={styles.notesIcon} size={15} aria-hidden="true" />
+            </button>
+            <button type="button" className={styles.iconButton} aria-label={t('workspace.notifications')} onClick={() => router.push('/actions')}><Bell size={15} /></button>
           </div>
         </header>
 
@@ -336,11 +333,7 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
           >
             {JOURNEY_QUESTS.map(chapterKey => {
               const chapterProgress = progress.find(item => item.questKey === chapterKey)
-              const href = chapterKey === 'attire_beauty'
-                ? '/assistant'
-                : chapterKey === 'vendor_team'
-                  ? '/assistant/photographer'
-                  : `/assistant/quest/${chapterKey}`
+              const href = `/assistant/quest/${chapterKey}`
               return (
                 <button
                   key={chapterKey}
@@ -348,6 +341,7 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
                   className={styles.questNode}
                   data-status={chapterProgress?.status ?? 'not_started'}
                   aria-current={chapterKey === questKey ? 'step' : undefined}
+                  aria-label={content(`quest.${chapterKey}.title`, chapterKey.replaceAll('_', ' '))}
                   title={content(`quest.${chapterKey}.title`, chapterKey.replaceAll('_', ' '))}
                   onClick={() => router.push(href)}
                 >
@@ -428,7 +422,9 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
             <div className={styles.conversationScroll}>
               <header className={styles.conversationIntro}>
                 <p className={styles.eyebrow}>{t('workspace.companionLabel')}</p>
-                <h2>{t('workspace.prototypeIntroTitle')}</h2>
+                <h1>{t.rich('workspace.prototypeIntroTitle', {
+                  story: chunks => <em>{chunks}</em>,
+                })}</h1>
                 <p>{t('workspace.prototypeIntroBody')}</p>
               </header>
 
@@ -486,19 +482,20 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
                 ))}
               </div>
               <form onSubmit={sendMessage} className={styles.composer}>
-                <button type="button" className={styles.attachButton} aria-label={t('workspace.attach')}><Paperclip size={15} /></button>
+                <button type="button" className={styles.attachButton} aria-label={t('workspace.attach')} onClick={() => router.push('/moments')}><Paperclip size={15} /></button>
                 <textarea
                   ref={composerRef}
                   value={draft}
                   onChange={event => setDraft(event.target.value)}
                   onKeyDown={event => {
-                    if (event.key === 'Enter' && !event.shiftKey) {
+                    if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
                       event.preventDefault()
                       void sendMessage()
                     }
                   }}
                   rows={1}
                   maxLength={12_000}
+                  aria-label={t('composer.placeholder')}
                   placeholder={thread ? t('composer.placeholder') : t('workspace.chooseQuestion')}
                   disabled={!thread || working}
                 />
@@ -528,6 +525,7 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
                       type="button"
                       className={styles.choiceOption}
                       data-selected={selected}
+                      aria-pressed={selected}
                       disabled={working}
                       onClick={() => {
                         setSelectedChoice(option.value)
@@ -545,6 +543,7 @@ export default function QuestDecisionPage({ params }: { params: { questKey: stri
                   className={styles.choiceOption}
                   data-other="true"
                   data-selected={otherQuestionKey === activeQuestion.questionKey}
+                  aria-pressed={otherQuestionKey === activeQuestion.questionKey}
                   onClick={() => {
                     setSelectedChoice(null)
                     setOtherQuestionKey(activeQuestion.questionKey)

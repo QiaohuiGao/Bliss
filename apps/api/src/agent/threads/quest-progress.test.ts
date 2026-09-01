@@ -49,13 +49,32 @@ describe('quest progress projection', () => {
     const untouched = projectQuestProgress([]).find(quest => quest.questKey === 'attire_beauty')
     const completed = projectQuestProgress([
       thread({
-        id: 'attire-thread',
+        id: 'attire-dress-thread',
         questKey: 'attire_beauty',
         questionKey: 'attire.dress_acquisition',
-        currentDecisionId: 'attire-decision',
+        currentDecisionId: 'attire-dress-decision',
+      }),
+      thread({
+        id: 'attire-suit-thread',
+        questKey: 'attire_beauty',
+        questionKey: 'attire.suit_acquisition',
+        currentDecisionId: 'attire-suit-decision',
+      }),
+      thread({
+        id: 'attire-beauty-thread',
+        questKey: 'attire_beauty',
+        questionKey: 'attire.beauty_approach',
+        currentDecisionId: 'attire-beauty-decision',
+      }),
+      thread({
+        id: 'attire-second-look-thread',
+        questKey: 'attire_beauty',
+        questionKey: 'attire.second_look',
+        currentDecisionId: 'attire-second-look-decision',
       }),
     ]).find(quest => quest.questKey === 'attire_beauty')
     expect(untouched?.status).toBe('not_started')
+    expect(untouched?.totalCount).toBe(4)
     expect(completed?.status).toBe('completed')
     expect(completed?.confirmedCount).toBe(completed?.totalCount)
   })

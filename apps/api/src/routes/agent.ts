@@ -50,12 +50,17 @@ const createMessageSchema = z.object({
 })
 
 function questionBelongsToQuest(questKey: string, questionKey: string) {
-  if (questKey === ATTIRE_QUEST_KEY) return questionKey === ATTIRE_QUESTION_KEY
   if (questKey === PHOTOGRAPHER_QUEST_KEY) return questionKey === PHOTOGRAPHER_QUESTION_KEY
   if (!isQuestScopingKey(questKey)) return false
   return getQuestScopingOverview(questKey, {}).questions.some(
     question => question.questionKey === questionKey,
   )
+}
+
+function agentRunStatus(code: string) {
+  if (code === 'UNEXPECTED_ERROR') return 500
+  if (code === 'THREAD_RUN_IN_PROGRESS') return 409
+  return 422
 }
 
 /**
@@ -329,8 +334,7 @@ export async function agentRoutes(app: FastifyInstance) {
     } catch (error) {
       const normalized = normalizedAgentError(error)
       req.log.error({ error: normalized, weddingId, threadId }, 'Attire agent run failed')
-      const status = normalized.code === 'UNEXPECTED_ERROR' ? 500 : 422
-      return reply.status(status).send({ error: normalized.message, ...normalized })
+      return reply.status(agentRunStatus(normalized.code)).send({ error: normalized.message, ...normalized })
     }
   })
 
@@ -369,7 +373,7 @@ export async function agentRoutes(app: FastifyInstance) {
     } catch (error) {
       const normalized = normalizedAgentError(error)
       req.log.error({ error: normalized, weddingId, threadId }, 'Photographer agent run failed')
-      return reply.status(normalized.code === 'UNEXPECTED_ERROR' ? 500 : 422).send({
+      return reply.status(agentRunStatus(normalized.code)).send({
         error: normalized.message,
         ...normalized,
       })
@@ -404,7 +408,7 @@ export async function agentRoutes(app: FastifyInstance) {
     } catch (error) {
       const normalized = normalizedAgentError(error)
       req.log.error({ error: normalized, weddingId, threadId }, 'Quest scoping agent run failed')
-      return reply.status(normalized.code === 'UNEXPECTED_ERROR' ? 500 : 422).send({
+      return reply.status(agentRunStatus(normalized.code)).send({
         error: normalized.message,
         ...normalized,
       })

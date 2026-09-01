@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { AgentGuardrailError } from '../errors'
 import { runAgentLoop } from './loop'
 import type {
   AgentModel,
@@ -179,5 +180,47 @@ describe('bounded agent loop', () => {
 
     expect(run.stopReason).toBe('guardrail')
     expect(trace.spans.at(-1)?.error?.code).toBe('TOOL_NOT_ALLOWED')
+  })
+
+  it('allows one bounded repair for a malformed external action draft', async () => {
+    let modelCalls = 0
+    let toolCalls = 0
+    const result = await runAgentLoop({
+      model: {
+        id: 'repair-model',
+        async generate() {
+          modelCalls += 1
+          return {
+            text: '',
+            toolCalls: [{ id: `call-${modelCalls}`, name: 'propose_decision', input: {} }],
+          }
+        },
+      },
+      tools: [{
+        definition: {
+          name: 'propose_decision',
+          description: 'Create a proposal.',
+          inputSchema: { type: 'object', properties: {} },
+        },
+        terminal: true,
+        async execute() {
+          toolCalls += 1
+          if (toolCalls === 1) {
+            throw new AgentGuardrailError(
+              'ACTION_PAYLOAD_INVALID',
+              'The calendar proposal is missing required details',
+            )
+          }
+          return { proposalId: 'proposal-1' }
+        },
+      }],
+      messages: [{ role: 'user', content: 'Create a safe draft.' }],
+      context: { runId: 'run-1', weddingId: 'wedding-1', userId: 'user-1', threadId: 'thread-1' },
+      limits: { maxSteps: 4, maxTokens: 1_000, maxCostMicros: 1_000, maxMs: 1_000 },
+      trace: { async recordSpan() {} },
+    })
+    expect(result.stopReason).toBe('terminal_tool')
+    expect(modelCalls).toBe(2)
+    expect(toolCalls).toBe(2)
   })
 })

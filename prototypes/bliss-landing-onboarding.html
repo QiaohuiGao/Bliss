@@ -542,6 +542,31 @@
       cursor: pointer;
     }
 
+    .claim-editor { display: grid; gap: 7px; margin-top: 8px; }
+    .claim-editor input {
+      width: 100%;
+      min-height: 36px;
+      padding: 7px 9px;
+      border: 1px solid var(--line-strong);
+      border-radius: 9px;
+      color: var(--ink);
+      background: white;
+      font-size: 11px;
+    }
+    .claim-editor-actions { display: flex; gap: 7px; }
+    .claim-editor-actions button {
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: white;
+      font-size: 9px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .claim-editor-actions button:first-child { color: white; border-color: var(--violet); background: var(--violet); }
+
     .knows-empty {
       padding: 22px 14px;
       border: 1px dashed var(--line-strong);
@@ -945,6 +970,28 @@
       node.innerHTML = `<div class="claim-top"><span class="claim-kind">${claim.kind}</span><span class="claim-source">You said this</span></div>
         <strong></strong><p>${claim.note}</p><button class="claim-fix" type="button">Correct this</button>`;
       node.querySelector('strong').textContent = claim.value;
+      node.querySelector('.claim-fix').addEventListener('click', () => {
+        if (node.querySelector('.claim-editor')) return;
+        const editor = document.createElement('form');
+        editor.className = 'claim-editor';
+        editor.innerHTML = `<label class="sr-only" for="claimCorrection${claimTotal}">Correct what Bliss remembers</label>
+          <input id="claimCorrection${claimTotal}" value="">
+          <div class="claim-editor-actions"><button type="submit">Save correction</button><button type="button">Cancel</button></div>`;
+        const input = editor.querySelector('input');
+        input.value = claim.value;
+        editor.addEventListener('submit', (event) => {
+          event.preventDefault();
+          const value = input.value.trim();
+          if (!value) return;
+          claim.value = value;
+          node.querySelector('strong').textContent = value;
+          editor.remove();
+        });
+        editor.querySelector('button[type="button"]').addEventListener('click', () => editor.remove());
+        node.appendChild(editor);
+        input.focus();
+        input.select();
+      });
       claims.appendChild(node);
       claimTotal += 1;
       claimCount.textContent = String(claimTotal);

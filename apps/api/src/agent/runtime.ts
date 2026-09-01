@@ -28,6 +28,9 @@ import { DatabaseVendorSearchStore } from './providers/vendor-search-store'
 import { DatabaseDecisionProposalStore } from './proposals/store'
 import { loadCurrentDecisionState } from './proposals/current'
 import type { AgentMessage, AgentModel, AgentTool } from './types'
+import { activeDecisionScope } from './scope'
+import { DatabaseThreadRunLeaseStore } from './threads/database-run-lease'
+import { withThreadRunLease } from './threads/run-lease'
 
 interface DecisionRunInput {
   weddingId: string
@@ -114,11 +117,6 @@ export class AgentRuntime {
   }
 
   private async runDecision(input: DecisionRunInput, pack: DecisionPack) {
-    const activeBundle = await resolveArtifactBundleForWedding({
-      weddingId: input.weddingId,
-      packKey: pack.releaseKey,
-      defaultBundle: pack.bundle,
-    })
     const [thread] = await db
       .select()
       .from(planningThreads)
@@ -143,6 +141,25 @@ export class AgentRuntime {
         'Planning thread question does not match this specialized decision pack',
       )
     }
+
+    return withThreadRunLease(
+      new DatabaseThreadRunLeaseStore(),
+      { weddingId: input.weddingId, threadId: input.threadId },
+      () => this.executeDecision(input, pack, thread, questionKey),
+    )
+  }
+
+  private async executeDecision(
+    input: DecisionRunInput,
+    pack: DecisionPack,
+    thread: typeof planningThreads.$inferSelect,
+    questionKey: string,
+  ) {
+    const activeBundle = await resolveArtifactBundleForWedding({
+      weddingId: input.weddingId,
+      packKey: pack.releaseKey,
+      defaultBundle: pack.bundle,
+    })
 
     const [wedding] = await db
       .select()
@@ -206,13 +223,14 @@ export class AgentRuntime {
       { role: 'system', content: activeBundle.prompt },
       {
         role: 'system',
-        content: `Active decision scope: ${JSON.stringify({
+        content: `Active decision scope: ${JSON.stringify(activeDecisionScope({
+          threadId: input.threadId,
           questKey: pack.questKey,
           questionKey,
           currentConfirmedChoice: currentDecisions.answers[questionKey] ?? null,
           conversationStatus: thread.status,
           currentDecisionId: thread.currentDecisionId,
-        })}. Discuss and propose only this question. Other questions may be mentioned only as context or downstream effects.`,
+        }))}. Discuss and propose only this question. Other questions may be mentioned only as context or downstream effects.`,
       },
       {
         role: 'system',

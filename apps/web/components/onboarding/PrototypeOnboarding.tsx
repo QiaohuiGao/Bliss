@@ -47,6 +47,8 @@ export function PrototypeOnboarding() {
   const [finished, setFinished] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [editingClaimKey, setEditingClaimKey] = useState<OnboardingIntakeClaim['key'] | null>(null)
+  const [correctionDraft, setCorrectionDraft] = useState('')
 
   useEffect(() => {
     try {
@@ -132,6 +134,20 @@ export function PrototypeOnboarding() {
     return undefined
   }
 
+  function startCorrection(claim: Claim) {
+    setEditingClaimKey(claim.key)
+    setCorrectionDraft(claim.value)
+  }
+
+  function saveCorrection(event: FormEvent, claimKey: OnboardingIntakeClaim['key']) {
+    event.preventDefault()
+    const value = correctionDraft.trim()
+    if (!value) return
+    setClaims(items => items.map(claim => claim.key === claimKey ? { ...claim, value } : claim))
+    setEditingClaimKey(null)
+    setCorrectionDraft('')
+  }
+
   async function openWorkspace() {
     if (saving) return
     setSaving(true)
@@ -196,7 +212,7 @@ export function PrototypeOnboarding() {
           <aside className={styles.knows} aria-labelledby="knowsTitle">
             <div className={styles.knowsHead}><strong id="knowsTitle">{t('knows.title')}</strong><span>{claims.length}</span></div>
             <p>{t('knows.body')}</p>
-            <div className={styles.claims}>{claims.length === 0 ? <div className={styles.knowsEmpty}>{t('knows.empty')}</div> : claims.map(claim => <article className={styles.claim} key={claim.key}><div><span>{t(claim.labelKey)}</span><small>{t('knows.source')}</small></div><strong>{claim.value}</strong><p>{t(claim.noteKey)}</p></article>)}</div>
+            <div className={styles.claims}>{claims.length === 0 ? <div className={styles.knowsEmpty}>{t('knows.empty')}</div> : claims.map(claim => <article className={styles.claim} data-who="both" key={claim.key}><div><span>{t(claim.labelKey)}</span><small>{t('knows.source')}</small></div><strong>{claim.value}</strong><p>{t(claim.noteKey)}</p>{editingClaimKey === claim.key ? <form className={styles.claimEditor} onSubmit={event => saveCorrection(event, claim.key)}><label className="sr-only" htmlFor={`claim-${claim.key}`}>{t('knows.correctionLabel')}</label><input id={`claim-${claim.key}`} value={correctionDraft} onChange={event => setCorrectionDraft(event.target.value)} autoFocus /><div><button type="submit" disabled={!correctionDraft.trim()}>{t('knows.saveCorrection')}</button><button type="button" onClick={() => setEditingClaimKey(null)}>{t('knows.cancelCorrection')}</button></div></form> : <button className={styles.claimFix} type="button" onClick={() => startCorrection(claim)}>{t('knows.correct')}</button>}</article>)}</div>
             <section className={styles.chaptersMini}><h3>{t('chapters.title')}<span>{t('chapters.touched', { count: touched.length })}</span></h3><div className={styles.miniArc} aria-hidden="true">{Array.from({ length: 14 }, (_, index) => <i key={index} data-touched={touched.includes(index)} />)}</div><p>{t('chapters.body')}</p></section>
             {finished && <div className={styles.donePanel}><strong>{t('done.title')}</strong><p>{t('done.body')}</p><button type="button" onClick={openWorkspace} disabled={saving}>{saving ? t('done.saving') : t('done.action')}</button>{error && <p className={styles.error}>{error}</p>}</div>}
           </aside>

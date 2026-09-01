@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { useAuth } from '@clerk/nextjs'
@@ -19,26 +19,12 @@ export default function JoinPage() {
 
   const inviteToken = searchParams.get('token')
 
-  useEffect(() => {
-    if (!isLoaded) return
-    if (!inviteToken) {
-      setError(tErrors('wedding.inviteInvalid'))
-      setStatus('error')
-      return
-    }
-    if (!isSignedIn) {
-      const redirectUrl = encodeURIComponent(`/join?token=${inviteToken}`)
-      router.push(`/sign-up?redirect_url=${redirectUrl}`)
-      return
-    }
-    joinWedding()
-  }, [isLoaded, isSignedIn])
-
-  async function joinWedding() {
+  const joinWedding = useCallback(async () => {
+    if (!inviteToken) return
     setStatus('joining')
     try {
       const token = await getToken()
-      await api.joinWedding(inviteToken!, token!)
+      await api.joinWedding(inviteToken, token!)
       setStatus('success')
       setTimeout(() => router.push('/dashboard'), 2000)
     } catch (caught) {
@@ -52,7 +38,22 @@ export default function JoinPage() {
             : tErrors('generic'))
       setStatus('error')
     }
-  }
+  }, [getToken, inviteToken, router, tErrors])
+
+  useEffect(() => {
+    if (!isLoaded) return
+    if (!inviteToken) {
+      setError(tErrors('wedding.inviteInvalid'))
+      setStatus('error')
+      return
+    }
+    if (!isSignedIn) {
+      const redirectUrl = encodeURIComponent(`/join?token=${inviteToken}`)
+      router.push(`/sign-up?redirect_url=${redirectUrl}`)
+      return
+    }
+    void joinWedding()
+  }, [inviteToken, isLoaded, isSignedIn, joinWedding, router, tErrors])
 
   return (
     <div className="min-h-screen bg-bliss-cream flex items-center justify-center px-4">

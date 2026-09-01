@@ -112,7 +112,7 @@ export default function MomentsPage() {
             <ArrowLeft className="w-4 h-4" />
             <span className="font-serif text-lg">Bliss</span>
           </button>
-          <button onClick={() => router.push('/assistant')} className="btn-ghost text-xs flex items-center gap-1.5">
+          <button onClick={() => router.push('/assistant/quest/foundation')} className="btn-ghost text-xs flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5" />
             {t('eyebrow')}
           </button>
@@ -339,6 +339,8 @@ function MomentCard({
         <div className={cn('grid gap-1 bg-bliss-linen', moment.assets.length > 1 ? 'grid-cols-2' : 'grid-cols-1')}>
           {moment.assets.map(asset => (
             <figure key={asset.id} className="relative aspect-[4/3] overflow-hidden">
+              {/* Signed private-media URLs are intentionally loaded directly and expire before an image optimizer can safely cache them. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={asset.url} alt={asset.caption ?? moment.title} className="w-full h-full object-cover" />
               <button
                 type="button"

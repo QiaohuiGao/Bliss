@@ -13,6 +13,23 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/bliss
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: bliss
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d bliss"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - name: Check out repository
@@ -32,11 +49,25 @@ jobs:
       - name: Type-check
         run: bun run type-check
 
+      - name: Migrate test database
+        run: bun run db:migrate
+
+      - name: Verify generated wedding plans
+        run: bun run verify:generation
+
       - name: Test
         run: bun test
 
       - name: Agent release gate
         run: bun run eval:agent
+
+      - name: Database smoke flows
+        run: |
+          bun run smoke:agent
+          bun run smoke:photographer
+          bun run smoke:scoping
+          bun run smoke:release
+          bun run smoke:couple
 
       - name: Build
         run: bun run build

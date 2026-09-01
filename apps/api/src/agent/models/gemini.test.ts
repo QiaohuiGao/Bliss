@@ -149,6 +149,7 @@ describe('Gemini agent model', () => {
     const model = new GeminiAgentModel({
       apiKey: 'gemini-secret',
       model: 'gemini-test',
+      maxAttempts: 2,
       fetcher: async input => {
         requestCount += 1
         requestUrl = input.toString()
@@ -192,6 +193,59 @@ describe('Gemini agent model', () => {
     })
 
     expect(result.text).toBe('Recovered')
+    expect(requestCount).toBe(2)
+  })
+
+  it('retries a truncated successful response before surfacing an error', async () => {
+    let requestCount = 0
+    const model = new GeminiAgentModel({
+      apiKey: 'gemini-secret',
+      model: 'gemini-test',
+      fetcher: async () => {
+        requestCount += 1
+        if (requestCount === 1) {
+          return new Response('{"candidates":', {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          })
+        }
+        return jsonResponse({
+          candidates: [{ content: { parts: [{ text: 'Recovered from truncation' }] } }],
+        })
+      },
+    })
+
+    const result = await model.generate({
+      messages: [{ role: 'user', content: 'Hello' }],
+      tools: [],
+      signal: new AbortController().signal,
+    })
+
+    expect(result.text).toBe('Recovered from truncation')
+    expect(requestCount).toBe(2)
+  })
+
+  it('retries a transport failure without exposing the provider exception', async () => {
+    let requestCount = 0
+    const model = new GeminiAgentModel({
+      apiKey: 'gemini-secret',
+      model: 'gemini-test',
+      fetcher: async () => {
+        requestCount += 1
+        if (requestCount === 1) throw new TypeError('socket reset with provider details')
+        return jsonResponse({
+          candidates: [{ content: { parts: [{ text: 'Recovered from transport failure' }] } }],
+        })
+      },
+    })
+
+    const result = await model.generate({
+      messages: [{ role: 'user', content: 'Hello' }],
+      tools: [],
+      signal: new AbortController().signal,
+    })
+
+    expect(result.text).toBe('Recovered from transport failure')
     expect(requestCount).toBe(2)
   })
 })

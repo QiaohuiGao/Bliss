@@ -104,7 +104,9 @@ const questScopingBundleV1 = (questKey: string): AgentArtifactBundle => Object.f
 export const QUEST_SCOPING_ARTIFACT_BUNDLES_V1 = Object.freeze({
   foundation: questScopingBundleV1('foundation'),
   venue_date: questScopingBundleV1('venue_date'),
+  vendor_team: questScopingBundleV1('vendor_team'),
   wedding_party: questScopingBundleV1('wedding_party'),
+  attire_beauty: questScopingBundleV1('attire_beauty'),
   guests_stationery: questScopingBundleV1('guests_stationery'),
   guest_experience: questScopingBundleV1('guest_experience'),
   food_beverage: questScopingBundleV1('food_beverage'),

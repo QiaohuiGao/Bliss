@@ -221,7 +221,11 @@
       "title": "What Bliss knows",
       "body": "Every line came from something one of you said. Correct anything that is wrong—corrections stick.",
       "empty": "Nothing yet. This fills in as you talk.",
-      "source": "You said this"
+      "source": "You said this",
+      "correct": "Correct this",
+      "correctionLabel": "Correct what Bliss remembers",
+      "saveCorrection": "Save correction",
+      "cancelCorrection": "Cancel"
     },
     "chapters": {
       "title": "The fourteen chapters",

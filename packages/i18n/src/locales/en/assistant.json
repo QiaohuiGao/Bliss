@@ -133,7 +133,7 @@
     "notifications": "Notifications",
     "decisionCount": "{count} decisions made",
     "agentReady": "Ready when you are",
-    "prototypeIntroTitle": "Let’s choose what belongs in your story.",
+    "prototypeIntroTitle": "Let’s choose what belongs in your <story>story.</story>",
     "prototypeIntroBody": "Bliss keeps your separate preferences visible, finds the common ground, and helps you resolve one honest tradeoff at a time.",
     "attach": "Attach a photo or file",
     "capabilities": {

@@ -1,5 +1,6 @@
 node_modules/
 .next/
+.next-*/
 dist/
 .expo/
 .turbo/
@@ -8,6 +9,8 @@ dist/
 .env
 .env.local
 *.env.local
+railway.env
+vercel.env
 apps/api/.env
 apps/web/.env.local
 apps/mobile/.env
@@ -21,3 +24,4 @@ apps/mobile/.env
 # TypeScript
 *.tsbuildinfo
 .gstack/
+.vercel/

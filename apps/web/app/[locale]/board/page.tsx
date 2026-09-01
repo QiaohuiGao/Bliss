@@ -47,7 +47,7 @@ export default function BoardPage() {
       }
     }
     load()
-  }, [])
+  }, [getToken, router])
 
   if (loading || !data) {
     return (
@@ -80,7 +80,7 @@ export default function BoardPage() {
             </button>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => router.push('/assistant')}
+                onClick={() => router.push('/assistant/quest/foundation')}
                 className="btn-primary py-2 px-3 text-sm flex items-center gap-1.5"
               >
                 <MessageCircleHeart className="w-4 h-4" />
