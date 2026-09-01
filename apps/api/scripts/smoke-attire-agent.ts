@@ -521,27 +521,21 @@ try {
 
   // A later change of mind is a new append-only decision. It points to the
   // decision it replaces and deterministically removes the obsolete branch.
-  const [revisionThread] = await db.insert(planningThreads).values({
-    weddingId,
-    questKey: 'attire_beauty',
-    title: 'Revisit attire after schedule pressure',
-    openedBy: userId,
-  }).returning({ id: planningThreads.id })
   const [revisionMessage] = await db.insert(threadMessages).values({
     weddingId,
-    threadId: revisionThread!.id,
+    threadId: thread!.id,
     authorType: 'user',
     authorUserId: userId,
     content: 'The timeline is now the firm constraint, so I want to rent instead.',
   }).returning({ id: threadMessages.id })
   const revisionRun = await new AgentRuntime(new RevisionSmokeModel({
-    threadId: revisionThread!.id,
+    threadId: thread!.id,
     messageId: revisionMessage!.id,
     memberId: userId,
-  })).runAttireDecision({ weddingId, threadId: revisionThread!.id, userId })
+  })).runAttireDecision({ weddingId, threadId: thread!.id, userId })
   assert.equal(revisionRun.stopReason, 'terminal_tool')
   const [revisionProposal] = await db.select().from(decisionProposals).where(and(
-    eq(decisionProposals.threadId, revisionThread!.id),
+    eq(decisionProposals.threadId, thread!.id),
     eq(decisionProposals.status, 'pending'),
   )).limit(1)
   const revision = await committer.confirm({
