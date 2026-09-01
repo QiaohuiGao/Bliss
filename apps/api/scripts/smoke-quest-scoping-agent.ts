@@ -83,12 +83,23 @@ let weddingId: string | null = null
 let userId: string | null = null
 
 async function decide(input: ScriptChoice & { message: string }) {
-  const [thread] = await db.insert(planningThreads).values({
-    weddingId: weddingId!,
-    questKey: input.questKey,
-    title: `Decide ${input.questionKey}`,
-    openedBy: userId!,
-  }).returning({ id: planningThreads.id })
+  let [thread] = await db.select({ id: planningThreads.id })
+    .from(planningThreads)
+    .where(and(
+      eq(planningThreads.weddingId, weddingId!),
+      eq(planningThreads.questKey, input.questKey),
+      eq(planningThreads.questionKey, input.questionKey),
+    ))
+    .limit(1)
+  if (!thread) {
+    ;[thread] = await db.insert(planningThreads).values({
+      weddingId: weddingId!,
+      questKey: input.questKey,
+      questionKey: input.questionKey,
+      title: `Decide ${input.questionKey}`,
+      openedBy: userId!,
+    }).returning({ id: planningThreads.id })
+  }
   const [message] = await db.insert(threadMessages).values({
     weddingId: weddingId!,
     threadId: thread!.id,

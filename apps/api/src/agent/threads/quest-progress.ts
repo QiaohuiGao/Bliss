@@ -3,26 +3,11 @@ import type {
   QuestProgress,
   QuestionProgress,
 } from '@bliss/types'
-import { ATTIRE_QUESTION_KEY, ATTIRE_QUEST_KEY } from '../packs/attire'
+import { QUEST_KEYS } from '@bliss/types'
 import { PHOTOGRAPHER_QUESTION_KEY, PHOTOGRAPHER_QUEST_KEY } from '../packs/photographer'
 import { getQuestScopingOverview } from '../packs/quest-scoping'
 
-export const QUEST_PROGRESS_QUEST_KEYS = [
-  'foundation',
-  'venue_date',
-  'vendor_team',
-  'wedding_party',
-  'attire_beauty',
-  'guests_stationery',
-  'guest_experience',
-  'food_beverage',
-  'design_flowers',
-  'ceremony',
-  'registry_rings_honeymoon',
-  'legal',
-  'pre_wedding_events',
-  'final_30_and_day_of',
-] as const
+export const QUEST_PROGRESS_QUEST_KEYS = QUEST_KEYS
 
 export type ProgressQuestKey = typeof QUEST_PROGRESS_QUEST_KEYS[number]
 
@@ -35,7 +20,6 @@ export interface QuestProgressThread {
 }
 
 function questionKeysForQuest(questKey: ProgressQuestKey) {
-  if (questKey === ATTIRE_QUEST_KEY) return [ATTIRE_QUESTION_KEY]
   if (questKey === PHOTOGRAPHER_QUEST_KEY) return [PHOTOGRAPHER_QUESTION_KEY]
   return getQuestScopingOverview(questKey, {}).questions.map(question => question.questionKey)
 }

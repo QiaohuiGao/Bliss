@@ -3,6 +3,15 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": [
+        "API_URL",
+        "CLERK_SECRET_KEY",
+        "CRON_SECRET",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL",
+        "NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"
+      ],
       "outputs": [".next/**", "dist/**", "!.next/cache/**"]
     },
     "dev": {

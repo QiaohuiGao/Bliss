@@ -14,11 +14,19 @@ describe('external action contracts', () => {
   })
 
   it('rejects calendar events whose end precedes the start', () => {
-    expect(() => parseExternalActionPayload('calendar_event', {
-      title: 'Salon visit',
-      startsAt: '2026-10-01T10:00:00-04:00',
-      endsAt: '2026-10-01T09:00:00-04:00',
-    })).toThrow()
+    try {
+      parseExternalActionPayload('calendar_event', {
+        title: 'Salon visit',
+        startsAt: '2026-10-01T10:00:00-04:00',
+        endsAt: '2026-10-01T09:00:00-04:00',
+      })
+      throw new Error('Expected invalid calendar payload to be rejected')
+    } catch (error) {
+      expect(error).toMatchObject({
+        code: 'ACTION_PAYLOAD_INVALID',
+        retryable: false,
+      })
+    }
   })
 
   it('creates a portable calendar artifact without sending anything', () => {

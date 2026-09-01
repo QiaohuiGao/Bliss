@@ -5,6 +5,9 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // QA builds can use an isolated directory without corrupting a running dev server.
+  // Production keeps Next.js' standard `.next` output unless explicitly overridden.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   transpilePackages: ['@bliss/types', '@bliss/i18n'],
   images: {
     remotePatterns: [{ hostname: 'images.unsplash.com' }],

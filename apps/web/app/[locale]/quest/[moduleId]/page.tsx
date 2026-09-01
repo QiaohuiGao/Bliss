@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/routing'
 import { useToken } from '@/lib/useToken'
@@ -14,8 +14,8 @@ import {
 } from 'lucide-react'
 
 const QUEST_ASSISTANT_ROUTES: Record<string, string> = {
-  attire_beauty: '/assistant',
-  vendor_team: '/assistant/photographer',
+  attire_beauty: '/assistant/quest/attire_beauty',
+  vendor_team: '/assistant/quest/vendor_team',
   foundation: '/assistant/quest/foundation',
   venue_date: '/assistant/quest/venue_date',
   wedding_party: '/assistant/quest/wedding_party',
@@ -42,7 +42,7 @@ export default function QuestPage({ params }: { params: { moduleId: string } }) 
   const [expandedSubs, setExpandedSubs] = useState<Set<string>>(new Set())
   const [animatingTasks, setAnimatingTasks] = useState<Set<string>>(new Set())
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     const token = await getToken()
     const detail = await api.getModuleDetail(moduleId, token)
     setData(detail)
@@ -51,9 +51,9 @@ export default function QuestPage({ params }: { params: { moduleId: string } }) 
     if (detail.celebration && !detail.celebration.shownAt) {
       setShowCelebration(true)
     }
-  }
+  }, [getToken, moduleId])
 
-  useEffect(() => { loadData() }, [moduleId])
+  useEffect(() => { void loadData() }, [loadData])
 
   const toggleTask = async (task: TaskWithMeta) => {
     const token = await getToken()

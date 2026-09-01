@@ -19,13 +19,14 @@ async function apiFetch<T>(
 ): Promise<T> {
   const { token, ...fetchOptions } = options
   const authToken = token || 'dev'
+  const headers = new Headers(fetchOptions.headers)
+  headers.set('Authorization', `Bearer ${authToken}`)
+  if (fetchOptions.body !== undefined && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json')
+  }
   const res = await fetch(`${API_URL}${path}`, {
     ...fetchOptions,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${authToken}`,
-      ...fetchOptions.headers,
-    },
+    headers,
   })
 
   if (!res.ok) {
@@ -209,6 +210,18 @@ export const api = {
     token: string,
   ) => apiFetch<MemoryProfileClaim>(`/weddings/${weddingId}/memory/${claimId}/correct`, {
     method: 'POST',
+    body: JSON.stringify({ value, reason }),
+    token,
+  }),
+
+  setIntakeMemoryClaim: (
+    weddingId: string,
+    key: 'feeling' | 'date_horizon' | 'place' | 'guest_shape' | 'support_style',
+    value: string,
+    reason: string,
+    token: string,
+  ) => apiFetch<MemoryProfileClaim>(`/weddings/${weddingId}/memory/intake/${key}`, {
+    method: 'PUT',
     body: JSON.stringify({ value, reason }),
     token,
   }),

@@ -68,6 +68,7 @@ export async function runAgentLoop(input: RunAgentLoopInput): Promise<AgentLoopR
   let inputTokens = 0
   let outputTokens = 0
   let costMicros = 0
+  const repairedToolErrors = new Set<string>()
 
   const finish = (
     stopReason: AgentStopReason,
@@ -211,7 +212,16 @@ export async function runAgentLoop(input: RunAgentLoopInput): Promise<AgentLoopR
             toolCallId: call.id,
             content: jsonForMessage({ error: normalized }),
           })
-          if (!normalized.retryable) return finish('guardrail')
+          if (normalized.retryable) continue
+          // A malformed draft has no side effect and can be safely repaired once.
+          // This is distinct from provider retryability: execution still treats an
+          // invalid payload as final, while the bounded model loop gets one chance
+          // to return a schema-valid proposal.
+          if (normalized.code === 'ACTION_PAYLOAD_INVALID' && !repairedToolErrors.has(normalized.code)) {
+            repairedToolErrors.add(normalized.code)
+            continue
+          }
+          return finish('guardrail')
         }
       }
     }

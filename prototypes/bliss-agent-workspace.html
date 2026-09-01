@@ -72,6 +72,21 @@
       outline-offset: 2px;
     }
 
+    [hidden] {
+      display: none !important;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     .app-shell {
       width: min(1560px, calc(100% - 28px));
       min-height: calc(100vh - 28px);
@@ -162,6 +177,31 @@
       margin-right: 6px;
     }
 
+    .presence .avatar {
+      padding: 0;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+    }
+
+    .presence .avatar[aria-pressed="false"] {
+      opacity: 0.58;
+    }
+
+    .presence .avatar[aria-pressed="true"] {
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 2px var(--paper-strong), 0 0 0 4px var(--line-strong);
+      transform: translateY(-1px);
+    }
+
+    .active-member-label {
+      max-width: 84px;
+      margin-left: 8px;
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 1.2;
+    }
+
     .avatar {
       display: inline-grid;
       place-items: center;
@@ -245,47 +285,103 @@
       font-size: 12px;
     }
 
+    .journey-carousel {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr) 30px;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .journey-control {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--violet-deep);
+      background: var(--paper-strong);
+      cursor: pointer;
+      transition: border-color 160ms ease, transform 160ms ease, opacity 160ms ease;
+    }
+
+    .journey-control:hover:not(:disabled) {
+      border-color: var(--violet);
+      transform: translateY(-1px);
+    }
+
+    .journey-control:disabled {
+      opacity: 0.34;
+      cursor: default;
+    }
+
+    .journey-viewport {
+      min-width: 0;
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .journey-viewport::-webkit-scrollbar {
+      display: none;
+    }
+
     .journey-track {
       position: relative;
-      display: grid;
-      grid-template-columns: repeat(14, minmax(24px, 1fr));
+      display: flex;
       align-items: center;
-      gap: 2px;
-      max-width: 850px;
-      padding: 17px 7px 0;
-    }
-
-    .journey-track::before {
-      content: "";
-      position: absolute;
-      top: 27px;
-      right: 24px;
-      left: 24px;
-      height: 1px;
-      background: var(--line-strong);
-    }
-
-    .journey-track::after {
-      content: "";
-      position: absolute;
-      top: 26px;
-      left: 24px;
-      width: 41%;
-      height: 3px;
-      border-radius: 99px;
-      background: var(--violet);
+      width: 100%;
+      padding: 8px 0 0;
     }
 
     .quest-node {
       position: relative;
       z-index: 1;
       display: grid;
+      flex: 0 0 calc(100% / 6);
       justify-items: center;
       gap: 7px;
       min-width: 0;
+      padding: 5px 3px 2px;
       border: 0;
       background: transparent;
       cursor: pointer;
+      scroll-snap-align: center;
+    }
+
+    .quest-node::before,
+    .quest-node::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 14px;
+      width: 50%;
+      height: 1px;
+      background: var(--line-strong);
+    }
+
+    .quest-node::before {
+      left: 0;
+    }
+
+    .quest-node::after {
+      right: 0;
+    }
+
+    .quest-node:first-child::before,
+    .quest-node:last-child::after {
+      background: transparent;
+    }
+
+    .quest-node.done::before,
+    .quest-node.done::after,
+    .quest-node.current::before {
+      height: 2px;
+      background: var(--violet);
     }
 
     .quest-dot {
@@ -331,6 +427,10 @@
 
     .quest-node.current .quest-label {
       color: var(--ink);
+    }
+
+    .quest-node.peek .quest-label {
+      color: var(--violet-deep);
     }
 
     .journey-score {
@@ -1612,6 +1712,165 @@
       font-size: 12px;
     }
 
+    .question-switcher {
+      margin: 20px 0 8px;
+    }
+
+    .question-switcher > span {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-family: var(--utility);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .question-tabs {
+      display: grid;
+      gap: 6px;
+    }
+
+    .question-tab {
+      display: grid;
+      grid-template-columns: 8px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      color: var(--muted);
+      text-align: left;
+      background: rgba(255, 255, 255, 0.66);
+      cursor: pointer;
+    }
+
+    .question-tab i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--line-strong);
+    }
+
+    .question-tab strong {
+      color: var(--ink);
+      font-size: 10px;
+      line-height: 1.25;
+    }
+
+    .question-tab small {
+      font-size: 8px;
+    }
+
+    .question-tab[aria-selected="true"] {
+      border-color: rgba(82, 103, 122, 0.55);
+      color: var(--violet-deep);
+      background: var(--violet-wash);
+      box-shadow: inset 3px 0 var(--violet);
+    }
+
+    .question-tab[aria-selected="true"] i {
+      background: linear-gradient(135deg, var(--violet), var(--coral));
+    }
+
+    .phase-label {
+      margin: 20px 0 7px;
+      color: var(--muted);
+      font-family: var(--utility);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .vendor-row-button {
+      width: 100%;
+      padding: 0;
+      border: 0;
+      text-align: left;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .vendor-row-button:hover .vendor-row {
+      background: var(--violet-wash);
+    }
+
+    .dock-empty {
+      padding: 15px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 14px;
+      color: var(--muted);
+      font-size: 10px;
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .approval-requested {
+      color: var(--amber);
+    }
+
+    .moment-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 9px;
+    }
+
+    .moment-actions .text-button {
+      margin-top: 0;
+    }
+
+    .quiet-button {
+      padding: 0;
+      border: 0;
+      color: var(--quiet);
+      font-size: 9px;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .dialog-source-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .dialog-source-list li {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-size: 10px;
+      background: var(--paper);
+    }
+
+    .dialog-source-list strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--violet-deep);
+    }
+
+    .vendor-detail {
+      display: grid;
+      gap: 12px;
+    }
+
+    .vendor-detail > div {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--paper);
+    }
+
+    .vendor-detail strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
     @media (max-width: 1180px) {
       .workspace {
         grid-template-columns: 252px minmax(460px, 1fr) 300px;
@@ -1627,14 +1886,6 @@
 
       .journey-track {
         padding-top: 5px;
-      }
-
-      .journey-track::before {
-        top: 15px;
-      }
-
-      .journey-track::after {
-        top: 14px;
       }
     }
 
@@ -1745,9 +1996,20 @@
       }
 
       .journey-track {
-        width: 670px;
+        width: 100%;
         margin-top: 4px;
-        transform: translateX(-210px);
+      }
+
+      .journey-carousel {
+        margin-top: 5px;
+      }
+
+      .quest-node {
+        flex-basis: 66.666%;
+      }
+
+      .quest-label {
+        display: block;
       }
 
       .workspace {
@@ -1764,7 +2026,25 @@
       }
 
       .quest-rail > .eyebrow,
-      .quest-subtitle,
+      .quest-subtitle {
+        display: none;
+      }
+
+      .question-switcher {
+        margin: 8px 0 0;
+      }
+
+      .question-tabs {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .question-tab {
+        flex: 0 0 210px;
+      }
+
+      .phase-label,
       .phase-list {
         display: none;
       }
@@ -1932,9 +2212,10 @@
       </div>
 
       <div class="header-actions">
-        <div class="presence" aria-label="Maya and Theo are in this wedding workspace">
-          <span class="avatar maya" title="Maya">M</span>
-          <span class="avatar theo" title="Theo">T</span>
+        <div class="presence" aria-label="Choose whose view to preview">
+          <button class="avatar maya" type="button" title="Preview as Maya" data-member="maya" aria-pressed="true">M</button>
+          <button class="avatar theo" type="button" title="Preview as Theo" data-member="theo" aria-pressed="false">T</button>
+          <span class="active-member-label" id="activeMemberLabel">Previewing Maya</span>
         </div>
         <button class="notes-button" type="button" data-open="notesDialog">Design notes</button>
         <button class="icon-button" type="button" aria-label="Notifications">♧</button>
@@ -1948,22 +2229,13 @@
         <span>Bliss keeps the whole plan connected.</span>
       </div>
 
-      <nav class="journey-track" aria-label="Wedding chapters">
-        <button class="quest-node done" type="button" title="Vision"><span class="quest-dot"></span><span class="quest-label">Vision</span></button>
-        <button class="quest-node done" type="button" title="Budget"><span class="quest-dot"></span><span class="quest-label">Budget</span></button>
-        <button class="quest-node done" type="button" title="Guests"><span class="quest-dot"></span><span class="quest-label">Guests</span></button>
-        <button class="quest-node done" type="button" title="Venue"><span class="quest-dot"></span><span class="quest-label">Venue</span></button>
-        <button class="quest-node done" type="button" title="Vendors"><span class="quest-dot"></span><span class="quest-label">Vendors</span></button>
-        <button class="quest-node current" type="button" title="Photography" aria-current="step"><span class="quest-dot"></span><span class="quest-label">Photo</span></button>
-        <button class="quest-node" type="button" title="Attire"><span class="quest-dot"></span><span class="quest-label">Attire</span></button>
-        <button class="quest-node" type="button" title="Ceremony"><span class="quest-dot"></span><span class="quest-label">Ceremony</span></button>
-        <button class="quest-node" type="button" title="Design"><span class="quest-dot"></span><span class="quest-label">Design</span></button>
-        <button class="quest-node" type="button" title="Invitations"><span class="quest-dot"></span><span class="quest-label">Invites</span></button>
-        <button class="quest-node" type="button" title="Guest care"><span class="quest-dot"></span><span class="quest-label">Guests</span></button>
-        <button class="quest-node" type="button" title="Timeline"><span class="quest-dot"></span><span class="quest-label">Timeline</span></button>
-        <button class="quest-node" type="button" title="Legal"><span class="quest-dot"></span><span class="quest-label">Legal</span></button>
-        <button class="quest-node" type="button" title="Celebration"><span class="quest-dot"></span><span class="quest-label">Finale</span></button>
-      </nav>
+      <div class="journey-carousel">
+        <button class="journey-control" id="journeyPrevious" type="button" aria-label="Show previous wedding chapters">‹</button>
+        <div class="journey-viewport" id="journeyViewport">
+          <nav class="journey-track" id="journeyTrack" aria-label="Wedding chapters"></nav>
+        </div>
+        <button class="journey-control" id="journeyNext" type="button" aria-label="Show next wedding chapters">›</button>
+      </div>
 
       <div class="journey-score">
         <strong>38%</strong>
@@ -1977,53 +2249,17 @@
         <h2 class="quest-title" id="questTitle">Photography</h2>
         <p class="quest-subtitle">Choose who will preserve how this felt.</p>
 
-        <ol class="phase-list" aria-label="Photography progress">
-          <li class="phase-item done">
-            <span class="phase-mark">✓</span>
-            <span class="phase-copy"><strong>Know your style</strong><span>Both preferences captured</span></span>
-          </li>
-          <li class="phase-item done">
-            <span class="phase-mark">✓</span>
-            <span class="phase-copy"><strong>Build a shortlist</strong><span>3 photographers compared</span></span>
-          </li>
-          <li class="phase-item current">
-            <span class="phase-mark">3</span>
-            <span class="phase-copy"><strong>Choose together</strong><span>One tradeoff to resolve</span></span>
-          </li>
-          <li class="phase-item">
-            <span class="phase-mark">4</span>
-            <span class="phase-copy"><strong>Reach out</strong><span>Inquiry ready to review</span></span>
-          </li>
-          <li class="phase-item">
-            <span class="phase-mark">5</span>
-            <span class="phase-copy"><strong>Book &amp; remember</strong><span>Contract, calendar, Moment</span></span>
-          </li>
-        </ol>
+        <section class="question-switcher" aria-labelledby="questionSwitcherTitle">
+          <span id="questionSwitcherTitle">Decision conversations</span>
+          <div class="question-tabs" id="questionTabs" role="tablist" aria-orientation="vertical"></div>
+        </section>
+
+        <p class="phase-label">Chapter procedure</p>
+        <ol class="phase-list" id="phaseList" aria-label="Photography chapter procedure"></ol>
 
         <section class="capability-box" aria-labelledby="capabilityTitle">
           <h3 class="section-heading" id="capabilityTitle">Bliss can help here <span>Try one</span></h3>
-          <div class="capability-list">
-            <button class="capability" type="button" data-prompt="Find photographers who fit our shared style.">
-              <span class="capability-icon">⌕</span>
-              <span><strong>Find photographers</strong><small>Search by your priorities</small></span>
-              <span class="capability-arrow">›</span>
-            </button>
-            <button class="capability" type="button" data-prompt="Compare our finalists and explain the tradeoffs.">
-              <span class="capability-icon">≍</span>
-              <span><strong>Compare finalists</strong><small>Facts, fit, and tradeoffs</small></span>
-              <span class="capability-arrow">›</span>
-            </button>
-            <button class="capability" type="button" data-open="emailDialog">
-              <span class="capability-icon">✉</span>
-              <span><strong>Draft the inquiry</strong><small>Review before it is sent</small></span>
-              <span class="capability-arrow">›</span>
-            </button>
-            <button class="capability" type="button" data-action="calendar">
-              <span class="capability-icon">□</span>
-              <span><strong>Plan interviews</strong><small>Add approved times to calendar</small></span>
-              <span class="capability-arrow">›</span>
-            </button>
-          </div>
+          <div class="capability-list" id="capabilityList"></div>
         </section>
       </aside>
 
@@ -2031,7 +2267,7 @@
         <header class="conversation-header">
           <div class="thread-name">
             <span class="bliss-orb" aria-hidden="true">b</span>
-            <span><strong id="conversationTitle">Choose our photographer</strong><span>Bliss uses 8 confirmed preferences from both of you</span></span>
+            <span><strong id="conversationTitle">Choose our photographer</strong><span id="threadSubtitle">This question always returns to the same conversation</span></span>
           </div>
           <span class="thinking-state" id="agentState">Ready when you are</span>
         </header>
@@ -2039,8 +2275,8 @@
         <div class="conversation-scroll" id="conversationScroll">
           <div class="conversation-intro">
             <p class="eyebrow">Bliss · Your planning companion</p>
-            <h1>Let’s choose who will tell <em>your story.</em></h1>
-            <p>I kept your separate preferences visible, found the common ground, and narrowed the choice to one honest tradeoff.</p>
+            <h1 id="conversationHeadline">Let’s choose who will tell <em>your story.</em></h1>
+            <p id="conversationLead">I kept your separate preferences visible, found the common ground, and narrowed the choice to one honest tradeoff.</p>
           </div>
 
           <article class="understanding-card">
@@ -2051,18 +2287,18 @@
             <div class="couple-inputs">
               <section class="member-view maya">
                 <div class="member-label"><i></i>Maya</div>
-                <p>Wants images that feel <strong>editorial and artful</strong>, with gentle direction during portraits.</p>
+                <p id="mayaUnderstanding">Wants images that feel <strong>editorial and artful</strong>, with gentle direction during portraits.</p>
               </section>
               <div class="shared-knot" aria-label="Shared preference"><span>&amp;</span></div>
               <section class="member-view theo">
                 <div class="member-label"><i></i>Theo</div>
-                <p>Wants the day to feel <strong>uninterrupted and natural</strong>, with very little posing.</p>
+                <p id="theoUnderstanding">Wants the day to feel <strong>uninterrupted and natural</strong>, with very little posing.</p>
               </section>
             </div>
-            <div class="shared-priority"><strong>Shared ground:</strong> Human emotion matters more than a perfect shot list, and the budget should stay below $6,500.</div>
+            <div class="shared-priority"><strong>Shared ground:</strong> <span id="sharedUnderstanding">Human emotion matters more than a perfect shot list, and the budget should stay below $6,500.</span></div>
           </article>
 
-          <div class="messages" id="messages">
+          <div class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions">
             <article class="message user">
               <div class="bubble"><p>I like Harbor House, but I’m worried their work might feel too posed for Theo.</p></div>
               <span class="avatar maya" aria-label="Maya">M</span>
@@ -2076,18 +2312,18 @@
 
                 <div class="comparison-card">
                   <div class="comparison-topline"><strong>Your two closest fits</strong><span class="fit-label">Grounded in 8 preferences</span></div>
-                  <div class="vendor-row">
+                  <button class="vendor-row-button" type="button" data-vendor="harbor"><span class="vendor-row">
                     <span class="vendor-swatch" aria-hidden="true"></span>
                     <span class="vendor-name"><strong>Harbor House</strong><span>Editorial documentary</span></span>
                     <span class="vendor-reason">Best balance for both of you</span>
                     <span class="vendor-price">$6,200</span>
-                  </div>
-                  <div class="vendor-row">
+                  </span></button>
+                  <button class="vendor-row-button" type="button" data-vendor="field"><span class="vendor-row">
                     <span class="vendor-swatch" aria-hidden="true"></span>
                     <span class="vendor-name"><strong>Field Notes</strong><span>Pure documentary</span></span>
                     <span class="vendor-reason">Best for uninterrupted moments</span>
                     <span class="vendor-price">$5,850</span>
-                  </div>
+                  </span></button>
                 </div>
               </div>
             </article>
@@ -2095,12 +2331,7 @@
         </div>
 
         <div class="composer-shell">
-          <div class="prompt-row" aria-label="Suggested next questions">
-            <button class="prompt-chip" type="button" data-prompt="Help us resolve the posing tradeoff.">Help us agree</button>
-            <button class="prompt-chip" type="button" data-prompt="What should we ask during the photographer interview?">Prepare interview questions</button>
-            <button class="prompt-chip" type="button" data-open="emailDialog">Review the inquiry email</button>
-            <button class="prompt-chip" type="button" data-prompt="Show me what this decision changes in our plan.">What changes next?</button>
-          </div>
+          <div class="prompt-row" id="promptRow" aria-label="Suggested next questions"></div>
           <form class="composer" id="composerForm">
             <button class="attach-button" type="button" aria-label="Attach a photo or file">＋</button>
             <textarea id="composerInput" rows="1" aria-label="Message Bliss" placeholder="Ask a question, share a preference, or tell Bliss what to do…"></textarea>
@@ -2117,24 +2348,10 @@
 
         <article class="decision-card" id="decisionCard">
           <p class="decision-number">Decision 06 · Photography</p>
-          <h2>Who should capture the wedding?</h2>
-          <p>Choose the proposal you want Bliss to carry into tasks, outreach, and memory.</p>
+          <h2 id="decisionQuestion">Who should capture the wedding?</h2>
+          <p id="decisionHelp">Choose the proposal you want Bliss to carry into tasks, outreach, and memory.</p>
 
-          <button class="choice-option selected" type="button" data-choice="Harbor House">
-            <span class="choice-radio"></span>
-            <span><strong>Harbor House</strong><small>Recommended for the shared balance</small></span>
-            <span>96% fit</span>
-          </button>
-          <button class="choice-option" type="button" data-choice="Field Notes">
-            <span class="choice-radio"></span>
-            <span><strong>Field Notes</strong><small>Stronger documentary approach</small></span>
-            <span>89% fit</span>
-          </button>
-          <button class="choice-option other-option" type="button" data-choice="Something else" data-other-choice>
-            <span class="choice-radio"></span>
-            <span><strong>Something else</strong><small>Share the idea you already have in mind</small></span>
-            <span>Write your own</span>
-          </button>
+          <div id="choiceList" role="radiogroup" aria-labelledby="decisionQuestion"></div>
           <form class="other-choice-panel" id="otherChoicePanel" hidden>
             <label for="otherChoiceInput">What are you imagining instead?</label>
             <textarea id="otherChoiceInput" placeholder="A photographer, approach, feeling, or possibility that is not shown here…"></textarea>
@@ -2142,17 +2359,17 @@
             <div class="other-choice-actions"><button type="submit">Share with Bliss →</button></div>
           </form>
 
-          <div class="why-fit"><strong>Why this fits you</strong>Editorial portraits for Maya, an unobtrusive day for Theo, and room left in the confirmed budget.</div>
+          <div class="why-fit"><strong>Why this may fit you</strong><span id="whyFit">Editorial portraits for Maya, an unobtrusive day for Theo, and room left in the confirmed budget.</span></div>
 
           <div class="member-confirmations">
-            <span class="member-status"><i></i>Maya · ready</span>
+            <span class="member-status" id="mayaStatus"><i></i>Maya · ready</span>
             <span class="member-status waiting" id="theoStatus"><i></i>Theo · reviewing</span>
           </div>
 
           <button class="primary-button" id="confirmationButton" type="button">Ask Theo to confirm →</button>
         </article>
 
-        <section class="dock-section" aria-labelledby="nextActionTitle">
+        <section class="dock-section" id="actionSection" aria-labelledby="nextActionTitle" hidden>
           <h3 class="section-heading" id="nextActionTitle">Ready for you <span>1 approval</span></h3>
           <article class="action-card">
             <div class="action-meta"><span class="action-type">✉ Email draft</span><span class="approval-badge" id="actionBadge">Needs approval</span></div>
@@ -2162,13 +2379,13 @@
           </article>
         </section>
 
-        <section class="dock-section" aria-labelledby="momentTitle">
+        <section class="dock-section" id="momentSection" aria-labelledby="momentTitle" hidden>
           <h3 class="section-heading" id="momentTitle">Worth remembering <span>Suggested</span></h3>
           <article class="moment-card" id="momentCard">
             <p class="eyebrow">Moment</p>
             <h3>Choosing how our day will be remembered</h3>
             <p>From “posed or natural?” to a choice that makes room for both.</p>
-            <button class="text-button" id="saveMoment" type="button">Save this Moment</button>
+            <div class="moment-actions"><button class="text-button" id="saveMoment" type="button">Save this Moment</button><button class="quiet-button" id="dismissMoment" type="button">Not for our story</button></div>
           </article>
         </section>
       </aside>
@@ -2202,6 +2419,32 @@ Maya &amp; Theo</div>
     </footer>
   </dialog>
 
+  <dialog id="sourcesDialog" aria-labelledby="sourcesDialogTitle">
+    <header class="dialog-header">
+      <div><p class="eyebrow">Question evidence</p><h2 id="sourcesDialogTitle">What this understanding came from</h2></div>
+      <button class="close-dialog" type="button" data-close aria-label="Close">×</button>
+    </header>
+    <div class="dialog-body">
+      <ul class="dialog-source-list" id="sourceList"></ul>
+      <div class="approval-note"><span>◆</span><span>A correction becomes a new message in this exact Question Thread. It never silently rewrites what either person said.</span></div>
+    </div>
+    <footer class="dialog-actions">
+      <button class="secondary-button" type="button" data-close>Keep as understood</button>
+      <button class="approve-button" id="correctUnderstanding" type="button">Add a correction</button>
+    </footer>
+  </dialog>
+
+  <dialog id="vendorDialog" aria-labelledby="vendorDialogTitle">
+    <header class="dialog-header">
+      <div><p class="eyebrow">Comparison source</p><h2 id="vendorDialogTitle">Vendor details</h2></div>
+      <button class="close-dialog" type="button" data-close aria-label="Close">×</button>
+    </header>
+    <div class="dialog-body vendor-detail" id="vendorDetail"></div>
+    <footer class="dialog-actions">
+      <button class="primary-button" type="button" data-close>Return to comparison</button>
+    </footer>
+  </dialog>
+
   <dialog class="design-notes" id="notesDialog" aria-labelledby="notesDialogTitle">
     <header class="dialog-header">
       <div><p class="eyebrow">Design rationale</p><h2 id="notesDialogTitle">Conversation with a visible outcome</h2></div>
@@ -2226,6 +2469,155 @@ Maya &amp; Theo</div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
+    const prototypeData = {
+      quests: [
+        ['vision', 'Vision', 'done'], ['budget', 'Budget', 'done'], ['guests', 'Guests', 'done'],
+        ['venue', 'Venue', 'done'], ['vendors', 'Vendors', 'done'], ['photo', 'Photo', 'current'],
+        ['attire', 'Attire', 'open'], ['ceremony', 'Ceremony', 'open'], ['design', 'Design', 'open'],
+        ['invites', 'Invites', 'open'], ['guest-care', 'Guest care', 'open'], ['timeline', 'Timeline', 'open'],
+        ['legal', 'Legal', 'open'], ['finale', 'Finale', 'open'],
+      ],
+      workflowPhases: [
+        { title: 'Know your style', detail: 'Both preferences captured', state: 'done' },
+        { title: 'Build a shortlist', detail: '3 photographers compared', state: 'done' },
+        { title: 'Choose together', detail: 'One tradeoff to resolve', state: 'current' },
+        { title: 'Reach out', detail: 'Inquiry prepared after the choice', state: 'open' },
+        { title: 'Book & remember', detail: 'Contract, calendar, and Moment', state: 'open' },
+      ],
+      questions: {
+        'photo.photographer_choice': {
+          tab: 'Photographer', status: 'Ready for review', title: 'Who should capture the wedding?',
+          help: 'Choose the proposal you want Bliss to carry into tasks, outreach, and memory.',
+          headline: 'Let’s choose who will tell <em>your story.</em>',
+          lead: 'Your separate preferences stay visible while Bliss helps you resolve one honest tradeoff.',
+          maya: 'Wants images that feel editorial and artful, with gentle direction during portraits.',
+          theo: 'Wants the day to feel uninterrupted and natural, with very little posing.',
+          shared: 'Human emotion matters more than a perfect shot list, and the budget should stay below $6,500.',
+          options: [
+            { value: 'Harbor House', detail: 'Recommended for the shared balance' },
+            { value: 'Field Notes', detail: 'Stronger documentary approach' },
+          ],
+          choice: 'Harbor House',
+          reasons: {
+            'Harbor House': 'Editorial portraits for Maya, an unobtrusive day for Theo, and room left in the confirmed budget.',
+            'Field Notes': 'The least interruption during the day, while leaving one open question about portrait direction.',
+          },
+          capabilities: [
+            ['⌕', 'Find photographers', 'Search by your shared priorities', 'Find photographers who fit our shared style.'],
+            ['≍', 'Compare finalists', 'Facts, fit, and tradeoffs', 'Compare our finalists without inventing a score.'],
+            ['✉', 'Draft the inquiry', 'Review after the choice is shared', 'Prepare the exact inquiry we could review after deciding.'],
+            ['□', 'Plan interviews', 'Choose times before calendar approval', 'Help us plan photographer interviews.'],
+          ],
+          prompts: [
+            ['Help us agree', 'Help us resolve the posing tradeoff.'],
+            ['Prepare interview questions', 'What should we ask during the photographer interview?'],
+            ['What changes next?', 'Show us what this decision changes before we confirm it.'],
+          ],
+          sources: [
+            ['Maya', 'I love photographs that feel composed, but I do not want portraits to take over the day.'],
+            ['Theo', 'I want to forget the camera is there for most of the wedding.'],
+            ['Maya', 'Some direction would help me relax instead of wondering what to do.'],
+            ['Theo', 'Documentary coverage matters more to me than a perfect shot list.'],
+            ['Maya', 'I would like to keep photography below $6,500.'],
+            ['Both', 'The photographs should feel emotionally true when we look back.'],
+          ],
+        },
+        'photo.style': {
+          tab: 'Visual style', status: 'Settled', title: 'How should the photographs feel?',
+          help: 'Name the visual language without turning it into a rigid theme.',
+          headline: 'Give the memories a <em>visual language.</em>',
+          lead: 'Bliss can hold two tastes at once and keep the overlap usable for a real shortlist.',
+          maya: 'Leans editorial, artful, and gently composed.',
+          theo: 'Leans documentary, honest, and unforced.',
+          shared: 'Neither of you wants trends to overpower recognizable emotion.',
+          options: [
+            { value: 'Documentary', detail: 'Uninterrupted and observational' },
+            { value: 'Editorial', detail: 'Artful with visible direction' },
+            { value: 'Editorial documentary', detail: 'A deliberate balance of both' },
+          ],
+          choice: 'Editorial documentary',
+          reasons: { 'Editorial documentary': 'It preserves Theo’s natural day while giving Maya confidence during a few intentional portraits.' },
+          capabilities: [
+            ['◇', 'Build a moodboard', 'Translate words into references', 'Help us build a concise shared photo moodboard.'],
+            ['≍', 'Compare styles', 'See the practical differences', 'Compare documentary and editorial photography using real tradeoffs.'],
+            ['⌕', 'Review galleries', 'Know what to look for', 'Give us a useful full-gallery review checklist.'],
+          ],
+          prompts: [
+            ['Name our overlap', 'Help us describe the visual overlap in one sentence.'],
+            ['Show the tradeoff', 'What do we gain and lose with this style?'],
+          ],
+          sources: [
+            ['Maya', 'Editorial images make the day feel special to me.'],
+            ['Theo', 'I care most about expressions that were not staged.'],
+            ['Both', 'We want the photographs to still feel like us.'],
+          ],
+        },
+        'photo.coverage': {
+          tab: 'Coverage', status: 'Exploring', title: 'What should the team capture?',
+          help: 'Choose photography only, add film, or include a separate content creator.',
+          headline: 'Decide what deserves to be <em>carried forward.</em>',
+          lead: 'Coverage changes the team, the budget, and how visible production feels during the day.',
+          maya: 'Curious about film, especially for voices and movement.',
+          theo: 'Wants a small team that does not make the wedding feel produced.',
+          shared: 'Any additional coverage should earn its presence and stay within the total vendor budget.',
+          options: [
+            { value: 'Photography only', detail: 'One focused visual record' },
+            { value: 'Photography and film', detail: 'Add motion, sound, and a larger team' },
+            { value: 'Photo, film, and content', detail: 'Fast informal clips as a separate layer' },
+          ],
+          choice: null,
+          reasons: {},
+          capabilities: [
+            ['≍', 'Compare coverage', 'Cost, team size, and memory', 'Compare the three coverage shapes for us.'],
+            ['◫', 'Map the budget', 'See the decision in context', 'Show what each coverage choice changes in our budget.'],
+            ['?', 'Surface the unknowns', 'Ask only what changes the choice', 'Ask us the one question that would clarify coverage.'],
+          ],
+          prompts: [
+            ['What would we miss?', 'What memories would photography alone not preserve?'],
+            ['Keep it low-pressure', 'How could we add film without making the day feel produced?'],
+          ],
+          sources: [
+            ['Maya', 'Hearing the vows again could be meaningful.'],
+            ['Theo', 'I do not want three separate cameras around us all day.'],
+          ],
+        },
+      },
+      vendors: {
+        harbor: { name: 'Harbor House', style: 'Editorial documentary', price: '$6,200', source: 'Full galleries and proposal reviewed', note: 'Strong portrait direction with a documentary approach for the rest of the day.' },
+        field: { name: 'Field Notes', style: 'Pure documentary', price: '$5,850', source: 'Full galleries and proposal reviewed', note: 'Minimal direction and strong candid coverage; portrait support is the open tradeoff.' },
+      },
+    };
+
+    const prototypeState = {
+      activeQuestionKey: 'photo.photographer_choice',
+      activeMember: 'maya',
+      threadsByQuestion: {
+        'photo.photographer_choice': [
+          { role: 'user', member: 'maya', text: 'I like Harbor House, but I’m worried their work might feel too posed for Theo.' },
+          { role: 'agent', text: 'That concern is fair. The meaningful tradeoff is more confidence during portraits versus less visible photographer direction.', resource: 'vendors' },
+        ],
+        'photo.style': [
+          { role: 'agent', text: 'You do not need to choose between artful and honest. The useful question is where visible direction helps and where it would interrupt the day.' },
+        ],
+        'photo.coverage': [
+          { role: 'agent', text: 'Coverage is not a package upgrade. It is a choice about which senses and voices you want to remember, and how much production you want around you.' },
+        ],
+      },
+      choices: {
+        'photo.photographer_choice': 'Harbor House',
+        'photo.style': 'Editorial documentary',
+        'photo.coverage': null,
+      },
+      customChoices: {},
+      approvalsByQuestion: {
+        'photo.photographer_choice': { maya: true, theo: false, requested: false },
+        'photo.style': { maya: true, theo: true, requested: false },
+        'photo.coverage': { maya: false, theo: false, requested: false },
+      },
+      confirmedDecisions: { 'photo.style': 'Editorial documentary' },
+      momentStatus: 'suggested',
+    };
+
     const composer = document.getElementById('composerForm');
     const input = document.getElementById('composerInput');
     const messages = document.getElementById('messages');
@@ -2236,11 +2628,19 @@ Maya &amp; Theo</div>
     const otherChoiceInput = document.getElementById('otherChoiceInput');
     let toastTimer;
 
+    function activeQuestion() {
+      return prototypeData.questions[prototypeState.activeQuestionKey];
+    }
+
+    function memberName(key) {
+      return key === 'maya' ? 'Maya' : 'Theo';
+    }
+
     function showToast(message) {
       toast.textContent = message;
       toast.classList.add('visible');
       window.clearTimeout(toastTimer);
-      toastTimer = window.setTimeout(() => toast.classList.remove('visible'), 2600);
+      toastTimer = window.setTimeout(() => toast.classList.remove('visible'), 3000);
     }
 
     function openDialog(id) {
@@ -2248,88 +2648,397 @@ Maya &amp; Theo</div>
       if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
     }
 
-    document.querySelectorAll('[data-open]').forEach((button) => {
-      button.addEventListener('click', () => openDialog(button.dataset.open));
+    function renderJourney() {
+      const track = document.getElementById('journeyTrack');
+      track.replaceChildren(...prototypeData.quests.map(([key, label, status]) => {
+        const button = document.createElement('button');
+        button.className = `quest-node ${status === 'open' ? '' : status}`;
+        button.type = 'button';
+        button.dataset.quest = key;
+        button.title = label;
+        if (key === 'photo') button.setAttribute('aria-current', 'step');
+        button.innerHTML = '<span class="quest-dot" aria-hidden="true"></span><span class="quest-label"></span>';
+        button.querySelector('.quest-label').textContent = label;
+        return button;
+      }));
+      window.setTimeout(() => track.querySelector('[aria-current="step"]')?.scrollIntoView({ inline: 'center', block: 'nearest' }), 0);
+    }
+
+    function renderProcedure() {
+      const phaseList = document.getElementById('phaseList');
+      phaseList.replaceChildren(...prototypeData.workflowPhases.map((phase, index) => {
+        const item = document.createElement('li');
+        item.className = `phase-item ${phase.state === 'open' ? '' : phase.state}`;
+        if (phase.state === 'current') item.setAttribute('aria-current', 'step');
+        item.innerHTML = '<span class="phase-mark"></span><span class="phase-copy"><strong></strong><span></span></span>';
+        item.querySelector('.phase-mark').textContent = phase.state === 'done' ? '✓' : String(index + 1);
+        item.querySelector('strong').textContent = phase.title;
+        item.querySelector('.phase-copy span').textContent = phase.detail;
+        return item;
+      }));
+    }
+
+    function renderQuestionTabs() {
+      const tabs = document.getElementById('questionTabs');
+      tabs.replaceChildren(...Object.entries(prototypeData.questions).map(([key, question]) => {
+        const button = document.createElement('button');
+        button.className = 'question-tab';
+        button.type = 'button';
+        button.role = 'tab';
+        button.dataset.question = key;
+        button.setAttribute('aria-selected', String(key === prototypeState.activeQuestionKey));
+        button.innerHTML = '<i aria-hidden="true"></i><strong></strong><small></small>';
+        button.querySelector('strong').textContent = question.tab;
+        const confirmed = prototypeState.confirmedDecisions[key];
+        button.querySelector('small').textContent = confirmed ? 'Settled' : question.status;
+        return button;
+      }));
+    }
+
+    function renderCapabilities() {
+      const list = document.getElementById('capabilityList');
+      list.replaceChildren(...activeQuestion().capabilities.map(([icon, title, detail, prompt]) => {
+        const button = document.createElement('button');
+        button.className = 'capability';
+        button.type = 'button';
+        button.dataset.prompt = prompt;
+        button.innerHTML = '<span class="capability-icon" aria-hidden="true"></span><span><strong></strong><small></small></span><span class="capability-arrow" aria-hidden="true">›</span>';
+        button.querySelector('.capability-icon').textContent = icon;
+        button.querySelector('strong').textContent = title;
+        button.querySelector('small').textContent = detail;
+        return button;
+      }));
+    }
+
+    function vendorComparison() {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'comparison-card';
+      wrapper.innerHTML = '<div class="comparison-topline"><strong>Your two closest fits</strong><span class="fit-label">Grounded in 8 preferences</span></div>';
+      for (const key of ['harbor', 'field']) {
+        const vendor = prototypeData.vendors[key];
+        const button = document.createElement('button');
+        button.className = 'vendor-row-button';
+        button.type = 'button';
+        button.dataset.vendor = key;
+        button.innerHTML = '<span class="vendor-row"><span class="vendor-swatch" aria-hidden="true"></span><span class="vendor-name"><strong></strong><span></span></span><span class="vendor-reason"></span><span class="vendor-price"></span></span>';
+        button.querySelector('.vendor-name strong').textContent = vendor.name;
+        button.querySelector('.vendor-name span').textContent = vendor.style;
+        button.querySelector('.vendor-reason').textContent = key === 'harbor' ? 'Best shared balance' : 'Least interruption';
+        button.querySelector('.vendor-price').textContent = vendor.price;
+        wrapper.appendChild(button);
+      }
+      return wrapper;
+    }
+
+    function renderMessages() {
+      const thread = prototypeState.threadsByQuestion[prototypeState.activeQuestionKey];
+      messages.replaceChildren(...thread.map(entry => {
+        const article = document.createElement('article');
+        article.className = `message ${entry.role === 'agent' ? 'agent' : 'user'}`;
+        if (entry.role === 'agent') {
+          article.innerHTML = '<span class="bliss-orb" aria-hidden="true">b</span><div class="bubble"><p></p></div>';
+          article.querySelector('p').textContent = entry.text;
+          if (entry.resource === 'vendors') article.querySelector('.bubble').appendChild(vendorComparison());
+        } else {
+          article.innerHTML = '<div class="bubble"><p></p></div><span class="avatar" aria-hidden="true"></span>';
+          article.querySelector('p').textContent = entry.text;
+          const avatar = article.querySelector('.avatar');
+          avatar.classList.add(entry.member);
+          avatar.textContent = memberName(entry.member).slice(0, 1);
+        }
+        return article;
+      }));
+    }
+
+    function renderPromptRow() {
+      const row = document.getElementById('promptRow');
+      row.replaceChildren(...activeQuestion().prompts.map(([label, prompt]) => {
+        const button = document.createElement('button');
+        button.className = 'prompt-chip';
+        button.type = 'button';
+        button.dataset.prompt = prompt;
+        button.textContent = label;
+        return button;
+      }));
+    }
+
+    function renderChoices() {
+      const question = activeQuestion();
+      const selectedChoice = prototypeState.choices[prototypeState.activeQuestionKey];
+      const choiceList = document.getElementById('choiceList');
+      const options = [...question.options, { value: '__other__', detail: 'Share the idea you already have in mind' }];
+      choiceList.replaceChildren(...options.map(option => {
+        const isOther = option.value === '__other__';
+        const custom = prototypeState.customChoices[prototypeState.activeQuestionKey];
+        const selected = isOther ? Boolean(custom && selectedChoice === custom) : selectedChoice === option.value;
+        const button = document.createElement('button');
+        button.className = `choice-option${selected ? ' selected' : ''}${isOther ? ' other-option' : ''}`;
+        button.type = 'button';
+        button.role = 'radio';
+        button.dataset.choice = option.value;
+        button.setAttribute('aria-checked', String(selected));
+        button.tabIndex = selected || (!selectedChoice && option === options[0]) ? 0 : -1;
+        button.innerHTML = '<span class="choice-radio" aria-hidden="true"></span><span><strong></strong><small></small></span><span></span>';
+        button.querySelector('strong').textContent = isOther ? (custom || 'Something else') : option.value;
+        button.querySelector('small').textContent = option.detail;
+        button.lastElementChild.textContent = isOther ? 'Write your own' : (selected ? 'Proposed' : 'Compare');
+        return button;
+      }));
+      document.getElementById('whyFit').textContent = selectedChoice
+        ? (question.reasons[selectedChoice] || `Bliss will compare “${selectedChoice}” using the same shared criteria before either of you confirms it.`)
+        : 'Bliss will explain the fit only after hearing what matters to both of you.';
+    }
+
+    function renderApprovals() {
+      const key = prototypeState.activeQuestionKey;
+      const approvals = prototypeState.approvalsByQuestion[key];
+      const confirmed = prototypeState.confirmedDecisions[key];
+      for (const member of ['maya', 'theo']) {
+        const element = document.getElementById(`${member}Status`);
+        const ready = approvals[member];
+        element.classList.toggle('waiting', !ready);
+        element.innerHTML = '<i></i>';
+        element.append(`${memberName(member)} · ${confirmed ? 'confirmed' : ready ? 'ready' : 'reviewing'}`);
+      }
+
+      const button = document.getElementById('confirmationButton');
+      const current = prototypeState.activeMember;
+      const other = current === 'maya' ? 'theo' : 'maya';
+      button.disabled = Boolean(confirmed);
+      if (confirmed) button.textContent = 'Decision confirmed ✓';
+      else if (!prototypeState.choices[key]) button.textContent = 'Choose a direction first';
+      else if (!approvals[current]) button.textContent = `Mark ${memberName(current)} ready →`;
+      else if (!approvals[other]) button.textContent = approvals.requested ? `${memberName(other)} has been invited to review` : `Ask ${memberName(other)} to review →`;
+      else button.textContent = 'Confirm our shared decision →';
+      document.querySelector('.phase-pill').textContent = confirmed ? 'Decision made' : approvals.maya && approvals.theo ? 'Ready to confirm' : 'In conversation';
+
+      const showOutcome = key === 'photo.photographer_choice' && Boolean(confirmed);
+      document.getElementById('actionSection').hidden = !showOutcome;
+      document.getElementById('momentSection').hidden = !showOutcome || prototypeState.momentStatus === 'dismissed';
+    }
+
+    function renderSources() {
+      const list = document.getElementById('sourceList');
+      list.replaceChildren(...activeQuestion().sources.map(([speaker, text]) => {
+        const item = document.createElement('li');
+        const strong = document.createElement('strong');
+        strong.textContent = speaker;
+        item.append(strong, text);
+        return item;
+      }));
+      document.querySelector('[data-action="sources"]').textContent = `${activeQuestion().sources.length} source messages · Correct this`;
+    }
+
+    function renderActiveMember() {
+      document.querySelectorAll('[data-member]').forEach(button => {
+        button.setAttribute('aria-pressed', String(button.dataset.member === prototypeState.activeMember));
+      });
+      document.getElementById('activeMemberLabel').textContent = `Previewing ${memberName(prototypeState.activeMember)}`;
+    }
+
+    function renderQuestion() {
+      const question = activeQuestion();
+      document.getElementById('conversationTitle').textContent = question.title;
+      document.getElementById('threadSubtitle').textContent = 'This Question always returns to the same conversation';
+      document.getElementById('conversationHeadline').innerHTML = question.headline;
+      document.getElementById('conversationLead').textContent = question.lead;
+      document.getElementById('mayaUnderstanding').textContent = question.maya;
+      document.getElementById('theoUnderstanding').textContent = question.theo;
+      document.getElementById('sharedUnderstanding').textContent = question.shared;
+      document.getElementById('decisionQuestion').textContent = question.title;
+      document.getElementById('decisionHelp').textContent = question.help;
+      otherChoicePanel.hidden = true;
+      otherChoiceInput.value = '';
+      renderQuestionTabs();
+      renderCapabilities();
+      renderMessages();
+      renderPromptRow();
+      renderChoices();
+      renderApprovals();
+      renderSources();
+      agentState.textContent = 'Ready when you are';
+      scrollArea.scrollTop = 0;
+    }
+
+    function submitQuestionInput(value, options = {}) {
+      const text = value.trim();
+      if (!text) return;
+      const key = prototypeState.activeQuestionKey;
+      const member = prototypeState.activeMember;
+      prototypeState.threadsByQuestion[key].push({ role: 'user', member, text });
+      if (options.customChoice) {
+        prototypeState.customChoices[key] = text;
+        prototypeState.choices[key] = text;
+        prototypeState.approvalsByQuestion[key] = { maya: false, theo: false, requested: false };
+      }
+      renderMessages();
+      renderChoices();
+      renderApprovals();
+      agentState.textContent = options.customChoice ? 'Understanding your idea…' : 'Thinking with this Question Thread…';
+      scrollArea.scrollTop = scrollArea.scrollHeight;
+
+      window.setTimeout(() => {
+        const response = options.customChoice
+          ? 'That belongs in this decision too. I will compare it fairly using the same shared criteria, without forcing it into one of the authored options.'
+          : 'I will keep this inside this exact Question Thread. I can clarify the tradeoff, bring grounded context, or show what would change before either of you confirms anything.';
+        prototypeState.threadsByQuestion[key].push({ role: 'agent', text: response });
+        if (key === prototypeState.activeQuestionKey) {
+          renderMessages();
+          agentState.textContent = 'Ready when you are';
+          scrollArea.scrollTop = scrollArea.scrollHeight;
+        }
+      }, 520);
+    }
+
+    document.addEventListener('click', event => {
+      const close = event.target.closest('[data-close]');
+      if (close) {
+        close.closest('dialog')?.close();
+        return;
+      }
+      const opener = event.target.closest('[data-open]');
+      if (opener) {
+        openDialog(opener.dataset.open);
+        return;
+      }
+      const member = event.target.closest('[data-member]');
+      if (member) {
+        prototypeState.activeMember = member.dataset.member;
+        renderActiveMember();
+        renderApprovals();
+        showToast(`Now previewing what ${memberName(prototypeState.activeMember)} can confirm. One person cannot confirm for the other.`);
+        return;
+      }
+      const quest = event.target.closest('[data-quest]');
+      if (quest) {
+        if (quest.dataset.quest === 'photo') showToast('Photography is the fully interactive chapter in this prototype.');
+        else showToast(`${quest.title} will use this same Question Thread → Decision → Action → Memory structure.`);
+        return;
+      }
+      const questionTab = event.target.closest('[data-question]');
+      if (questionTab) {
+        prototypeState.activeQuestionKey = questionTab.dataset.question;
+        renderQuestion();
+        return;
+      }
+      const prompted = event.target.closest('[data-prompt]');
+      if (prompted) {
+        input.value = prompted.dataset.prompt;
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+        return;
+      }
+      const choice = event.target.closest('[role="radio"]');
+      if (choice) {
+        if (choice.dataset.choice === '__other__') {
+          otherChoicePanel.hidden = false;
+          window.setTimeout(() => otherChoiceInput.focus(), 0);
+          return;
+        }
+        const key = prototypeState.activeQuestionKey;
+        prototypeState.choices[key] = choice.dataset.choice;
+        delete prototypeState.customChoices[key];
+        prototypeState.approvalsByQuestion[key] = { maya: false, theo: false, requested: false };
+        delete prototypeState.confirmedDecisions[key];
+        renderChoices();
+        renderApprovals();
+        showToast(`${choice.dataset.choice} is proposed. Both people can review it independently.`);
+        return;
+      }
+      const vendorButton = event.target.closest('[data-vendor]');
+      if (vendorButton) {
+        const vendor = prototypeData.vendors[vendorButton.dataset.vendor];
+        document.getElementById('vendorDialogTitle').textContent = vendor.name;
+        const detail = document.getElementById('vendorDetail');
+        detail.innerHTML = '<div><strong>Approach</strong><span></span></div><div><strong>Proposal</strong><span></span></div><div><strong>Why it is here</strong><span></span></div>';
+        const spans = detail.querySelectorAll('span');
+        spans[0].textContent = vendor.style;
+        spans[1].textContent = vendor.price;
+        spans[2].textContent = `${vendor.note} ${vendor.source}.`;
+        openDialog('vendorDialog');
+      }
     });
 
-    document.querySelectorAll('[data-close]').forEach((button) => {
-      button.addEventListener('click', () => button.closest('dialog').close());
-    });
-
-    document.querySelectorAll('dialog').forEach((dialog) => {
-      dialog.addEventListener('click', (event) => {
+    document.querySelectorAll('dialog').forEach(dialog => {
+      dialog.addEventListener('click', event => {
         if (event.target === dialog) dialog.close();
       });
     });
 
-    document.querySelectorAll('[data-prompt]').forEach((button) => {
-      button.addEventListener('click', () => {
-        input.value = button.dataset.prompt;
-        input.focus();
-      });
-    });
-
-    document.querySelectorAll('.choice-option').forEach((button) => {
-      button.addEventListener('click', () => {
-        document.querySelectorAll('.choice-option').forEach((option) => option.classList.remove('selected'));
-        button.classList.add('selected');
-        const isOther = button.hasAttribute('data-other-choice');
-        otherChoicePanel.hidden = !isOther;
-        if (isOther) {
-          window.setTimeout(() => otherChoiceInput.focus(), 0);
-          showToast('Share the idea in your own words. Bliss will keep it inside this decision.');
-          return;
-        }
-        showToast(`${button.dataset.choice} is now the proposed choice. Nothing has been confirmed yet.`);
-      });
-    });
-
-    otherChoicePanel.addEventListener('submit', (event) => {
+    document.getElementById('choiceList').addEventListener('keydown', event => {
+      if (!['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+      const choices = [...event.currentTarget.querySelectorAll('[role="radio"]')];
+      const current = Math.max(0, choices.indexOf(document.activeElement));
+      const delta = ['ArrowDown', 'ArrowRight'].includes(event.key) ? 1 : -1;
+      choices[(current + delta + choices.length) % choices.length].focus();
       event.preventDefault();
-      const value = otherChoiceInput.value.trim();
-      if (!value) {
-        otherChoiceInput.focus();
+    });
+
+    document.getElementById('confirmationButton').addEventListener('click', () => {
+      const key = prototypeState.activeQuestionKey;
+      const approvals = prototypeState.approvalsByQuestion[key];
+      const current = prototypeState.activeMember;
+      const other = current === 'maya' ? 'theo' : 'maya';
+      if (!prototypeState.choices[key]) {
+        showToast('Choose a direction before asking either person to confirm it.');
         return;
       }
+      if (!approvals[current]) {
+        approvals[current] = true;
+        renderApprovals();
+        showToast(`${memberName(current)} is ready. This does not confirm for ${memberName(other)}.`);
+        return;
+      }
+      if (!approvals[other]) {
+        approvals.requested = true;
+        renderApprovals();
+        showToast(`${memberName(other)} has been invited to review in their own session.`);
+        return;
+      }
+      prototypeState.confirmedDecisions[key] = prototypeState.choices[key];
+      renderQuestionTabs();
+      renderApprovals();
+      showToast('Shared decision confirmed. Tasks, the exact action draft, and a suggested Moment are now available.');
+    });
 
-      const userMessage = document.createElement('article');
-      userMessage.className = 'message user';
-      userMessage.innerHTML = '<div class="bubble"><p></p></div><span class="avatar maya" aria-label="Maya">M</span>';
-      userMessage.querySelector('p').textContent = value;
-      messages.appendChild(userMessage);
+    otherChoicePanel.addEventListener('submit', event => {
+      event.preventDefault();
+      const value = otherChoiceInput.value.trim();
+      if (!value) return otherChoiceInput.focus();
       otherChoicePanel.hidden = true;
       otherChoiceInput.value = '';
-      agentState.textContent = 'Understanding your idea…';
-      scrollArea.scrollTop = scrollArea.scrollHeight;
-
-      window.setTimeout(() => {
-        const agentMessage = document.createElement('article');
-        agentMessage.className = 'message agent';
-        agentMessage.innerHTML = '<span class="bliss-orb" aria-hidden="true">b</span><div class="bubble"><p>That belongs in this decision too. I will not force it into Harbor House or Field Notes. Let me understand what matters most about your idea, then I can compare it fairly and record the reason if you choose it.</p></div>';
-        messages.appendChild(agentMessage);
-        agentState.textContent = 'Ready when you are';
-        scrollArea.scrollTop = scrollArea.scrollHeight;
-        showToast('Your idea is now part of this decision thread.');
-      }, 620);
+      submitQuestionInput(value, { customChoice: true });
+      showToast('Your idea is now the proposed custom choice in this permanent Question Thread.');
     });
 
-    document.querySelector('[data-action="calendar"]').addEventListener('click', () => {
-      showToast('Bliss would first ask for a preferred time, then show the exact calendar event for approval.');
+    composer.addEventListener('submit', event => {
+      event.preventDefault();
+      const value = input.value.trim();
+      if (!value) return;
+      input.value = '';
+      input.style.height = 'auto';
+      submitQuestionInput(value);
     });
 
-    document.querySelector('[data-action="sources"]').addEventListener('click', () => {
-      showToast('Every preference opens its source message and can be corrected.');
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = `${Math.min(input.scrollHeight, 120)}px`;
     });
 
-    document.getElementById('confirmationButton').addEventListener('click', (event) => {
-      const status = document.getElementById('theoStatus');
-      status.classList.remove('waiting');
-      status.innerHTML = '<i></i>Theo · confirmed';
-      event.currentTarget.textContent = 'Decision confirmed ✓';
-      event.currentTarget.disabled = true;
-      document.querySelector('.phase-pill').textContent = 'Decision made';
-      showToast('Decision confirmed. Bliss can now create the next tasks and prepare approved actions.');
+    document.querySelector('.attach-button').addEventListener('click', () => {
+      showToast('A real file picker will attach references to this Question Thread.');
     });
+
+    document.querySelector('[data-action="sources"]').addEventListener('click', () => openDialog('sourcesDialog'));
+    document.getElementById('correctUnderstanding').addEventListener('click', () => {
+      document.getElementById('sourcesDialog').close();
+      input.value = 'I want to correct what Bliss understands: ';
+      input.focus();
+    });
+
+    document.querySelector('.icon-button').addEventListener('click', () => showToast('No new planning requests.'));
+    document.getElementById('journeyPrevious').addEventListener('click', () => document.getElementById('journeyViewport').scrollBy({ left: -document.getElementById('journeyViewport').clientWidth * 0.85, behavior: 'smooth' }));
+    document.getElementById('journeyNext').addEventListener('click', () => document.getElementById('journeyViewport').scrollBy({ left: document.getElementById('journeyViewport').clientWidth * 0.85, behavior: 'smooth' }));
 
     document.getElementById('approveEmail').addEventListener('click', () => {
       document.getElementById('emailDialog').close();
@@ -2337,43 +3046,26 @@ Maya &amp; Theo</div>
       badge.textContent = 'Sent';
       badge.style.color = '#3d5146';
       badge.style.background = 'var(--sage-wash)';
-      showToast('Email sent once. Bliss will track the reply in this photography thread.');
+      showToast('The exact approved email was sent once. Bliss will track the reply here.');
     });
 
-    document.getElementById('saveMoment').addEventListener('click', (event) => {
+    document.getElementById('saveMoment').addEventListener('click', event => {
+      prototypeState.momentStatus = 'saved';
       document.getElementById('momentCard').classList.add('saved');
       event.currentTarget.textContent = 'Saved to your story ✓';
-      showToast('Moment saved. You can add a photo or edit the wording anytime.');
+      showToast('Moment saved. You can edit the wording or add a photo later.');
     });
 
-    composer.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const value = input.value.trim();
-      if (!value) return;
-
-      const userMessage = document.createElement('article');
-      userMessage.className = 'message user';
-      userMessage.innerHTML = `<div class="bubble"><p></p></div><span class="avatar maya" aria-label="Maya">M</span>`;
-      userMessage.querySelector('p').textContent = value;
-      messages.appendChild(userMessage);
-      input.value = '';
-      agentState.textContent = 'Thinking with your shared context…';
-      scrollArea.scrollTop = scrollArea.scrollHeight;
-
-      window.setTimeout(() => {
-        const agentMessage = document.createElement('article');
-        agentMessage.className = 'message agent';
-        agentMessage.innerHTML = '<span class="bliss-orb" aria-hidden="true">b</span><div class="bubble"><p>I would keep this inside the photographer decision. I can help you compare the tradeoff, turn the result into tasks, or prepare the exact next action for approval. Which would reduce the most pressure right now?</p></div>';
-        messages.appendChild(agentMessage);
-        agentState.textContent = 'Ready when you are';
-        scrollArea.scrollTop = scrollArea.scrollHeight;
-      }, 720);
+    document.getElementById('dismissMoment').addEventListener('click', () => {
+      prototypeState.momentStatus = 'dismissed';
+      document.getElementById('momentSection').hidden = true;
+      showToast('Moment dismissed. The confirmed decision remains in the plan.');
     });
 
-    input.addEventListener('input', () => {
-      input.style.height = 'auto';
-      input.style.height = `${Math.min(input.scrollHeight, 120)}px`;
-    });
+    renderJourney();
+    renderProcedure();
+    renderActiveMember();
+    renderQuestion();
   </script>
 </body>
 </html>

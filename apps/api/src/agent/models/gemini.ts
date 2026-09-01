@@ -42,6 +42,31 @@ export type GeminiFetch = (
   init?: RequestInit,
 ) => Promise<Response>
 
+function retryDelayMs(attempt: number, response: Response | null, baseMs: number) {
+  const retryAfter = response?.headers.get('retry-after')
+  const retryAfterSeconds = retryAfter ? Number(retryAfter) : Number.NaN
+  if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds >= 0) {
+    return Math.min(retryAfterSeconds * 1_000, 5_000)
+  }
+  return Math.min(baseMs * (2 ** (attempt - 1)), 5_000)
+}
+
+async function waitForRetry(milliseconds: number, signal: AbortSignal) {
+  if (milliseconds <= 0) return
+  await new Promise<void>((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      signal.removeEventListener('abort', abort)
+      resolve()
+    }, milliseconds)
+    const abort = () => {
+      clearTimeout(timeout)
+      reject(new AgentGuardrailError('MODEL_CANCELLED', 'Gemini request was cancelled'))
+    }
+    if (signal.aborted) abort()
+    else signal.addEventListener('abort', abort, { once: true })
+  })
+}
+
 function toolNameFor(messages: AgentMessage[], toolCallId?: string) {
   if (!toolCallId) return ''
   for (let index = messages.length - 1; index >= 0; index -= 1) {
@@ -133,6 +158,7 @@ export class GeminiAgentModel implements AgentModel {
     model: string
     maxOutputTokens?: number
     maxAttempts?: number
+    retryBaseMs?: number
     baseUrl?: string
     fetcher?: GeminiFetch
   }) {
@@ -168,15 +194,41 @@ export class GeminiAgentModel implements AgentModel {
       }),
     } satisfies RequestInit
 
-    const maxAttempts = Math.min(Math.max(this.config.maxAttempts ?? 2, 1), 3)
+    const maxAttempts = Math.min(Math.max(this.config.maxAttempts ?? 3, 1), 3)
+    const retryBaseMs = Math.max(
+      this.config.retryBaseMs ?? (this.config.fetcher ? 0 : 750),
+      0,
+    )
     let body: GeminiResponse | undefined
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-      const response = await fetcher(`${baseUrl}/models/${model}:generateContent`, request)
+      let response: Response
+      try {
+        response = await fetcher(`${baseUrl}/models/${model}:generateContent`, request)
+      } catch (error) {
+        if (input.signal.aborted) {
+          throw new AgentGuardrailError('MODEL_CANCELLED', 'Gemini request was cancelled')
+        }
+        if (attempt < maxAttempts) {
+          await waitForRetry(retryDelayMs(attempt, null, retryBaseMs), input.signal)
+          continue
+        }
+        throw new AgentGuardrailError(
+          'MODEL_PROVIDER_UNAVAILABLE',
+          'Gemini is temporarily unavailable',
+          true,
+        )
+      }
       try {
         body = await response.json() as GeminiResponse
       } catch {
-        const retryable = response.status === 408 || response.status === 429 || response.status >= 500
-        if (retryable && attempt < maxAttempts) continue
+        const retryable = response.ok
+          || response.status === 408
+          || response.status === 429
+          || response.status >= 500
+        if (retryable && attempt < maxAttempts) {
+          await waitForRetry(retryDelayMs(attempt, response, retryBaseMs), input.signal)
+          continue
+        }
         throw new AgentGuardrailError(
           `MODEL_HTTP_${response.status}`,
           'Gemini returned an invalid response',
@@ -186,7 +238,10 @@ export class GeminiAgentModel implements AgentModel {
 
       if (response.ok) break
       const retryable = response.status === 408 || response.status === 429 || response.status >= 500
-      if (retryable && attempt < maxAttempts) continue
+      if (retryable && attempt < maxAttempts) {
+        await waitForRetry(retryDelayMs(attempt, response, retryBaseMs), input.signal)
+        continue
+      }
       throw new AgentGuardrailError(
         `MODEL_HTTP_${response.status}`,
         body.error?.message ?? `Model request failed with status ${response.status}`,

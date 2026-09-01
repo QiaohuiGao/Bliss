@@ -107,7 +107,7 @@ export default function ActionsPage() {
             <ArrowLeft className="w-4 h-4" />
             <span className="font-serif text-lg">Bliss</span>
           </button>
-          <button onClick={() => router.push('/assistant')} className="btn-ghost text-xs flex items-center gap-1.5">
+          <button onClick={() => router.push('/assistant/quest/foundation')} className="btn-ghost text-xs flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5" />
             {t('empty.action')}
           </button>
@@ -129,7 +129,7 @@ export default function ActionsPage() {
             </div>
             <h2 className="font-serif text-xl text-bliss-ink">{t('empty.title')}</h2>
             <p className="text-sm text-bliss-muted mt-2 max-w-md mx-auto">{t('empty.body')}</p>
-            <button onClick={() => router.push('/assistant')} className="btn-primary mt-5 text-sm">{t('empty.action')}</button>
+            <button onClick={() => router.push('/assistant/quest/foundation')} className="btn-primary mt-5 text-sm">{t('empty.action')}</button>
           </section>
         ) : (
           <section className="space-y-4">

@@ -16,6 +16,7 @@
     "type-check": "turbo type-check",
     "lint:i18n": "bash scripts/lint-i18n.sh",
     "verify:generation": "cd apps/api && bun run scripts/verify-generation.ts",
+    "verify:production": "bun run scripts/verify-production.ts",
     "test": "turbo test",
     "eval:agent": "cd apps/api && bun run eval:agent",
     "smoke:agent": "cd apps/api && bun run smoke:agent",

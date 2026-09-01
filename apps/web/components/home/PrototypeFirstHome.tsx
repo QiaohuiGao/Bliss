@@ -67,20 +67,30 @@ export function PrototypeFirstHome() {
 
   async function saveVision() {
     const value = visionDraft.trim()
-    if (!dashboard || !feeling || !value || saving) return
+    if (!dashboard || !value || saving) return
     setSaving(true)
     try {
       const token = await getToken()
-      const updated = await api.correctMemoryClaim(
-        dashboard.wedding.id,
-        feeling.id,
-        value,
-        t('correctionReason'),
-        token,
-      )
+      const updated = feeling
+        ? await api.correctMemoryClaim(
+            dashboard.wedding.id,
+            feeling.id,
+            value,
+            t('correctionReason'),
+            token,
+          )
+        : await api.setIntakeMemoryClaim(
+            dashboard.wedding.id,
+            'feeling',
+            value,
+            t('correctionReason'),
+            token,
+          )
       setMemory(current => current ? {
         ...current,
-        couple: current.couple.map(item => item.id === feeling.id ? updated : item),
+        couple: feeling
+          ? current.couple.map(item => item.id === feeling.id ? updated : item)
+          : [...current.couple, updated],
       } : current)
       setEditing(false)
       showToast(t('saved'))

@@ -150,4 +150,80 @@ describe('generic quest scoping pack', () => {
       'plan_offline_guest_backup',
     ])
   })
+
+  it('supports the attire questions outside the specialized gown flow', async () => {
+    const store = new CaptureStore()
+    const [questions, candidates, propose] = createQuestScopingTools({
+      questKey: 'attire_beauty',
+      questionKey: 'attire.suit_acquisition',
+      resolverInput: { weddingType: 'traditional', cultures: [], plannerType: 'none' },
+      activeAnswers: {},
+      proposalStore: store,
+    })
+    const overview = await questions!.execute({}, context) as {
+      questions: Array<{ questionKey: string }>
+    }
+    expect(overview.questions.map(question => question.questionKey)).toEqual([
+      'attire.suit_acquisition',
+    ])
+    const result = await candidates!.execute({
+      questionKey: 'attire.suit_acquisition',
+      choice: 'custom_tailor',
+    }, context) as { candidates: Array<{ taskKey: string }> }
+    expect(result.candidates.map(candidate => candidate.taskKey)).toEqual([
+      'order_suit',
+      'custom_suit_measurements',
+      'suit_alterations',
+    ])
+    await propose!.execute(packet({
+      questKey: 'attire_beauty',
+      questionKey: 'attire.suit_acquisition',
+      proposedChoice: 'custom_tailor',
+      taskEffects: [{
+        taskKey: 'custom_suit_measurements',
+        rationale: 'Start the made-to-measure path early.',
+      }],
+    }), context)
+    expect(store.packet?.taskEffects.map(effect => effect.taskKey)).toEqual([
+      'order_suit',
+      'custom_suit_measurements',
+      'suit_alterations',
+    ])
+  })
+
+  it('settles Vendor Team coverage without requiring a live vendor provider', async () => {
+    const store = new CaptureStore()
+    const [questions, candidates, propose] = createQuestScopingTools({
+      questKey: 'vendor_team',
+      questionKey: 'photo.coverage',
+      resolverInput: { weddingType: 'traditional', cultures: [], plannerType: 'none' },
+      activeAnswers: {},
+      proposalStore: store,
+    })
+    const overview = await questions!.execute({}, context) as {
+      questions: Array<{ questionKey: string }>
+    }
+    expect(overview.questions.map(question => question.questionKey)).toEqual(['photo.coverage'])
+    const result = await candidates!.execute({
+      questionKey: 'photo.coverage',
+      choice: 'photo_video_content',
+    }, context) as { candidates: Array<{ taskKey: string }> }
+    expect(result.candidates.map(candidate => candidate.taskKey)).toEqual([
+      'book_videographer',
+      'book_content_creator',
+    ])
+    await propose!.execute(packet({
+      questKey: 'vendor_team',
+      questionKey: 'photo.coverage',
+      proposedChoice: 'photo_video_content',
+      taskEffects: [{
+        taskKey: 'book_content_creator',
+        rationale: 'Keep the short-form coverage the couple explicitly chose.',
+      }],
+    }), context)
+    expect(store.packet?.taskEffects.map(effect => effect.taskKey)).toEqual([
+      'book_videographer',
+      'book_content_creator',
+    ])
+  })
 })

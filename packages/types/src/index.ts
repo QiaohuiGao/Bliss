@@ -9,6 +9,26 @@ export const DEFAULT_LOCALE: Locale = 'en'
 /** Locales that are planned but not yet shipped. Kept separate so `Locale` stays honest. */
 export type PlannedLocale = 'es' | 'zh'
 
+// The product journey is exactly these fourteen stable chapters. Question
+// threads, progress projection, and the web journey must all share this order.
+export const QUEST_KEYS = [
+  'foundation',
+  'venue_date',
+  'vendor_team',
+  'wedding_party',
+  'attire_beauty',
+  'guests_stationery',
+  'guest_experience',
+  'food_beverage',
+  'design_flowers',
+  'ceremony',
+  'registry_rings_honeymoon',
+  'legal',
+  'pre_wedding_events',
+  'final_30_and_day_of',
+] as const
+export type QuestKey = typeof QUEST_KEYS[number]
+
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
 /** Tiers sized for the US market (2026 national average is 117 guests). */

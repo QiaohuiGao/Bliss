@@ -42,6 +42,22 @@ export const planningThreads = pgTable('planning_threads', {
     .on(table.weddingId, table.questKey, table.questionKey),
 }))
 
+// Agent runs can span multiple model and tool calls, so a transaction lock
+// would keep a database transaction open for the whole conversation turn.
+// This short-lived lease serializes runs per permanent question thread while
+// still recovering automatically if an API process exits mid-run.
+export const threadRunLeases = pgTable('thread_run_leases', {
+  threadId: text('thread_id').primaryKey().references(() => planningThreads.id, { onDelete: 'cascade' }),
+  weddingId: text('wedding_id').notNull().references(() => weddings.id, { onDelete: 'cascade' }),
+  leaseId: text('lease_id').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, table => ({
+  weddingExpiryIdx: index('thread_run_leases_wedding_expiry_idx')
+    .on(table.weddingId, table.expiresAt),
+}))
+
 export const threadMessages = pgTable('thread_messages', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   threadId: text('thread_id').notNull().references(() => planningThreads.id, { onDelete: 'cascade' }),
