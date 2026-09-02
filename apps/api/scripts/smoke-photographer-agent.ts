@@ -107,12 +107,6 @@ class SmokePhotographerModel implements AgentModel {
     this.step += 1
     if (this.step === 1) {
       return {
-        toolCalls: [{ id: 'candidate', name: 'get_candidate_tasks', input: { choice: 'photo_video' } }],
-        usage: { inputTokens: 120, outputTokens: 30, costMicros: 100 },
-      }
-    }
-    if (this.step === 2) {
-      return {
         toolCalls: [{
           id: 'search',
           name: 'search_photographers',
@@ -138,33 +132,33 @@ class SmokePhotographerModel implements AgentModel {
           schemaVersion: 1,
           threadId: this.evidence.threadId,
           questKey: 'vendor_team',
-          questionKey: 'photo.coverage',
+          questionKey: 'photo.photographer_choice',
           state: 'ready',
-          summary: 'Documentary photography plus video preserves the day without making it feel staged.',
-          proposedChoice: 'photo_video',
-          reason: 'Both partners value candid images, and one explicitly values hearing the day again.',
+          summary: 'A verified documentary photographer best matches the couple\'s shared priorities.',
+          proposedChoice: candidates[0]!.id,
+          reason: 'Both partners value candid work, and the sourced profile shows complete documentary galleries.',
           alternativesConsidered: [{
-            value: 'photo_only',
-            tradeoff: 'Simpler budget, but it would lose vows, speeches, and ambient sound.',
+            value: candidates[1]!.id,
+            tradeoff: 'Also documentary-led, but the selected profile has stronger complete-gallery evidence.',
           }],
           memberInputs: [
             {
               memberId: this.evidence.firstMemberId,
-              stance: 'photo_video',
+              stance: candidates[0]!.id,
               reason: 'Wants candid photographs and does not want the day to feel staged.',
               sourceMessageIds: [this.evidence.firstMessageId],
             },
             {
               memberId: this.evidence.secondMemberId,
-              stance: 'photo_video',
-              reason: 'Wants to hear the vows and speeches again.',
+              stance: candidates[0]!.id,
+              reason: 'Wants full galleries that preserve candid moments consistently.',
               sourceMessageIds: [this.evidence.secondMessageId],
             },
           ],
-          taskEffects: [
-            { taskKey: 'shortlist_photographers', rationale: 'Compare complete galleries before contacting anyone.' },
-            { taskKey: 'book_videographer', rationale: 'Video is part of the jointly chosen coverage.' },
-          ],
+          taskEffects: [{
+            taskKey: 'book_photographer',
+            rationale: 'Move the selected verified candidate into the booking workflow.',
+          }],
           memoryEffects: [
             {
               subjectType: 'member',
@@ -270,6 +264,7 @@ try {
   const [thread] = await db.insert(planningThreads).values({
     weddingId,
     questKey: 'vendor_team',
+    questionKey: 'photo.photographer_choice',
     title: 'Smoke photographer decision',
     openedBy: userIds[0],
   }).returning({ id: planningThreads.id })
@@ -352,14 +347,14 @@ try {
   assert.equal(candidates.length, 4)
   assert.equal(shortlist.length, 3)
   assert.deepEqual(shortlist.map(item => item.rank).sort(), [1, 2, 3])
-  assert.equal(decidedTasks.length, 2)
+  assert.equal(decidedTasks.length, 1)
   assert.ok(decidedTasks.every(task => task.confidence === 'decided'))
   assert.equal(decision!.decidedBy, 'both')
   assert.equal(claims.length, 2)
   assert.equal(actions.length, 2)
   assert.ok(actions.every(action => action.status === 'draft'))
   assert.equal(savedMoments.length, 1)
-  assert.ok(spans.length >= 6)
+  assert.ok(spans.length >= 4)
   const serializedSpans = JSON.stringify(spans)
   assert.doesNotMatch(serializedSpans, /candid photographs/i)
   assert.doesNotMatch(serializedSpans, /North Star Photo/i)
