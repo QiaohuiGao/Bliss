@@ -13,6 +13,7 @@ import { db } from '../src/db'
 import {
   agentSpans,
   agentFeedback,
+  decisionProposalApprovals,
   decisionProposals,
   decisions,
   externalActions,
@@ -312,6 +313,11 @@ try {
 
   const committer = new DatabaseDecisionCommitter()
   const key = crypto.randomUUID()
+  await db.insert(decisionProposalApprovals).values(userIds.map(userId => ({
+    weddingId,
+    proposalId: proposal.id,
+    userId,
+  })))
   const committed = await committer.confirm({
     proposalId: proposal.id,
     weddingId,
