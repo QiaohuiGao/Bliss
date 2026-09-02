@@ -5,6 +5,7 @@ import { DatabaseDecisionCommitter } from '../src/agent/proposals/committer'
 import type { AgentModel, AgentModelResult, ProposedTask } from '../src/agent/types'
 import { db } from '../src/db'
 import {
+  decisionProposalApprovals,
   decisionProposals,
   decisions,
   planningThreads,
@@ -122,6 +123,11 @@ async function decide(input: ScriptChoice & { message: string }) {
     eq(decisionProposals.status, 'pending'),
   )).limit(1)
   assert.ok(proposal)
+  await db.insert(decisionProposalApprovals).values({
+    weddingId: weddingId!,
+    proposalId: proposal.id,
+    userId: userId!,
+  })
   return new DatabaseDecisionCommitter().confirm({
     proposalId: proposal.id,
     weddingId: weddingId!,

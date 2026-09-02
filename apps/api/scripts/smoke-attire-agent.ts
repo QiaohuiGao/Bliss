@@ -22,6 +22,7 @@ import { db } from '../src/db'
 import {
   agentSpans,
   activityFeed,
+  decisionProposalApprovals,
   decisionProposals,
   decisions,
   externalActions,
@@ -296,6 +297,7 @@ try {
 
   const committer = new DatabaseDecisionCommitter()
   const key = crypto.randomUUID()
+  await db.insert(decisionProposalApprovals).values({ weddingId, proposalId: proposal.id, userId })
   const committed = await committer.confirm({
     proposalId: proposal.id,
     weddingId,
@@ -538,6 +540,11 @@ try {
     eq(decisionProposals.threadId, thread!.id),
     eq(decisionProposals.status, 'pending'),
   )).limit(1)
+  await db.insert(decisionProposalApprovals).values({
+    weddingId,
+    proposalId: revisionProposal!.id,
+    userId,
+  })
   const revision = await committer.confirm({
     proposalId: revisionProposal!.id,
     weddingId,
