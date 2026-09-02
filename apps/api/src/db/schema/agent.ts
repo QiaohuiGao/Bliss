@@ -199,6 +199,7 @@ export const decisionProposals = pgTable('decision_proposals', {
   state: text('state').notNull().$type<'contested' | 'ready'>(),
   summary: text('summary').notNull(),
   proposedChoice: text('proposed_choice'),
+  customChoice: text('custom_choice'),
   reason: text('reason'),
   alternativesConsidered: jsonb('alternatives_considered')
     .$type<Array<{ value: string; tradeoff: string }>>().notNull(),
@@ -226,6 +227,20 @@ export const decisionProposals = pgTable('decision_proposals', {
     .on(table.weddingId, table.status),
 }))
 
+export const decisionProposalApprovals = pgTable('decision_proposal_approvals', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  weddingId: text('wedding_id').notNull().references(() => weddings.id, { onDelete: 'cascade' }),
+  proposalId: text('proposal_id').notNull().references(() => decisionProposals.id, { onDelete: 'cascade' }),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, table => ({
+  proposalMemberUnique: uniqueIndex('decision_proposal_approvals_proposal_member_unique')
+    .on(table.proposalId, table.userId),
+  weddingProposalIdx: index('decision_proposal_approvals_wedding_proposal_idx')
+    .on(table.weddingId, table.proposalId),
+}))
+
 export const decisions = pgTable('decisions', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   weddingId: text('wedding_id').notNull().references(() => weddings.id, { onDelete: 'cascade' }),
@@ -233,6 +248,7 @@ export const decisions = pgTable('decisions', {
   questKey: text('quest_key').notNull(),
   questionKey: text('question_key').notNull(),
   choice: text('choice').notNull(),
+  customChoice: text('custom_choice'),
   reason: text('reason'),
   decidedBy: text('decided_by').notNull().$type<'member' | 'both' | 'assumed'>(),
   confidence: text('confidence').notNull().$type<'high' | 'medium' | 'low'>(),

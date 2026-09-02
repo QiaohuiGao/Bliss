@@ -81,6 +81,8 @@
     "chaptersTitle": "14 connected chapters",
     "chaptersBody": "Bliss keeps decisions connected across the whole plan.",
     "chaptersLabel": "Wedding chapters",
+    "previousChapters": "Show previous wedding chapters",
+    "nextChapters": "Show next wedding chapters",
     "chapter": {
       "foundation": "Foundation",
       "venue_date": "Venue",
@@ -100,6 +102,7 @@
     "decisionsMade": "decisions made",
     "currentChapter": "Current chapter · {number}",
     "questionsTitle": "Decisions in this chapter",
+    "procedureTitle": "Chapter procedure",
     "questionCount": "{confirmed} of {total} settled",
     "questionStatus": {
       "not_started": "Ready whenever you are",
@@ -117,9 +120,24 @@
     "cycleLabel": "Planning cycle",
     "cycle": {
       "understand": "Understand",
+      "explore": "Explore",
       "decide": "Decide",
       "act": "Act",
       "remember": "Remember"
+    },
+    "workflow": {
+      "photographerChoice": {
+        "understand": "Know your style",
+        "explore": "Build a shortlist",
+        "decide": "Choose together",
+        "act": "Reach out",
+        "remember": "Book and remember"
+      }
+    },
+    "cycleState": {
+      "done": "Complete from confirmed planning state",
+      "current": "This is where the chapter is now",
+      "open": "Opens when the earlier work is settled"
     },
     "companionLabel": "Bliss · Working with both of you",
     "introTitle": "Let’s settle one real choice at a time.",
@@ -158,6 +176,26 @@
         "title": "Remember the reason",
         "body": "Keep why this mattered",
         "prompt": "Help us name what we will want to remember about making this decision together."
+      },
+      "findVendors": {
+        "title": "Find photographers",
+        "body": "Search a verified local candidate pool",
+        "prompt": "Find a small shortlist of photographers in our wedding location using our confirmed preferences. Do not invent availability, pricing, or fit scores."
+      },
+      "compareVendors": {
+        "title": "Compare finalists",
+        "body": "Show evidence, strengths, and concerns",
+        "prompt": "Compare the photographer candidates already found for us. Use source evidence and explain strengths and concerns without inventing percentages."
+      },
+      "draftInquiry": {
+        "title": "Draft the inquiry",
+        "body": "Prepare an email for our approval",
+        "prompt": "Draft a concise inquiry to our preferred photographer using only known details. Keep it as an approval-required preview."
+      },
+      "planInterviews": {
+        "title": "Plan interviews",
+        "body": "Prepare useful finalist questions",
+        "prompt": "Prepare the few interview questions that would genuinely distinguish our photographer finalists."
       }
     },
     "understanding": {
@@ -195,6 +233,9 @@
       "whyFallback": "Bliss will explain the fit only after hearing what matters to both of you.",
       "memberReady": "{name} · ready",
       "memberReviewing": "{name} · reviewing",
+      "markReady": "Mark me ready →",
+      "waitingForPartner": "Waiting for your partner",
+      "confirmShared": "Confirm our shared decision →",
       "continue": "Continue with Bliss →"
     },
     "actions": {
@@ -203,17 +244,24 @@
       "noneType": "No prepared action",
       "approval": "Needs approval",
       "prepared": "A next action is prepared",
+      "preview": "A possible next action",
       "empty": "Nothing is waiting on you yet",
       "body": "Exact details stay visible and nothing is sent, scheduled, or shared until you approve it.",
+      "previewBody": "This is still part of the proposal. It becomes an approvable action only after the decision is confirmed.",
       "review": "Open Action Center →"
     },
     "moment": {
       "title": "Worth remembering",
       "suggested": "Suggested",
+      "saved": "Saved to your story",
       "emptyTitle": "The reason behind this choice",
       "emptyBody": "When a decision becomes meaningful, Bliss will suggest the part of the story worth keeping.",
+      "save": "Save this Moment",
+      "dismiss": "Not for our story",
+      "preview": "This becomes saveable after the decision is confirmed.",
       "open": "Open our Moments"
-    }
+    },
+    "openSource": "Open the source for {name}"
   },
   "legalLookup": {
     "verifiedTitle": "Verified marriage-license rules",

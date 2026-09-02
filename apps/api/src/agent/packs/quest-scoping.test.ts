@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DecisionProposalStore } from '../proposals/store'
 import type { AgentToolContext, DecisionPacket } from '../types'
-import { createQuestScopingTools } from './quest-scoping'
+import { createQuestScopingTools, getQuestScopingOverview } from './quest-scoping'
 
 const context: AgentToolContext = {
   runId: 'run-1',
@@ -57,6 +57,19 @@ const tools = (store = new CaptureStore(), questionKey = 'food.service_style') =
 }
 
 describe('generic quest scoping pack', () => {
+  it('exposes photographer selection as a separate dynamic question', () => {
+    const overview = getQuestScopingOverview('vendor_team', {})
+    expect(overview.questions.map(question => question.questionKey)).toEqual([
+      'photo.coverage',
+      'photo.photographer_choice',
+    ])
+    expect(overview.questions[1]).toMatchObject({
+      options: [],
+      allowsCustom: false,
+      source: 'assumed',
+    })
+  })
+
   it('exposes only the active authored question', async () => {
     const { questions } = tools(new CaptureStore(), 'food.bar_package')
     const result = await questions.execute({}, context) as {
@@ -97,6 +110,38 @@ describe('generic quest scoping pack', () => {
     await candidates.execute({ questionKey: 'food.service_style', choice: 'buffet' }, context)
     await propose.execute(packet(), context)
     expect(store.packet?.proposedChoice).toBe('buffet')
+  })
+
+  it('preserves an other choice and uses the authored base branch', async () => {
+    const { store, candidates, propose } = tools()
+    const result = await candidates.execute({
+      questionKey: 'food.service_style',
+      choice: 'other',
+      customChoice: 'Cocktail-style small plates throughout the evening',
+    }, context) as { candidates: Array<{ taskKey: string }> }
+    expect(result.candidates.map(item => item.taskKey)).toEqual([
+      'collect_meal_choices_with_rsvp',
+      'build_meal_key_for_place_cards',
+    ])
+    await propose.execute(packet({
+      proposedChoice: 'other',
+      customChoice: 'Cocktail-style small plates throughout the evening',
+      taskEffects: [],
+    }), context)
+    expect(store.packet).toMatchObject({
+      proposedChoice: 'other',
+      customChoice: 'Cocktail-style small plates throughout the evening',
+    })
+  })
+
+  it('rejects other without the couple\'s exact choice', async () => {
+    const { candidates, propose } = tools()
+    expect(candidates.execute({
+      questionKey: 'food.service_style',
+      choice: 'other',
+    }, context)).rejects.toMatchObject({ code: 'CUSTOM_CHOICE_REQUIRED' })
+    expect(propose.execute(packet({ proposedChoice: 'other' }), context))
+      .rejects.toMatchObject({ code: 'CUSTOM_CHOICE_REQUIRED' })
   })
 
   it('rejects an invented or cross-question task', async () => {

@@ -15,25 +15,28 @@ class Store implements DecisionProposalStore {
   }
 }
 
+const vendorEffects = ['v1', 'v2', 'v3'].map((candidateId, index) => ({
+  candidateId,
+  rationale: `Sourced comparison ${index + 1}.`,
+  pros: ['Style evidence'],
+  concerns: ['Confirm availability'],
+}))
+
 const packet = (overrides: Partial<DecisionPacket> = {}): DecisionPacket => ({
   schemaVersion: 1,
   threadId: context.threadId,
   questKey: 'vendor_team',
-  questionKey: 'photo.coverage',
+  questionKey: 'photo.photographer_choice',
   state: 'ready',
-  summary: 'Photography matters most; video can stay lean.',
-  proposedChoice: 'photo_only',
-  reason: 'You both prioritize still images and a calm day.',
+  summary: 'A sourced finalist best matches the couple\'s documentary priorities.',
+  proposedChoice: 'v1',
+  reason: 'Both members prefer candid coverage and this candidate shows that work.',
   alternativesConsidered: [],
   memberInputs: [],
-  taskEffects: [{ taskKey: 'shortlist_photographers', rationale: 'Compare a focused set.' }],
+  taskEffects: [],
   memoryEffects: [],
   externalActions: [],
-  vendorEffects: [
-    { candidateId: 'v1', rationale: 'Strong documentary fit.', pros: ['Style fit'], concerns: ['Confirm price'] },
-    { candidateId: 'v2', rationale: 'Good local experience.', pros: ['Local'], concerns: ['Review full galleries'] },
-    { candidateId: 'v3', rationale: 'Balanced alternative.', pros: ['Flexible'], concerns: ['Confirm availability'] },
-  ],
+  vendorEffects,
   momentCandidate: null,
   ...overrides,
 })
@@ -41,7 +44,6 @@ const packet = (overrides: Partial<DecisionPacket> = {}): DecisionPacket => ({
 function setup() {
   const store = new Store()
   const tools = createPhotographerTools({
-    resolverInput: {},
     weddingLocation: { city: 'Brooklyn', state: 'NY' },
     proposalStore: store,
     vendorSearch: {
@@ -52,62 +54,59 @@ function setup() {
   })
   return {
     store,
-    tasks: tools.find(tool => tool.definition.name === 'get_candidate_tasks')!,
     search: tools.find(tool => tool.definition.name === 'search_photographers')!,
     propose: tools.find(tool => tool.definition.name === 'propose_decision')!,
   }
 }
 
-describe('photographer pack', () => {
-  it('creates a proposal only from authored tasks and returned vendors', async () => {
+const search = (tool: ReturnType<typeof setup>['search']) => tool.execute({
+  city: 'Brooklyn', state: 'NY', style: 'documentary', limit: 5,
+}, context)
+
+describe('photographer selection pack', () => {
+  it('chooses an exact returned candidate and adds only the booking task', async () => {
     const tools = setup()
-    await tools.tasks.execute({ choice: 'photo_only' }, context)
-    await tools.search.execute({ city: 'Brooklyn', state: 'NY', style: 'documentary', limit: 5 }, context)
+    await search(tools.search)
     await tools.propose.execute(packet(), context)
-    expect(tools.store.packet?.vendorEffects).toHaveLength(3)
+    expect(tools.store.packet).toMatchObject({ proposedChoice: 'v1' })
+    expect(tools.store.packet?.taskEffects.map(effect => effect.taskKey)).toEqual(['book_photographer'])
   })
 
-  it('shows the full coverage branch before confirmation', async () => {
+  it('rejects a selected candidate that was not returned', async () => {
     const tools = setup()
-    await tools.tasks.execute({ choice: 'photo_video' }, context)
-    await tools.search.execute({ city: 'Brooklyn', state: 'NY', style: 'documentary', limit: 5 }, context)
-    await tools.propose.execute(packet({
-      proposedChoice: 'photo_video',
-      taskEffects: [{ taskKey: 'shortlist_photographers', rationale: 'Compare a focused set.' }],
-    }), context)
-    expect(tools.store.packet?.taskEffects.map(effect => effect.taskKey)).toContain('book_videographer')
+    await search(tools.search)
+    await expect(tools.propose.execute(packet({ proposedChoice: 'invented' }), context))
+      .rejects.toMatchObject({ code: 'INVALID_VENDOR_CHOICE' })
   })
 
-  it('requires the exact candidate branch even when the model proposes no tasks', async () => {
+  it('requires the selected candidate in the sourced comparison', async () => {
     const tools = setup()
-    await tools.search.execute({ city: 'Brooklyn', state: 'NY', style: 'documentary', limit: 5 }, context)
-    await expect(tools.propose.execute(packet({ taskEffects: [] }), context)).rejects.toMatchObject({
-      code: 'CANDIDATES_NOT_READ',
-    })
+    await search(tools.search)
+    await expect(tools.propose.execute(packet({ vendorEffects: vendorEffects.slice(1) }), context))
+      .rejects.toMatchObject({ code: 'SELECTED_VENDOR_MISSING' })
   })
 
-  it('rejects an invented vendor', async () => {
+  it('rejects invented vendors and tasks', async () => {
     const tools = setup()
-    await tools.tasks.execute({ choice: 'photo_only' }, context)
-    await tools.search.execute({ city: 'Brooklyn', state: 'NY', style: 'documentary', limit: 5 }, context)
+    await search(tools.search)
     await expect(tools.propose.execute(packet({
-      vendorEffects: [
-        { candidateId: 'v1', rationale: 'Returned.', pros: [], concerns: [] },
-        { candidateId: 'v2', rationale: 'Returned.', pros: [], concerns: [] },
-        { candidateId: 'invented', rationale: 'No source.', pros: [], concerns: [] },
-      ],
+      vendorEffects: [...vendorEffects.slice(0, 2), { candidateId: 'invented', rationale: 'No source.', pros: [], concerns: [] }],
     }), context)).rejects.toMatchObject({ code: 'INVENTED_VENDOR' })
+    await expect(tools.propose.execute(packet({
+      taskEffects: [{ taskKey: 'book_videographer', rationale: 'Wrong question.' }],
+    }), context)).rejects.toMatchObject({ code: 'INVENTED_TASK' })
+  })
+
+  it('requires a provider search before a ready proposal', async () => {
+    const tools = setup()
+    await expect(tools.propose.execute(packet(), context))
+      .rejects.toMatchObject({ code: 'VENDOR_SEARCH_REQUIRED' })
   })
 
   it('keeps contested decisions free of downstream effects', async () => {
     const tools = setup()
-    await expect(tools.propose.execute(packet({
-      state: 'contested', proposedChoice: null, reason: null,
-    }), context)).rejects.toMatchObject({ code: 'CONTESTED_SIDE_EFFECT' })
-  })
-
-  it('accepts a clean contested proposal without searching', async () => {
-    const tools = setup()
+    await expect(tools.propose.execute(packet({ state: 'contested', proposedChoice: null, reason: null }), context))
+      .rejects.toMatchObject({ code: 'CONTESTED_SIDE_EFFECT' })
     await tools.propose.execute(packet({
       state: 'contested', proposedChoice: null, reason: null,
       taskEffects: [], vendorEffects: [], externalActions: [],

@@ -80,11 +80,12 @@ export const ATTIRE_ARTIFACT_BUNDLE: AgentArtifactBundle = Object.freeze({
 
 export const PHOTOGRAPHER_ARTIFACT_BUNDLE: AgentArtifactBundle = Object.freeze({
   ...PHOTOGRAPHER_ARTIFACT_BUNDLE_V2,
-  id: 'photographer-v3',
-  promptVersion: 'photographer-system-v3',
-  toolsVersion: 'photographer-tools-v2',
+  id: 'photographer-selection-v1',
+  promptVersion: 'photographer-selection-system-v1',
+  toolsVersion: 'photographer-selection-tools-v1',
+  domainPackVersion: 'us-photographer-selection-v1',
   policyVersion: 'proposal-approval-v2',
-  evalSuiteVersion: 'photographer-conformance-v3',
+  evalSuiteVersion: 'photographer-selection-conformance-v1',
   prompt: PHOTOGRAPHER_AGENT_PROMPT_V3,
 })
 

@@ -27,15 +27,20 @@ import { PHOTOGRAPHER_QUESTION_KEY, PHOTOGRAPHER_QUEST_KEY } from '../agent/pack
 import { getQuestScopingOverview } from '../agent/packs/quest-scoping'
 import { configuredVendorSearchProvider } from '../agent/providers/vendor-search'
 import { DatabaseDecisionCommitter } from '../agent/proposals/committer'
+import { projectDecisionProposalApprovals } from '../agent/proposals/approvals'
 import { loadCurrentDecisionState } from '../agent/proposals/current'
 import { findOrCreateQuestionThread } from '../agent/threads/find-or-create'
 import { projectQuestProgress } from '../agent/threads/quest-progress'
+import { loadQuestWorkspaceSnapshot } from '../agent/workspace/load'
 import { db } from '../db'
 import {
   decisionProposals,
+  decisionProposalApprovals,
   planningThreads,
   threadMessages,
+  users,
   vendorCandidates,
+  weddingMembers,
 } from '../db/schema'
 import { requireAuth, requireWeddingAccess } from '../middleware/auth'
 
@@ -49,8 +54,12 @@ const createMessageSchema = z.object({
   content: z.string().trim().min(1).max(12_000),
 })
 
+const workspaceQuerySchema = z.object({
+  questionKey: z.string().trim().min(1).max(120).optional(),
+})
+
 function questionBelongsToQuest(questKey: string, questionKey: string) {
-  if (questKey === PHOTOGRAPHER_QUEST_KEY) return questionKey === PHOTOGRAPHER_QUESTION_KEY
+  if (questKey === PHOTOGRAPHER_QUEST_KEY && questionKey === PHOTOGRAPHER_QUESTION_KEY) return true
   if (!isQuestScopingKey(questKey)) return false
   return getQuestScopingOverview(questKey, {}).questions.some(
     question => question.questionKey === questionKey,
@@ -109,6 +118,23 @@ async function proposalWithVendors<T extends {
   }
 }
 
+async function approvalState(weddingId: string, proposalId: string, currentUserId: string) {
+  const [members, approvals] = await Promise.all([
+    db.select({ userId: weddingMembers.userId, displayName: users.displayName })
+      .from(weddingMembers)
+      .innerJoin(users, eq(users.id, weddingMembers.userId))
+      .where(eq(weddingMembers.weddingId, weddingId))
+      .orderBy(asc(weddingMembers.joinedAt)),
+    db.select({ userId: decisionProposalApprovals.userId, approvedAt: decisionProposalApprovals.updatedAt })
+      .from(decisionProposalApprovals)
+      .where(and(
+        eq(decisionProposalApprovals.weddingId, weddingId),
+        eq(decisionProposalApprovals.proposalId, proposalId),
+      )),
+  ])
+  return projectDecisionProposalApprovals(proposalId, currentUserId, members, approvals)
+}
+
 export async function agentRoutes(app: FastifyInstance) {
   const access = { preHandler: [requireAuth, requireWeddingAccess] }
   app.get('/weddings/:weddingId/quest-progress', access, async (req, reply) => {
@@ -131,6 +157,24 @@ export async function agentRoutes(app: FastifyInstance) {
     try {
       const current = await loadCurrentDecisionState(weddingId)
       return reply.send(getQuestScopingOverview(questKey, current.answers))
+    } catch (error) {
+      const normalized = normalizedAgentError(error)
+      return reply.status(404).send({ error: normalized.message, ...normalized })
+    }
+  })
+
+  app.get('/weddings/:weddingId/quests/:questKey/workspace', access, async (req, reply) => {
+    const { questKey } = req.params as { weddingId: string; questKey: string }
+    const userId = (req as any).userId as string
+    const wedding = (req as any).wedding as typeof import('../db/schema').weddings.$inferSelect
+    const query = workspaceQuerySchema.parse(req.query ?? {})
+    try {
+      return reply.send(await loadQuestWorkspaceSnapshot({
+        wedding,
+        userId,
+        questKey,
+        questionKey: query.questionKey,
+      }))
     } catch (error) {
       const normalized = normalizedAgentError(error)
       return reply.status(404).send({ error: normalized.message, ...normalized })
@@ -427,6 +471,41 @@ export async function agentRoutes(app: FastifyInstance) {
       .limit(1)
     if (!proposal) return reply.status(404).send({ error: 'Decision proposal not found' })
     return reply.send(await proposalWithVendors(proposal))
+  })
+
+  app.post('/weddings/:weddingId/decision-proposals/:proposalId/approve', access, async (req, reply) => {
+    const { weddingId, proposalId } = req.params as { weddingId: string; proposalId: string }
+    const userId = (req as any).userId as string
+    const [proposal] = await db.select({ id: decisionProposals.id })
+      .from(decisionProposals)
+      .where(and(
+        eq(decisionProposals.id, proposalId),
+        eq(decisionProposals.weddingId, weddingId),
+        eq(decisionProposals.status, 'pending'),
+        eq(decisionProposals.state, 'ready'),
+      ))
+      .limit(1)
+    if (!proposal) {
+      return reply.status(409).send({ error: 'Only a pending ready proposal can be approved' })
+    }
+    const [membership] = await db.select({ id: weddingMembers.id })
+      .from(weddingMembers)
+      .where(and(
+        eq(weddingMembers.weddingId, weddingId),
+        eq(weddingMembers.userId, userId),
+      ))
+      .limit(1)
+    if (!membership) return reply.status(403).send({ error: 'Only a wedding member can approve' })
+
+    await db.insert(decisionProposalApprovals).values({
+      weddingId,
+      proposalId,
+      userId,
+    }).onConflictDoUpdate({
+      target: [decisionProposalApprovals.proposalId, decisionProposalApprovals.userId],
+      set: { updatedAt: new Date() },
+    })
+    return reply.send(await approvalState(weddingId, proposalId, userId))
   })
 
   // The commit boundary (design §4.1). Everything above this line is reversible;

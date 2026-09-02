@@ -78,10 +78,13 @@
 .journeyCopy .eyebrow { margin-bottom: 5px; }
 .journeyCopy strong { display: block; font-family: var(--display); font-size: 20px; line-height: 1.1; letter-spacing: -.025em; }
 .journeyCopy span { color: var(--muted); font-size: 12px; }
-.journeyTrack { position: relative; display: grid; grid-template-columns: repeat(14, minmax(24px, 1fr)); align-items: center; gap: 2px; max-width: 850px; padding: 17px 7px 0; }
+.journeyCarousel { display: grid; grid-template-columns: 28px minmax(0, 1fr) 28px; align-items: center; gap: 5px; min-width: 0; }
+.journeyControl { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); background: white; cursor: pointer; }
+.journeyTrack { position: relative; display: flex; align-items: center; gap: 2px; width: 100%; max-width: 850px; padding: 17px 7px 4px; overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none; }
+.journeyTrack::-webkit-scrollbar { display: none; }
 .journeyTrack::before { content: ""; position: absolute; top: 27px; right: 24px; left: 24px; height: 1px; background: var(--line-strong); }
 .journeyTrack::after { content: ""; position: absolute; top: 26px; left: 24px; width: min(var(--journey-progress), calc(100% - 48px)); height: 3px; border-radius: 99px; background: var(--violet); }
-.questNode { position: relative; z-index: 1; display: grid; justify-items: center; gap: 7px; min-width: 0; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.questNode { position: relative; z-index: 1; display: grid; flex: 0 0 calc((100% - 10px) / 6); justify-items: center; gap: 7px; min-width: 0; padding: 0; border: 0; background: transparent; cursor: pointer; }
 .questDot { display: grid; place-items: center; width: 11px; height: 11px; border: 2px solid var(--paper); border-radius: 50%; background: var(--line-strong); box-shadow: 0 0 0 1px var(--line-strong); transition: transform 160ms ease; }
 .questNode:hover .questDot { transform: scale(1.22); }
 .questNode[data-status="completed"] .questDot { background: var(--violet); box-shadow: 0 0 0 1px var(--violet); }
@@ -97,16 +100,28 @@
 .questRail { padding: 23px 19px 20px; border-right: 1px solid var(--line); }
 .questTitle { margin: 9px 0 5px; font-family: var(--display); font-size: 27px; line-height: 1.06; letter-spacing: -.035em; }
 .questSubtitle { margin: 0; color: var(--muted); font-size: 12px; }
-.phaseList { position: relative; display: grid; gap: 0; margin: 24px 0 26px; padding: 0; list-style: none; }
+.questionSwitcher { margin: 20px 0 0; }
+.questionSwitcher h2, .phaseLabel { margin: 0 0 8px; color: var(--muted); font-family: var(--utility); font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.questionTabs { display: grid; gap: 6px; }
+.questionTab { display: grid; grid-template-columns: 8px minmax(0, 1fr); align-items: center; gap: 9px; width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; background: white; text-align: left; cursor: pointer; }
+.questionTab > i { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
+.questionTab strong, .questionTab small { display: block; }
+.questionTab strong { overflow: hidden; font-size: 10px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+.questionTab small { margin-top: 2px; color: var(--muted); font-size: 8px; }
+.questionTab[aria-selected="true"] { border-color: rgb(82 103 122 / 55%); background: var(--violet-wash); box-shadow: inset 3px 0 var(--violet); }
+.questionTab[aria-selected="true"] > i { background: linear-gradient(135deg, var(--violet), var(--coral)); }
+.questionTab[data-status="confirmed"] > i { background: var(--sage); }
+.phaseLabel { margin-top: 20px; }
+.phaseList { position: relative; display: grid; gap: 0; margin: 0 0 26px; padding: 0; list-style: none; }
 .phaseList::before { content: ""; position: absolute; top: 16px; bottom: 20px; left: 14px; width: 1px; background: var(--line-strong); }
-.phaseItem { position: relative; display: grid; grid-template-columns: 29px 1fr; gap: 11px; width: 100%; min-height: 57px; padding: 0; border: 0; background: transparent; text-align: left; cursor: pointer; }
+.phaseItem { position: relative; display: grid; grid-template-columns: 29px 1fr; gap: 11px; width: 100%; min-height: 57px; padding: 0; text-align: left; }
 .phaseMark { position: relative; z-index: 1; display: grid; place-items: center; width: 29px; height: 29px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--quiet); background: var(--paper); font-size: 11px; font-weight: 800; }
-.phaseItem[data-status="confirmed"] .phaseMark { border-color: var(--sage); color: white; background: var(--sage); }
-.phaseItem[data-active="true"] .phaseMark { border: 5px solid var(--violet-wash); color: white; background: var(--violet); box-shadow: 0 0 0 1px var(--violet); }
+.phaseItem[data-state="done"] .phaseMark { border-color: var(--sage); color: white; background: var(--sage); }
+.phaseItem[data-state="current"] .phaseMark { border: 5px solid var(--violet-wash); color: white; background: var(--violet); box-shadow: 0 0 0 1px var(--violet); }
 .phaseCopy { min-width: 0; padding-top: 1px; }
 .phaseCopy strong { display: block; font-size: 12px; font-weight: 700; line-height: 1.3; }
 .phaseCopy span { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; line-height: 1.35; }
-.phaseItem:not([data-active="true"]):not([data-status="confirmed"]) .phaseCopy strong { color: var(--quiet); }
+.phaseItem[data-state="open"] .phaseCopy strong { color: var(--quiet); }
 .capabilityBox { padding-top: 18px; border-top: 1px solid var(--line); }
 .sectionHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 11px; font-size: 12px; font-weight: 750; }
 .sectionHeading span { color: var(--muted); font-size: 10px; font-weight: 500; }
@@ -171,6 +186,13 @@
 .planEffects { display: grid; gap: 7px; max-width: 720px; margin: 20px auto 0; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); font-size: 10px; }
 .planEffects > strong { font-size: 11px; }
 .planEffects span { display: flex; align-items: center; gap: 7px; }
+.resourceCard { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 10px; max-width: 720px; margin: 12px auto 0; padding: 12px 13px; border: 1px solid var(--line); border-radius: 13px; background: var(--paper); }
+.resourceCard[data-kind="vendor"] { border-left: 3px solid var(--violet); }
+.resourceIcon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; color: var(--violet-deep); background: var(--violet-wash); }
+.resourceCard strong, .resourceCard small { display: block; }
+.resourceCard strong { font-size: 11px; }
+.resourceCard small { margin-top: 2px; color: var(--muted); font-size: 9px; }
+.resourceCard a { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 8px; color: var(--violet-deep); background: white; }
 .error { max-width: 720px; margin: 14px auto 0; padding: 10px 12px; border: 1px solid #d7c8c5; border-radius: 11px; color: #744c48; background: var(--coral-wash); font-size: 10px; }
 .composerShell { position: sticky; bottom: 0; z-index: 4; padding: 10px 24px 17px; border-top: 1px solid rgb(220 226 235 / 88%); background: rgb(255 255 255 / 90%); backdrop-filter: blur(18px); }
 .promptRow { display: flex; gap: 7px; max-width: 760px; margin: 0 auto 9px; overflow-x: auto; scrollbar-width: none; }
@@ -228,17 +250,30 @@
 .feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 10px; color: var(--muted); font-size: 8px; }
 .feedback button { padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: white; cursor: pointer; }
 .dockSection { margin-top: 21px; }
+.actionList { display: grid; gap: 9px; }
 .actionCard { padding: 13px; border: 1px solid var(--line); border-radius: 14px; background: white; }
 .actionMeta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
 .actionType { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-family: var(--utility); font-size: 8px; font-weight: 750; letter-spacing: .05em; text-transform: uppercase; }
 .approvalBadge { padding: 4px 6px; border-radius: 99px; color: #765e38; background: var(--amber-wash); font-size: 8px; font-weight: 750; }
+.approvalBadge[data-complete="true"] { color: #3d614d; background: var(--sage-wash); }
 .actionCard h3 { margin: 0; font-size: 11px; }
 .actionCard p { margin: 5px 0 11px; color: var(--muted); font-size: 9px; }
-.actionCard .secondaryButton { width: 100%; }
+.actionDetails { display: grid; gap: 6px; margin: 10px 0 0; }
+.actionDetails div { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 8px; font-size: 9px; line-height: 1.45; }
+.actionDetails dt { color: var(--muted); }
+.actionDetails dd { min-width: 0; margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.actionApproval { margin-top: 11px; padding-top: 10px; border-top: 1px solid var(--line); }
+.actionApproval > p { margin-top: 0; }
+.actionButtons { display: flex; align-items: center; gap: 10px; }
+.actionButtons .primaryButton { width: auto; margin-top: 0; padding: 0 12px; }
+.actionResult { margin: 11px 0 0 !important; padding-top: 10px; border-top: 1px solid var(--line); color: #3d614d !important; font-weight: 750; }
 .momentCard { position: relative; overflow: hidden; min-height: 142px; padding: 15px; border: 1px solid #d7c8c5; border-radius: 18px 18px 18px 5px; background: radial-gradient(circle at 92% 12%, rgb(161 111 104 / 18%), transparent 72px), #f6f1ef; }
 .momentCard .eyebrow::before { background: var(--coral); }
 .momentCard h3 { max-width: 220px; margin: 18px 0 6px; font-family: var(--display); font-size: 20px; font-weight: 500; line-height: 1.08; letter-spacing: -.03em; }
 .momentCard p { margin: 0 0 13px; color: var(--muted); font-size: 9px; }
+.momentActions { display: flex; align-items: center; gap: 12px; }
+.quietButton { padding: 0; border: 0; color: var(--quiet); background: transparent; font-size: 9px; cursor: pointer; }
+.previewNote { display: block; color: var(--muted); font-size: 9px; }
 .legalCard { max-width: 720px; margin: 0 auto 20px; padding: 12px; border: 1px solid var(--line); border-radius: 13px; background: var(--paper); font-size: 10px; }
 .legalCard strong { display: block; margin-bottom: 5px; }
 .legalFacts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -280,12 +315,18 @@
   .journeyCopy { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
   .journeyCopy .eyebrow, .journeyCopy span { display: none; }
   .journeyCopy strong { font-size: 17px; }
-  .journeyTrack { width: 670px; margin-top: 4px; transform: translateX(-210px); }
+  .journeyCarousel { margin-top: 5px; }
+  .journeyTrack { width: 100%; margin-top: 4px; }
+  .questNode { flex-basis: calc((100% - 4px) / 3); }
   .workspace { display: block; width: 100%; overflow-x: hidden; }
   .questRail { padding: 15px 14px; border-right: 0; border-bottom: 1px solid var(--line); }
   .questRail > .eyebrow, .questSubtitle { display: none; }
   .questTitle { margin: 0 0 11px; font-size: 22px; }
+  .questionSwitcher { margin-top: 8px; }
+  .questionTabs { display: flex; overflow-x: auto; padding-bottom: 4px; }
+  .questionTab { flex: 0 0 210px; }
   .phaseList { display: none; }
+  .phaseLabel { display: none; }
   .capabilityBox { padding-top: 0; border-top: 0; }
   .capabilityBox .sectionHeading { display: none; }
   .capabilityList { display: flex; gap: 7px; overflow-x: auto; }

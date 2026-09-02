@@ -45,6 +45,7 @@ export const decisionPacketSchema = z.object({
   state: decisionStateSchema,
   summary: z.string().min(1),
   proposedChoice: z.string().nullable(),
+  customChoice: z.string().trim().min(1).max(2_000).nullable().optional(),
   reason: z.string().nullable(),
   alternativesConsidered: z.array(z.object({
     value: z.string().min(1),
@@ -89,6 +90,7 @@ export const decisionPacketJsonSchema: Record<string, unknown> = {
     state: { type: 'string', enum: ['contested', 'ready'] },
     summary: { type: 'string', minLength: 1 },
     proposedChoice: nullableStringJsonSchema,
+    customChoice: { type: 'string', nullable: true, minLength: 1, maxLength: 2_000 },
     reason: nullableStringJsonSchema,
     alternativesConsidered: {
       type: 'array',

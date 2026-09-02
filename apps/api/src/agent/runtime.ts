@@ -80,7 +80,7 @@ export class AgentRuntime {
       questKey: PHOTOGRAPHER_QUEST_KEY,
       questionKey: PHOTOGRAPHER_QUESTION_KEY,
       releaseKey: PHOTOGRAPHER_ARTIFACT_BUNDLE.packKey,
-      goal: 'Define photographer coverage, run one bounded search, and propose a sourced shortlist',
+      goal: 'Choose one verified photographer candidate from a sourced shortlist',
       bundle: PHOTOGRAPHER_ARTIFACT_BUNDLE,
       buildTools: wedding => {
         if (!wedding.city || !wedding.state) {
@@ -90,7 +90,6 @@ export class AgentRuntime {
           )
         }
         return createPhotographerTools({
-          resolverInput: resolverInput(wedding),
           weddingLocation: { city: wedding.city, state: wedding.state },
           proposalStore: new DatabaseDecisionProposalStore(),
           vendorSearch: new DatabaseVendorSearchStore(provider),

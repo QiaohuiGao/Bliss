@@ -92,6 +92,7 @@ export class ExternalActionApprover {
           eq(externalActions.weddingId, input.weddingId),
         ))
         .limit(1)
+        .for('update')
       if (!action) throw new AgentGuardrailError('ACTION_NOT_FOUND', 'Action not found')
       if (action.status !== 'draft' && action.status !== 'failed') {
         throw new AgentGuardrailError('ACTION_NOT_APPROVABLE', 'Only a draft or failed action can be approved')

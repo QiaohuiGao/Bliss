@@ -16,6 +16,7 @@ export async function loadCurrentDecisionState(
       questKey: decisions.questKey,
       questionKey: decisions.questionKey,
       choice: decisions.choice,
+      customChoice: decisions.customChoice,
       reason: decisions.reason,
     })
     .from(decisions)

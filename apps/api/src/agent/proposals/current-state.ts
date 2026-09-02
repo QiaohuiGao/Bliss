@@ -3,6 +3,7 @@ export interface CurrentDecision {
   questKey: string
   questionKey: string
   choice: string
+  customChoice?: string | null
   reason: string | null
 }
 

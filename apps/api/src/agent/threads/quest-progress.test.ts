@@ -91,4 +91,22 @@ describe('quest progress projection', () => {
     expect(progress.find(quest => quest.questKey === 'food_beverage')?.status).toBe('in_progress')
     expect(progress.find(quest => quest.questKey === 'ceremony')?.status).toBe('not_started')
   })
+
+  it('keeps coverage and photographer selection as separate Vendor Team decisions', () => {
+    const coverageOnly = projectQuestProgress([
+      thread({
+        id: 'coverage-thread',
+        questKey: 'vendor_team',
+        questionKey: 'photo.coverage',
+        currentDecisionId: 'coverage-decision',
+      }),
+    ]).find(quest => quest.questKey === 'vendor_team')
+    expect(coverageOnly?.questions.map(question => question.questionKey)).toEqual([
+      'photo.coverage',
+      'photo.photographer_choice',
+    ])
+    expect(coverageOnly?.status).toBe('in_progress')
+    expect(coverageOnly?.confirmedCount).toBe(1)
+    expect(coverageOnly?.totalCount).toBe(2)
+  })
 })

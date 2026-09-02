@@ -404,7 +404,6 @@ export async function runPhotographerEvalSuite(
     const run = await runAgentLoop({
       model: new ScriptedEvalModel(evalCase.script),
       tools: createPhotographerTools({
-        resolverInput: {},
         weddingLocation: { city: 'Brooklyn', state: 'NY' },
         proposalStore: store,
         vendorSearch: new StaticVendorSearch(),

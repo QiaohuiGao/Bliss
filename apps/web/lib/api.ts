@@ -3,7 +3,7 @@ import type {
   DashboardResponse, OnboardingPayload, ModuleCelebration, Milestone,
   TaskPhoto, TaskVendor,
   PlanningThread, ThreadMessage, DecisionProposal, AttireAgentRunResult,
-  QuestScopingOverview, QuestProgress,
+  QuestScopingOverview, QuestProgress, QuestWorkspaceSnapshot, ApproveDecisionProposalResult,
   ConfirmDecisionResult,
   MemoryProfile, MemoryProfileClaim, BlissMoment, MomentAsset,
   ExternalAction, ApprovedActionResult, AgentFeedback,
@@ -144,6 +144,12 @@ export const api = {
   getQuestScoping: (weddingId: string, questKey: string, token: string) =>
     apiFetch<QuestScopingOverview>(`/weddings/${weddingId}/quests/${questKey}/scoping`, { token }),
 
+  getQuestWorkspace: (weddingId: string, questKey: string, token: string, questionKey?: string) =>
+    apiFetch<QuestWorkspaceSnapshot>(
+      `/weddings/${weddingId}/quests/${questKey}/workspace${questionKey ? `?questionKey=${encodeURIComponent(questionKey)}` : ''}`,
+      { token },
+    ),
+
   getMarriageLicense: (weddingId: string, token: string, county?: string) =>
     apiFetch<MarriageLicenseLookupResponse>(
       `/weddings/${weddingId}/legal/marriage-license${county ? `?county=${encodeURIComponent(county)}` : ''}`,
@@ -196,6 +202,15 @@ export const api = {
       headers: { 'Idempotency-Key': idempotencyKey },
       token,
     },
+  ),
+
+  approveDecisionProposal: (
+    weddingId: string,
+    proposalId: string,
+    token: string,
+  ) => apiFetch<ApproveDecisionProposalResult>(
+    `/weddings/${weddingId}/decision-proposals/${proposalId}/approve`,
+    { method: 'POST', token },
   ),
 
   // Memory and Moments

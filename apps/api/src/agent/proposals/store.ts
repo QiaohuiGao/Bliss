@@ -181,6 +181,7 @@ export class DatabaseDecisionProposalStore implements DecisionProposalStore {
           state: packet.state,
           summary: packet.summary,
           proposedChoice: packet.proposedChoice,
+          customChoice: packet.customChoice ?? null,
           reason: packet.reason,
           alternativesConsidered: packet.alternativesConsidered,
           memberInputs: packet.memberInputs,

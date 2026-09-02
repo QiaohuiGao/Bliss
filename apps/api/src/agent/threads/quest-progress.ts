@@ -4,7 +4,6 @@ import type {
   QuestionProgress,
 } from '@bliss/types'
 import { QUEST_KEYS } from '@bliss/types'
-import { PHOTOGRAPHER_QUESTION_KEY, PHOTOGRAPHER_QUEST_KEY } from '../packs/photographer'
 import { getQuestScopingOverview } from '../packs/quest-scoping'
 
 export const QUEST_PROGRESS_QUEST_KEYS = QUEST_KEYS
@@ -20,7 +19,6 @@ export interface QuestProgressThread {
 }
 
 function questionKeysForQuest(questKey: ProgressQuestKey) {
-  if (questKey === PHOTOGRAPHER_QUEST_KEY) return [PHOTOGRAPHER_QUESTION_KEY]
   return getQuestScopingOverview(questKey, {}).questions.map(question => question.questionKey)
 }
 

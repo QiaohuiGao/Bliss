@@ -1496,6 +1496,11 @@
       font-weight: 750;
     }
 
+    .approval-badge.complete {
+      color: #3d5146;
+      background: var(--sage-wash);
+    }
+
     .action-card h3 {
       margin: 0;
       font-size: 11px;
@@ -2238,8 +2243,8 @@
       </div>
 
       <div class="journey-score">
-        <strong>38%</strong>
-        <span>6 decisions made</span>
+        <strong id="journeyPercent">38%</strong>
+        <span id="journeyDecisionCount">6 decisions made</span>
       </div>
     </section>
 
@@ -2370,17 +2375,17 @@
         </article>
 
         <section class="dock-section" id="actionSection" aria-labelledby="nextActionTitle" hidden>
-          <h3 class="section-heading" id="nextActionTitle">Ready for you <span>1 approval</span></h3>
+          <h3 class="section-heading" id="nextActionTitle">Ready for you <span id="actionCount">1 approval</span></h3>
           <article class="action-card">
             <div class="action-meta"><span class="action-type">✉ Email draft</span><span class="approval-badge" id="actionBadge">Needs approval</span></div>
-            <h3>Ask Harbor House about availability</h3>
-            <p>Exact recipient, subject, and message are ready for your review.</p>
-            <button class="secondary-button" type="button" data-open="emailDialog">Review email →</button>
+            <h3 id="actionTitle">Ask Harbor House about availability</h3>
+            <p id="actionDescription">Exact recipient, subject, and message are ready for your review.</p>
+            <button class="secondary-button" id="reviewAction" type="button">Review email →</button>
           </article>
         </section>
 
         <section class="dock-section" id="momentSection" aria-labelledby="momentTitle" hidden>
-          <h3 class="section-heading" id="momentTitle">Worth remembering <span>Suggested</span></h3>
+          <h3 class="section-heading" id="momentTitle">Worth remembering <span id="momentStateLabel">Suggested</span></h3>
           <article class="moment-card" id="momentCard">
             <p class="eyebrow">Moment</p>
             <h3>Choosing how our day will be remembered</h3>
@@ -2399,11 +2404,11 @@
     </header>
     <div class="dialog-body">
       <dl class="payload-grid">
-        <dt>To</dt><dd>hello@harborhousephoto.com</dd>
-        <dt>Subject</dt><dd>June 14, 2027 wedding photography inquiry</dd>
+        <dt>To</dt><dd id="emailRecipient">hello@harborhousephoto.com</dd>
+        <dt>Subject</dt><dd id="emailSubject">June 14, 2027 wedding photography inquiry</dd>
         <dt>From</dt><dd>Maya &amp; Theo</dd>
       </dl>
-      <div class="email-body">Hi Harbor House team,
+      <div class="email-body" id="emailBody">Hi Harbor House team,
 
 We are planning our June 14, 2027 wedding in the Hudson Valley and love the balance of documentary moments and artful portraits in your work.
 
@@ -2453,12 +2458,17 @@ Maya &amp; Theo</div>
     <div class="dialog-body">
       <p class="design-thesis">The interface answers four questions at all times: Where are we in the wedding? What are we solving now? What can Bliss do? What becomes real after this conversation?</p>
       <div class="note-grid">
-        <article class="note"><b>1 · Wedding journey</b><p>The 14 chapters stay visible as one connected story without exposing a giant checklist.</p></article>
-        <article class="note"><b>2 · Current chapter</b><p>The left rail combines local progress with specific capabilities, so users know exactly how Bliss can help.</p></article>
-        <article class="note"><b>3 · Agent conversation</b><p>Natural dialogue remains central, but attributed preferences and sourced comparisons appear as structured conversational objects.</p></article>
-        <article class="note"><b>4 · Decision dock</b><p>Decisions, approvals, and Moments live outside the chat stream. They are reviewable, deterministic, and persistent.</p></article>
-        <article class="note"><b>5 · The shared thread</b><p>Violet and coral represent two individual voices. They meet only where the couple has shared understanding or confirmation.</p></article>
-        <article class="note"><b>6 · Progressive disclosure</b><p>One next decision and one approval are prominent. Deeper planning remains available without becoming visual noise.</p></article>
+        <article class="note"><b>1 · Couple header</b><p>The shared identity stays visible, while each person previews and confirms only as themselves.</p></article>
+        <article class="note"><b>2 · Fourteen-chapter journey</b><p>The plan reads as one connected story and shows only a balanced slice of chapters at once.</p></article>
+        <article class="note"><b>3 · Chapter procedure</b><p>Milestones are derived from real decisions, actions, and Moments rather than manually checked tasks.</p></article>
+        <article class="note"><b>4 · Contextual capabilities</b><p>Bliss offers only the tools that make sense for the active Question and its current phase.</p></article>
+        <article class="note"><b>5 · Permanent Question Thread</b><p>Every decisive branch keeps its own conversation and returns to it whenever the couple comes back.</p></article>
+        <article class="note"><b>6 · What Bliss understands</b><p>Separate preferences, shared ground, and source messages remain visible and correctable.</p></article>
+        <article class="note"><b>7 · Conversation resources</b><p>Grounded comparisons appear inside dialogue without turning the entire workspace into a dashboard.</p></article>
+        <article class="note"><b>8 · Composer and Other</b><p>Either person can bring a custom idea into this exact Question without being forced into authored choices.</p></article>
+        <article class="note"><b>9 · Decision dock</b><p>A proposal becomes confirmed only after Maya and Theo independently mark the same choice ready.</p></article>
+        <article class="note"><b>10 · Ready for you</b><p>External actions expose their exact payload and require approval; custom ideas cannot create invented recipients.</p></article>
+        <article class="note"><b>11 · Worth remembering</b><p>A confirmed choice can become an editable Moment, while dismissing it never changes the planning decision.</p></article>
       </div>
     </div>
     <footer class="dialog-actions">
@@ -2583,8 +2593,8 @@ Maya &amp; Theo</div>
         },
       },
       vendors: {
-        harbor: { name: 'Harbor House', style: 'Editorial documentary', price: '$6,200', source: 'Full galleries and proposal reviewed', note: 'Strong portrait direction with a documentary approach for the rest of the day.' },
-        field: { name: 'Field Notes', style: 'Pure documentary', price: '$5,850', source: 'Full galleries and proposal reviewed', note: 'Minimal direction and strong candid coverage; portrait support is the open tradeoff.' },
+        harbor: { name: 'Harbor House', style: 'Editorial documentary', price: '$6,200', email: 'hello@harborhousephoto.com', source: 'Full galleries and proposal reviewed', note: 'Strong portrait direction with a documentary approach for the rest of the day.' },
+        field: { name: 'Field Notes', style: 'Pure documentary', price: '$5,850', email: 'studio@fieldnotes.photo', source: 'Full galleries and proposal reviewed', note: 'Minimal direction and strong candid coverage; portrait support is the open tradeoff.' },
       },
     };
 
@@ -2615,7 +2625,10 @@ Maya &amp; Theo</div>
         'photo.coverage': { maya: false, theo: false, requested: false },
       },
       confirmedDecisions: { 'photo.style': 'Editorial documentary' },
-      momentStatus: 'suggested',
+      baselineDecisionCount: 6,
+      initialConfirmedDecisionKeys: ['photo.style'],
+      actionStatusByQuestion: {},
+      momentStatusByQuestion: {},
     };
 
     const composer = document.getElementById('composerForm');
@@ -2662,11 +2675,36 @@ Maya &amp; Theo</div>
         return button;
       }));
       window.setTimeout(() => track.querySelector('[aria-current="step"]')?.scrollIntoView({ inline: 'center', block: 'nearest' }), 0);
+      renderJourneyScore();
+    }
+
+    function renderJourneyScore() {
+      const newlyConfirmed = Object.keys(prototypeState.confirmedDecisions)
+        .filter(key => !prototypeState.initialConfirmedDecisionKeys.includes(key)).length;
+      const decisions = prototypeState.baselineDecisionCount + newlyConfirmed;
+      document.getElementById('journeyPercent').textContent = `${Math.round((decisions / 16) * 100)}%`;
+      document.getElementById('journeyDecisionCount').textContent = `${decisions} decisions made`;
+    }
+
+    function derivedWorkflowPhases() {
+      const styleSettled = Boolean(prototypeState.confirmedDecisions['photo.style']);
+      const photographerSettled = Boolean(prototypeState.confirmedDecisions['photo.photographer_choice']);
+      const inquirySent = prototypeState.actionStatusByQuestion['photo.photographer_choice'] === 'sent';
+      const momentStatus = prototypeState.momentStatusByQuestion['photo.photographer_choice'];
+
+      const derived = [
+        { detail: styleSettled ? 'Both preferences captured' : 'One shared direction still open', state: styleSettled ? 'done' : 'current' },
+        { detail: '3 photographers compared', state: 'done' },
+        { detail: photographerSettled ? 'Shared choice confirmed' : 'One tradeoff to resolve', state: photographerSettled ? 'done' : 'current' },
+        { detail: inquirySent ? 'Approved inquiry sent' : photographerSettled ? 'Exact inquiry ready to review' : 'Inquiry prepared after the choice', state: inquirySent ? 'done' : photographerSettled ? 'current' : 'open' },
+        { detail: momentStatus === 'saved' ? 'Moment saved; contract still open' : inquirySent ? 'Track the reply and preserve the choice' : 'Contract, calendar, and Moment', state: inquirySent ? 'current' : 'open' },
+      ];
+      return prototypeData.workflowPhases.map((phase, index) => ({ ...phase, ...derived[index] }));
     }
 
     function renderProcedure() {
       const phaseList = document.getElementById('phaseList');
-      phaseList.replaceChildren(...prototypeData.workflowPhases.map((phase, index) => {
+      phaseList.replaceChildren(...derivedWorkflowPhases().map((phase, index) => {
         const item = document.createElement('li');
         item.className = `phase-item ${phase.state === 'open' ? '' : phase.state}`;
         if (phase.state === 'current') item.setAttribute('aria-current', 'step');
@@ -2814,7 +2852,66 @@ Maya &amp; Theo</div>
 
       const showOutcome = key === 'photo.photographer_choice' && Boolean(confirmed);
       document.getElementById('actionSection').hidden = !showOutcome;
-      document.getElementById('momentSection').hidden = !showOutcome || prototypeState.momentStatus === 'dismissed';
+      renderOutcome();
+      renderProcedure();
+      renderJourneyScore();
+    }
+
+    function vendorForChoice(choice) {
+      return Object.values(prototypeData.vendors).find(vendor => vendor.name === choice);
+    }
+
+    function renderOutcome() {
+      const key = prototypeState.activeQuestionKey;
+      const confirmedChoice = prototypeState.confirmedDecisions[key];
+      const showOutcome = key === 'photo.photographer_choice' && Boolean(confirmedChoice);
+      const actionSection = document.getElementById('actionSection');
+      const momentSection = document.getElementById('momentSection');
+      if (!showOutcome) {
+        actionSection.hidden = true;
+        momentSection.hidden = true;
+        return;
+      }
+
+      const vendor = vendorForChoice(confirmedChoice);
+      const actionStatus = prototypeState.actionStatusByQuestion[key] || 'draft';
+      const momentStatus = prototypeState.momentStatusByQuestion[key] || 'suggested';
+      const badge = document.getElementById('actionBadge');
+      const reviewButton = document.getElementById('reviewAction');
+      actionSection.hidden = false;
+      momentSection.hidden = momentStatus === 'dismissed';
+
+      if (vendor) {
+        document.querySelector('.action-type').textContent = '✉ Email draft';
+        document.getElementById('actionTitle').textContent = `Ask ${vendor.name} about availability`;
+        document.getElementById('actionDescription').textContent = actionStatus === 'sent'
+          ? 'The approved inquiry was sent once. Bliss is now waiting for the reply.'
+          : 'Exact recipient, subject, and message are ready for your review.';
+        document.getElementById('actionCount').textContent = actionStatus === 'sent' ? 'Sent' : '1 approval';
+        reviewButton.textContent = actionStatus === 'sent' ? 'View sent email →' : 'Review email →';
+        reviewButton.dataset.actionKind = 'email';
+        badge.textContent = actionStatus === 'sent' ? 'Sent' : 'Needs approval';
+        badge.classList.toggle('complete', actionStatus === 'sent');
+        document.getElementById('emailRecipient').textContent = vendor.email;
+        document.getElementById('emailSubject').textContent = 'June 14, 2027 wedding photography inquiry';
+        document.getElementById('emailBody').textContent = `Hi ${vendor.name} team,\n\nWe are planning our June 14, 2027 wedding in the Hudson Valley and appreciate the ${vendor.style.toLowerCase()} quality in your work.\n\nAre you available on our date? We would also love to understand how you work with couples while keeping the day feeling natural.\n\nWarmly,\nMaya & Theo`;
+        const approveButton = document.getElementById('approveEmail');
+        approveButton.disabled = actionStatus === 'sent';
+        approveButton.textContent = actionStatus === 'sent' ? 'Already sent ✓' : 'Approve & send email';
+      } else {
+        document.querySelector('.action-type').textContent = '◇ Planning task';
+        document.getElementById('actionTitle').textContent = `Add contact details for “${confirmedChoice}”`;
+        document.getElementById('actionDescription').textContent = 'This custom choice is confirmed, but Bliss needs a grounded contact before it can prepare an external action.';
+        document.getElementById('actionCount').textContent = 'Needs context';
+        reviewButton.textContent = 'Continue in this Question →';
+        reviewButton.dataset.actionKind = 'thread';
+        badge.textContent = 'Not sendable yet';
+        badge.classList.remove('complete');
+      }
+
+      document.getElementById('momentStateLabel').textContent = momentStatus === 'saved' ? 'Saved' : 'Suggested';
+      document.getElementById('momentCard').classList.toggle('saved', momentStatus === 'saved');
+      document.getElementById('saveMoment').textContent = momentStatus === 'saved' ? 'Saved to your story ✓' : 'Save this Moment';
     }
 
     function renderSources() {
@@ -2870,6 +2967,9 @@ Maya &amp; Theo</div>
         prototypeState.customChoices[key] = text;
         prototypeState.choices[key] = text;
         prototypeState.approvalsByQuestion[key] = { maya: false, theo: false, requested: false };
+        delete prototypeState.confirmedDecisions[key];
+        delete prototypeState.actionStatusByQuestion[key];
+        delete prototypeState.momentStatusByQuestion[key];
       }
       renderMessages();
       renderChoices();
@@ -2940,6 +3040,8 @@ Maya &amp; Theo</div>
         delete prototypeState.customChoices[key];
         prototypeState.approvalsByQuestion[key] = { maya: false, theo: false, requested: false };
         delete prototypeState.confirmedDecisions[key];
+        delete prototypeState.actionStatusByQuestion[key];
+        delete prototypeState.momentStatusByQuestion[key];
         renderChoices();
         renderApprovals();
         showToast(`${choice.dataset.choice} is proposed. Both people can review it independently.`);
@@ -3040,25 +3142,42 @@ Maya &amp; Theo</div>
     document.getElementById('journeyPrevious').addEventListener('click', () => document.getElementById('journeyViewport').scrollBy({ left: -document.getElementById('journeyViewport').clientWidth * 0.85, behavior: 'smooth' }));
     document.getElementById('journeyNext').addEventListener('click', () => document.getElementById('journeyViewport').scrollBy({ left: document.getElementById('journeyViewport').clientWidth * 0.85, behavior: 'smooth' }));
 
-    document.getElementById('approveEmail').addEventListener('click', () => {
+    document.getElementById('reviewAction').addEventListener('click', event => {
+      if (event.currentTarget.dataset.actionKind === 'email') {
+        openDialog('emailDialog');
+        return;
+      }
+      input.value = `Help us add the grounded contact details for “${prototypeState.confirmedDecisions[prototypeState.activeQuestionKey]}”.`;
+      input.dispatchEvent(new Event('input'));
+      input.focus();
+    });
+
+    document.getElementById('approveEmail').addEventListener('click', event => {
+      const key = prototypeState.activeQuestionKey;
+      if (prototypeState.actionStatusByQuestion[key] === 'sent') return;
+      prototypeState.actionStatusByQuestion[key] = 'sent';
       document.getElementById('emailDialog').close();
-      const badge = document.getElementById('actionBadge');
-      badge.textContent = 'Sent';
-      badge.style.color = '#3d5146';
-      badge.style.background = 'var(--sage-wash)';
+      event.currentTarget.disabled = true;
+      renderOutcome();
+      renderProcedure();
       showToast('The exact approved email was sent once. Bliss will track the reply here.');
     });
 
     document.getElementById('saveMoment').addEventListener('click', event => {
-      prototypeState.momentStatus = 'saved';
-      document.getElementById('momentCard').classList.add('saved');
-      event.currentTarget.textContent = 'Saved to your story ✓';
+      const key = prototypeState.activeQuestionKey;
+      if (prototypeState.momentStatusByQuestion[key] === 'saved') {
+        showToast('This Moment is already part of your story.');
+        return;
+      }
+      prototypeState.momentStatusByQuestion[key] = 'saved';
+      renderOutcome();
+      renderProcedure();
       showToast('Moment saved. You can edit the wording or add a photo later.');
     });
 
     document.getElementById('dismissMoment').addEventListener('click', () => {
-      prototypeState.momentStatus = 'dismissed';
-      document.getElementById('momentSection').hidden = true;
+      prototypeState.momentStatusByQuestion[prototypeState.activeQuestionKey] = 'dismissed';
+      renderOutcome();
       showToast('Moment dismissed. The confirmed decision remains in the plan.');
     });
 

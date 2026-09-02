@@ -494,10 +494,12 @@ export interface QuestScopingOverview {
     questionKey: string
     promptI18nKey: string
     helpI18nKey: string
-    options: Array<{ value: string; labelI18nKey: string }>
+    options: Array<{ value: string; labelI18nKey: string; label?: string }>
     currentChoice: string
+    currentCustomChoice: string | null
     source: 'confirmed' | 'assumed'
     allowsDefer: boolean
+    allowsCustom: boolean
   }>
 }
 
@@ -576,6 +578,7 @@ export interface DecisionProposal {
   state: 'contested' | 'ready'
   summary: string
   proposedChoice: string | null
+  customChoice: string | null
   reason: string | null
   alternativesConsidered: Array<{ value: string; tradeoff: string }>
   memberInputs: DecisionMemberInput[]
@@ -598,6 +601,122 @@ export interface DecisionProposal {
   confirmedBy: string | null
   confirmedAt: string | null
   createdAt: string
+}
+
+export interface DecisionProposalMemberApproval {
+  proposalId: string
+  userId: string
+  displayName: string | null
+  isCurrentUser: boolean
+  ready: boolean
+  approvedAt: string | null
+}
+
+export interface ApproveDecisionProposalResult {
+  proposalId: string
+  readyMembers: number
+  requiredMembers: number
+  readyToConfirm: boolean
+  approvals: DecisionProposalMemberApproval[]
+}
+
+export type WorkspaceProcedurePhaseKey =
+  | 'understand'
+  | 'explore'
+  | 'decide'
+  | 'act'
+  | 'remember'
+
+export interface WorkspaceProcedurePhase {
+  key: WorkspaceProcedurePhaseKey
+  titleI18nKey: string
+  state: 'done' | 'current' | 'open'
+}
+
+export type WorkspaceCapabilityKey =
+  | 'context'
+  | 'compare'
+  | 'next'
+  | 'remember'
+  | 'findVendors'
+  | 'compareVendors'
+  | 'draftInquiry'
+  | 'planInterviews'
+
+export interface WorkspaceCapability {
+  key: WorkspaceCapabilityKey
+  icon: string
+  titleI18nKey: string
+  bodyI18nKey: string
+  promptI18nKey: string
+  enabled: boolean
+}
+
+export type WorkspaceResourceCard =
+  | {
+      type: 'vendor'
+      candidateId: string
+      name: string
+      website: string | null
+      sourceUrl: string
+      priceLevel: string | null
+      summary: string | null
+      rationale: string
+      pros: string[]
+      concerns: string[]
+    }
+  | {
+      type: 'task_effect'
+      taskKey: string
+      rationale: string
+    }
+
+export interface WorkspaceReadyAction {
+  source: 'proposal_preview' | 'persisted'
+  id: string | null
+  kind: ExternalActionKind
+  payload: Record<string, unknown>
+  status: ExternalActionStatus | 'preview'
+}
+
+export interface WorkspaceMoment {
+  source: 'proposal_preview' | 'persisted'
+  id: string | null
+  status: BlissMoment['status'] | 'preview'
+  title: string
+  narrative: string
+  sourceMessageIds: string[]
+}
+
+export interface QuestWorkspaceSnapshot {
+  wedding: Pick<Wedding, 'id' | 'weddingDate' | 'city' | 'state'>
+  members: WeddingMemberSummary[]
+  currentUserId: string
+  journey: QuestProgress[]
+  quest: {
+    questKey: string
+    titleI18nKey: string
+    subtitleI18nKey: string
+    confirmedCount: number
+    totalCount: number
+  }
+  procedure: WorkspaceProcedurePhase[]
+  capabilities: WorkspaceCapability[]
+  questions: QuestScopingOverview['questions']
+  activeQuestionKey: string
+  activeThread: PlanningThread | null
+  messages: ThreadMessage[]
+  understanding: {
+    memberInputs: DecisionMemberInput[]
+    sharedGround: string | null
+    sourceMessageIds: string[]
+    confirmedClaims: MemoryProfileClaim[]
+  }
+  proposal: DecisionProposal | null
+  memberApprovals: DecisionProposalMemberApproval[]
+  resourceCards: WorkspaceResourceCard[]
+  readyActions: WorkspaceReadyAction[]
+  moment: WorkspaceMoment | null
 }
 
 export interface VendorCandidate {

@@ -4,6 +4,7 @@ import type { Culture } from '@bliss/types'
 import { db, type DB } from '../../db'
 import {
   decisionProposals,
+  decisionProposalApprovals,
   decisions,
   externalActions,
   idempotencyRecords,
@@ -107,6 +108,17 @@ export class DatabaseDecisionCommitter implements DecisionCommitter {
         return { ...(existing.response as Omit<CommitDecisionResult, 'replayed'>), replayed: true }
       }
 
+      // Serialize every confirmation for this wedding before reading mutable
+      // proposal state. This covers simultaneous requests that use different
+      // idempotency keys as well as choices that affect cross-quest predicates.
+      const [wedding] = await tx
+        .select()
+        .from(weddings)
+        .where(eq(weddings.id, input.weddingId))
+        .limit(1)
+        .for('update')
+      if (!wedding) throw new AgentGuardrailError('WEDDING_NOT_FOUND', 'Wedding not found')
+
       const [proposal] = await tx
         .select()
         .from(decisionProposals)
@@ -126,14 +138,31 @@ export class DatabaseDecisionCommitter implements DecisionCommitter {
       if (!proposal.proposedChoice) {
         throw new AgentGuardrailError('PROPOSAL_CHOICE_REQUIRED', 'A ready proposal must contain a choice')
       }
+      if (proposal.proposedChoice === 'other' && !proposal.customChoice) {
+        throw new AgentGuardrailError('CUSTOM_CHOICE_REQUIRED', 'Other requires the couple\'s own choice')
+      }
+      if (proposal.proposedChoice !== 'other' && proposal.customChoice) {
+        throw new AgentGuardrailError('UNEXPECTED_CUSTOM_CHOICE', 'Authored choices must not include custom choice text')
+      }
 
-      const [wedding] = await tx
-        .select()
-        .from(weddings)
-        .where(eq(weddings.id, input.weddingId))
-        .limit(1)
-        .for('update')
-      if (!wedding) throw new AgentGuardrailError('WEDDING_NOT_FOUND', 'Wedding not found')
+      const [requiredMembers, readyMembers] = await Promise.all([
+        tx.select({ userId: weddingMembers.userId })
+          .from(weddingMembers)
+          .where(eq(weddingMembers.weddingId, input.weddingId)),
+        tx.select({ userId: decisionProposalApprovals.userId })
+          .from(decisionProposalApprovals)
+          .where(and(
+            eq(decisionProposalApprovals.weddingId, input.weddingId),
+            eq(decisionProposalApprovals.proposalId, proposal.id),
+          )),
+      ])
+      const readyMemberIds = new Set(readyMembers.map(member => member.userId))
+      if (requiredMembers.length === 0 || requiredMembers.some(member => !readyMemberIds.has(member.userId))) {
+        throw new AgentGuardrailError(
+          'MEMBER_APPROVALS_REQUIRED',
+          'Every joined wedding member must approve this proposal before it can be confirmed',
+        )
+      }
 
       // Canonical decision writes are serialized by the wedding row lock above.
       // Build one active answer per question so changing one choice preserves all
@@ -141,7 +170,13 @@ export class DatabaseDecisionCommitter implements DecisionCommitter {
       const currentDecisions = await loadCurrentDecisionState(input.weddingId, tx)
       const supersededDecision = currentDecisions.byQuestion.get(proposal.questionKey)
       const activeAnswers = { ...currentDecisions.answers }
-      activeAnswers[proposal.questionKey] = proposal.proposedChoice
+      const authoredQuest = QUEST_TEMPLATES.find(template => template.key === proposal.questKey)
+      const authoredQuestion = authoredQuest?.scopingQuestions?.find(question => (
+        `${authoredQuest.answerNamespace ?? authoredQuest.key}.${question.key}` === proposal.questionKey
+      ))
+      activeAnswers[proposal.questionKey] = proposal.proposedChoice === 'other'
+        ? authoredQuestion?.defaultValue ?? proposal.proposedChoice
+        : proposal.proposedChoice
 
       // Resolve every cited message before writing anything. A fabricated citation
       // passes schema validation and is indistinguishable from a real one once
@@ -164,7 +199,6 @@ export class DatabaseDecisionCommitter implements DecisionCommitter {
         }
       }
 
-      const memberCount = new Set(proposal.memberInputs.map(member => member.memberId)).size
       const [decision] = await tx
         .insert(decisions)
         .values({
@@ -173,8 +207,9 @@ export class DatabaseDecisionCommitter implements DecisionCommitter {
           questKey: proposal.questKey,
           questionKey: proposal.questionKey,
           choice: proposal.proposedChoice,
+          customChoice: proposal.customChoice,
           reason: proposal.reason,
-          decidedBy: memberCount === 2 ? 'both' : 'member',
+          decidedBy: requiredMembers.length > 1 ? 'both' : 'member',
           confidence: proposal.reason ? 'high' : 'medium',
           wasContested: false,
           proposalId: proposal.id,
@@ -183,7 +218,6 @@ export class DatabaseDecisionCommitter implements DecisionCommitter {
         .returning({ id: decisions.id })
 
       const taskIds: string[] = []
-      const authoredQuest = QUEST_TEMPLATES.find(template => template.key === proposal.questKey)
       const isAuthoredScopingQuestion = authoredQuest?.scopingQuestions?.some(question =>
         `${authoredQuest.answerNamespace ?? authoredQuest.key}.${question.key}` === proposal.questionKey,
       ) ?? false

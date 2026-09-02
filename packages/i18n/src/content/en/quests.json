@@ -267,6 +267,12 @@
       "title": "Vendor Dream Team",
       "subtitle": "The people who make the day actually happen",
       "celebration": "Your team is booked. These are the people who will carry the day.",
+      "question": {
+        "photographer_choice": {
+          "prompt": "Choose our photographer",
+          "help": "Choose only from photographers found through the verified shortlist. Bliss will show sourced strengths and concerns, never invented fit percentages."
+        }
+      },
       "section": {
         "photo": "Photo and video",
         "music": "Music",

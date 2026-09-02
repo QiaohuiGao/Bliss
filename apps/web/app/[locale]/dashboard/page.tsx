@@ -1,5 +1,5 @@
-import { PrototypeFirstHome } from '@/components/home/PrototypeFirstHome'
+import { DashboardEntry } from '@/components/home/DashboardEntry'
 
 export default function DashboardPage() {
-  return <PrototypeFirstHome />
+  return <DashboardEntry />
 }
