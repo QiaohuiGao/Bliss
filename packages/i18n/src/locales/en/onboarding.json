@@ -228,9 +228,32 @@
       "cancelCorrection": "Cancel"
     },
     "chapters": {
-      "title": "The fourteen chapters",
-      "touched": "{count} touched",
-      "body": "Answering here quietly opens the chapters this affects. None become work until you decide something."
+      "title": "Your fourteen chapters",
+      "touched": "{count} connected to what you shared",
+      "body": "Answering here quietly connects the chapters this affects. None become work until you decide something.",
+      "label": "The fourteen wedding chapter carousel",
+      "previous": "Show the previous wedding chapter",
+      "next": "Show the next wedding chapter",
+      "position": "Chapter {current} of {total}",
+      "cardLabel": "Chapter {current} of {total}: {chapter}",
+      "connected": "Connected to your answers",
+      "waiting": "Ready when you are",
+      "items": {
+        "foundation": "Vision & budget",
+        "venue_date": "Venue & date",
+        "vendor_team": "Vendor team",
+        "wedding_party": "Wedding party",
+        "attire_beauty": "Attire & beauty",
+        "guests_stationery": "Guests & invitations",
+        "guest_experience": "Guest experience",
+        "food_beverage": "Food & drink",
+        "design_flowers": "Design & flowers",
+        "ceremony": "Ceremony",
+        "registry_rings_honeymoon": "Rings, registry & honeymoon",
+        "legal": "Legal",
+        "pre_wedding_events": "Pre-wedding events",
+        "final_30_and_day_of": "Final month & wedding day"
+      }
     },
     "done": {
       "title": "That is plenty to start",

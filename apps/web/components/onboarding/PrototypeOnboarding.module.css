@@ -83,20 +83,37 @@
 .claimEditor button { min-height: 30px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); background: white; font-size: 9px; font-weight: 700; cursor: pointer; }
 .claimEditor button[type="submit"] { color: white; border-color: var(--violet); background: var(--violet); }
 .claimEditor button:disabled { opacity: .4; }
-.chaptersMini { margin-top: 24px; padding-top: 19px; border-top: 1px solid var(--line); }
-.chaptersMini h3 { display: flex; justify-content: space-between; margin: 0; font-size: 10px; }
-.chaptersMini h3 span { color: var(--muted); font-weight: 500; }
-.miniArc { position: relative; display: grid; grid-template-columns: repeat(14,1fr); gap: 5px; margin-top: 14px; }
-.miniArc::before { content: ""; position: absolute; top: 4px; right: 3px; left: 3px; height: 1px; background: var(--line-strong); }
-.miniArc i { position: relative; z-index: 1; width: 8px; height: 8px; border: 2px solid var(--paper); border-radius: 50%; background: var(--line-strong); box-shadow: 0 0 0 1px var(--line-strong); transition: 300ms ease; }
-.miniArc i[data-touched="true"] { background: var(--violet); box-shadow: 0 0 0 1px var(--violet); transform: scale(1.2); }
-.chaptersMini > p { margin: 11px 0 0; color: var(--muted); font-size: 8px; line-height: 1.45; }
+.chaptersMini { margin-top: 24px; padding-top: 19px; overflow: hidden; border-top: 1px solid var(--line); }
+.chaptersHead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.chaptersHead h3 { margin: 0; font-family: var(--display); font-size: 16px; font-weight: 600; letter-spacing: -.02em; }
+.chaptersHead p { margin: 2px 0 0; color: var(--muted); font-size: 9px; }
+.chapterControls { display: flex; gap: 6px; }
+.chapterControls button { display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 50%; color: var(--violet-deep); background: white; cursor: pointer; transition: 170ms ease; }
+.chapterControls button:hover:not(:disabled) { border-color: #aebac2; background: var(--violet-wash); transform: translateY(-1px); }
+.chapterControls button:disabled { color: var(--quiet); opacity: .38; cursor: default; }
+.chapterViewport { position: relative; margin-top: 12px; }
+.chapterViewport::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 26px; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(246,247,245,.96)); }
+.chapterTrack { display: flex; gap: 9px; padding: 3px 25% 10px 1px; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.chapterTrack::-webkit-scrollbar { display: none; }
+.chapterCard { position: relative; display: grid; flex: 0 0 132px; min-height: 116px; padding: 12px; overflow: hidden; scroll-snap-align: center; scroll-snap-stop: always; border: 1px solid var(--line); border-radius: 15px; color: var(--muted); background: rgba(255,255,255,.86); text-align: left; cursor: pointer; opacity: .72; transform: scale(.96); transition: border-color 220ms ease, box-shadow 220ms ease, opacity 220ms ease, transform 220ms ease, background 220ms ease; }
+.chapterCard::before { content: ""; position: absolute; top: 0; right: 0; left: 0; height: 3px; background: var(--line-strong); transition: background 220ms ease; }
+.chapterCard:hover, .chapterCard[data-active="true"] { border-color: #b7c2c8; opacity: 1; transform: scale(1); box-shadow: 0 8px 20px rgba(52,73,88,.1); }
+.chapterCard[data-active="true"] { color: var(--ink); background: white; }
+.chapterCard[data-touched="true"]::before { background: linear-gradient(90deg,var(--violet),var(--coral)); }
+.chapterCard[data-touched="true"] { border-color: #b9c5cc; background: var(--violet-wash); }
+.chapterNumber { color: var(--quiet); font-family: var(--utility); font-size: 8px; font-weight: 750; letter-spacing: .08em; }
+.chapterCard strong { align-self: end; font-family: var(--display); font-size: 15px; font-weight: 600; line-height: 1.12; }
+.chapterState { align-self: end; color: var(--quiet); font-size: 8px; line-height: 1.25; }
+.chapterCard[data-touched="true"] .chapterState { color: var(--violet-deep); font-weight: 700; }
+.chapterPosition { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 2px; color: var(--muted); font-size: 9px; }
+.chapterPosition strong { color: var(--ink); font-size: 10px; }
+.chaptersBody { margin: 9px 0 0; color: var(--muted); font-size: 9px; line-height: 1.45; }
 .donePanel { margin-top: 24px; padding: 14px; border: 1px solid #cbd7ce; border-radius: 12px; background: var(--sage-wash); }
 .donePanel strong { font-family: var(--display); font-size: 17px; }
 .donePanel p { margin: 6px 0 12px; color: #50665a; font-size: 9px; }
 .donePanel button { width: 100%; min-height: 40px; border: 1px solid var(--violet); border-radius: 10px; color: white; background: var(--violet); font-size: 9px; font-weight: 750; cursor: pointer; }
 .donePanel button:disabled { opacity: .5; }
 .error { color: #8f4d47 !important; }
-@media (max-width: 900px) { .body { display: block; } .knows { border-top: 1px solid var(--line); border-left: 0; } .top { grid-template-columns: 1fr auto; } .topProgress { display: none; } .talkScroll { max-height: none; } }
+@media (max-width: 900px) { .body { display: block; } .knows { border-top: 1px solid var(--line); border-left: 0; } .top { grid-template-columns: 1fr auto; } .topProgress { display: none; } .talkScroll { max-height: none; } .chapterCard { flex-basis: 148px; } .chapterTrack { padding-right: 42%; } }
 @media (max-width: 640px) { .shell { width: 100%; min-height: 100vh; margin: 0; border: 0; border-radius: 0; } .top { padding: 0 14px; } .leaveButton { font-size: 8px; } .talkScroll { padding: 24px 14px 16px; } .opening h1 { font-size: 35px; } .composerShell { padding: 10px 14px 16px; } .knows { padding: 20px 14px 26px; } }
 @media (prefers-reduced-motion: reduce) { .root *, .root *::before, .root *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }

@@ -1,7 +1,9 @@
 'use client'
 
 import { type FormEvent, useEffect, useMemo, useRef, useState } from 'react'
-import type { GuestCountRange, OnboardingIntakeClaim, OnboardingPayload } from '@bliss/types'
+import type { GuestCountRange, OnboardingIntakeClaim, OnboardingPayload, QuestKey } from '@bliss/types'
+import { QUEST_KEYS } from '@bliss/types'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/routing'
 import { api } from '@/lib/api'
@@ -22,14 +24,14 @@ const STEPS: Array<{
   key: StepKey
   claimKey: OnboardingIntakeClaim['key']
   kind: OnboardingIntakeClaim['kind']
-  touches: number[]
+  touches: QuestKey[]
   chips: string[]
 }> = [
-  { key: 'feeling', claimKey: 'feeling', kind: 'priority', touches: [0, 6, 8], chips: ['relaxed', 'alive', 'intimate', 'different'] },
-  { key: 'date', claimKey: 'date_horizon', kind: 'fact', touches: [1, 4, 11, 12], chips: ['june', 'season', 'open'] },
-  { key: 'place', claimKey: 'place', kind: 'fact', touches: [1, 3, 9], chips: ['hudson', 'family', 'open'] },
-  { key: 'people', claimKey: 'guest_shape', kind: 'fact', touches: [2, 5, 7, 8], chips: ['small', 'hundred', 'large', 'different'] },
-  { key: 'support', claimKey: 'support_style', kind: 'preference', touches: [0, 4, 10, 13], chips: ['next', 'options', 'conflict', 'learn'] },
+  { key: 'feeling', claimKey: 'feeling', kind: 'priority', touches: ['foundation', 'design_flowers', 'ceremony'], chips: ['relaxed', 'alive', 'intimate', 'different'] },
+  { key: 'date', claimKey: 'date_horizon', kind: 'fact', touches: ['foundation', 'venue_date', 'legal', 'final_30_and_day_of'], chips: ['june', 'season', 'open'] },
+  { key: 'place', claimKey: 'place', kind: 'fact', touches: ['venue_date', 'guest_experience', 'legal'], chips: ['hudson', 'family', 'open'] },
+  { key: 'people', claimKey: 'guest_shape', kind: 'fact', touches: ['foundation', 'venue_date', 'guests_stationery', 'guest_experience'], chips: ['small', 'hundred', 'large', 'different'] },
+  { key: 'support', claimKey: 'support_style', kind: 'preference', touches: ['foundation', 'vendor_team', 'pre_wedding_events', 'final_30_and_day_of'], chips: ['next', 'options', 'conflict', 'learn'] },
 ]
 
 export function PrototypeOnboarding() {
@@ -37,11 +39,13 @@ export function PrototypeOnboarding() {
   const router = useRouter()
   const getToken = useToken()
   const scrollRef = useRef<HTMLDivElement>(null)
+  const chapterRefs = useRef<Array<HTMLButtonElement | null>>([])
   const [draft, setDraft] = useState<IntakeDraft>({})
   const [stepIndex, setStepIndex] = useState(0)
   const [turns, setTurns] = useState<Turn[]>([])
   const [claims, setClaims] = useState<Claim[]>([])
-  const [touched, setTouched] = useState<number[]>([])
+  const [touched, setTouched] = useState<QuestKey[]>([])
+  const [activeChapterIndex, setActiveChapterIndex] = useState(0)
   const [input, setInput] = useState('')
   const [thinking, setThinking] = useState(false)
   const [finished, setFinished] = useState(false)
@@ -68,6 +72,16 @@ export function PrototypeOnboarding() {
   const scrollDown = () => window.requestAnimationFrame(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight
   })
+
+  function showChapter(index: number) {
+    const nextIndex = Math.max(0, Math.min(QUEST_KEYS.length - 1, index))
+    setActiveChapterIndex(nextIndex)
+    chapterRefs.current[nextIndex]?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'nearest',
+      inline: 'center',
+    })
+  }
 
   function finish() {
     setFinished(true)
@@ -97,7 +111,12 @@ export function PrototypeOnboarding() {
         labelKey: `steps.${step.key}.claimLabel`,
         noteKey: `steps.${step.key}.claimNote`,
       }])
-      setTouched(items => Array.from(new Set([...items, ...step.touches])))
+      setTouched(items => {
+        const next = Array.from(new Set([...items, ...step.touches]))
+        const newestChapterIndex = QUEST_KEYS.findIndex(key => step.touches.includes(key))
+        if (newestChapterIndex >= 0) window.requestAnimationFrame(() => showChapter(newestChapterIndex))
+        return next
+      })
       setThinking(false)
       if (nextIndex >= STEPS.length) finish()
       else setStepIndex(nextIndex)
@@ -213,7 +232,46 @@ export function PrototypeOnboarding() {
             <div className={styles.knowsHead}><strong id="knowsTitle">{t('knows.title')}</strong><span>{claims.length}</span></div>
             <p>{t('knows.body')}</p>
             <div className={styles.claims}>{claims.length === 0 ? <div className={styles.knowsEmpty}>{t('knows.empty')}</div> : claims.map(claim => <article className={styles.claim} data-who="both" key={claim.key}><div><span>{t(claim.labelKey)}</span><small>{t('knows.source')}</small></div><strong>{claim.value}</strong><p>{t(claim.noteKey)}</p>{editingClaimKey === claim.key ? <form className={styles.claimEditor} onSubmit={event => saveCorrection(event, claim.key)}><label className="sr-only" htmlFor={`claim-${claim.key}`}>{t('knows.correctionLabel')}</label><input id={`claim-${claim.key}`} value={correctionDraft} onChange={event => setCorrectionDraft(event.target.value)} autoFocus /><div><button type="submit" disabled={!correctionDraft.trim()}>{t('knows.saveCorrection')}</button><button type="button" onClick={() => setEditingClaimKey(null)}>{t('knows.cancelCorrection')}</button></div></form> : <button className={styles.claimFix} type="button" onClick={() => startCorrection(claim)}>{t('knows.correct')}</button>}</article>)}</div>
-            <section className={styles.chaptersMini}><h3>{t('chapters.title')}<span>{t('chapters.touched', { count: touched.length })}</span></h3><div className={styles.miniArc} aria-hidden="true">{Array.from({ length: 14 }, (_, index) => <i key={index} data-touched={touched.includes(index)} />)}</div><p>{t('chapters.body')}</p></section>
+            <section className={styles.chaptersMini} aria-labelledby="onboardingChaptersTitle">
+              <div className={styles.chaptersHead}>
+                <div><h3 id="onboardingChaptersTitle">{t('chapters.title')}</h3><p>{t('chapters.touched', { count: touched.length })}</p></div>
+                <div className={styles.chapterControls}>
+                  <button type="button" aria-label={t('chapters.previous')} onClick={() => showChapter(activeChapterIndex - 1)} disabled={activeChapterIndex === 0}><ChevronLeft size={15} /></button>
+                  <button type="button" aria-label={t('chapters.next')} onClick={() => showChapter(activeChapterIndex + 1)} disabled={activeChapterIndex === QUEST_KEYS.length - 1}><ChevronRight size={15} /></button>
+                </div>
+              </div>
+              <div className={styles.chapterViewport}>
+                <div className={styles.chapterTrack} role="group" aria-roledescription="carousel" aria-label={t('chapters.label')}>
+                  {QUEST_KEYS.map((chapterKey, index) => {
+                    const isTouched = touched.includes(chapterKey)
+                    const isActive = index === activeChapterIndex
+                    return (
+                      <button
+                        ref={node => { chapterRefs.current[index] = node }}
+                        className={styles.chapterCard}
+                        data-active={isActive}
+                        data-touched={isTouched}
+                        type="button"
+                        key={chapterKey}
+                        aria-current={isActive ? 'true' : undefined}
+                        aria-roledescription="slide"
+                        aria-label={t('chapters.cardLabel', { current: index + 1, total: QUEST_KEYS.length, chapter: t(`chapters.items.${chapterKey}`) })}
+                        onClick={() => showChapter(index)}
+                      >
+                        <span className={styles.chapterNumber}>{String(index + 1).padStart(2, '0')}</span>
+                        <strong>{t(`chapters.items.${chapterKey}`)}</strong>
+                        <span className={styles.chapterState}>{isTouched ? t('chapters.connected') : t('chapters.waiting')}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+              <div className={styles.chapterPosition} aria-live="polite">
+                <span>{t('chapters.position', { current: activeChapterIndex + 1, total: QUEST_KEYS.length })}</span>
+                <strong>{t(`chapters.items.${QUEST_KEYS[activeChapterIndex]}`)}</strong>
+              </div>
+              <p className={styles.chaptersBody}>{t('chapters.body')}</p>
+            </section>
             {finished && <div className={styles.donePanel}><strong>{t('done.title')}</strong><p>{t('done.body')}</p><button type="button" onClick={openWorkspace} disabled={saving}>{saving ? t('done.saving') : t('done.action')}</button>{error && <p className={styles.error}>{error}</p>}</div>}
           </aside>
         </div>
