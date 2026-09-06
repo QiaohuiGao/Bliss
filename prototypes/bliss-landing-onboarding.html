@@ -576,54 +576,31 @@
       text-align: center;
     }
 
-    .chapters-mini { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); }
-
-    .chapters-mini h3 {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 10px;
-      margin: 0 0 11px;
-      font-size: 12px;
-      font-weight: 750;
-    }
-
-    .chapters-mini h3 span { color: var(--muted); font-size: 10px; font-weight: 500; }
-
-    .mini-arc {
-      position: relative;
-      display: grid;
-      grid-template-columns: repeat(14, minmax(0, 1fr));
-      gap: 2px;
-      padding-top: 3px;
-    }
-
-    .mini-arc::before {
-      content: "";
-      position: absolute;
-      top: 7px;
-      right: 8px;
-      left: 8px;
-      height: 1px;
-      background: var(--line-strong);
-    }
-
-    .mini-dot {
-      position: relative;
-      z-index: 1;
-      justify-self: center;
-      width: 9px;
-      height: 9px;
-      border: 2px solid rgba(246, 247, 245, 1);
-      border-radius: 50%;
-      background: var(--line-strong);
-      box-shadow: 0 0 0 1px var(--line-strong);
-      transition: background 400ms ease, box-shadow 400ms ease;
-    }
-
-    .mini-dot.touched { background: var(--amber); box-shadow: 0 0 0 1px var(--amber); }
-
-    .chapters-mini p { margin: 12px 0 0; color: var(--quiet); font-size: 10px; }
+    .chapters-mini { margin-top: 24px; padding-top: 18px; overflow: hidden; border-top: 1px solid var(--line); }
+    .chapters-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .chapters-head h3 { margin: 0; font-family: var(--display); font-size: 16px; font-weight: 600; letter-spacing: -0.02em; }
+    .chapters-head p { margin: 2px 0 0; color: var(--muted); font-size: 9px; }
+    .chapter-controls { display: flex; gap: 6px; }
+    .chapter-controls button { display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 50%; color: var(--violet-deep); background: white; cursor: pointer; transition: 170ms ease; }
+    .chapter-controls button:hover:not(:disabled) { border-color: #aebac2; background: var(--violet-wash); transform: translateY(-1px); }
+    .chapter-controls button:disabled { color: var(--quiet); opacity: 0.38; cursor: default; }
+    .chapter-viewport { position: relative; margin-top: 12px; }
+    .chapter-viewport::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 26px; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(246, 247, 245, 0.96)); }
+    .chapter-track { display: flex; gap: 9px; padding: 3px 25% 10px 1px; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .chapter-track::-webkit-scrollbar { display: none; }
+    .chapter-card { position: relative; display: grid; flex: 0 0 132px; min-height: 116px; padding: 12px; overflow: hidden; scroll-snap-align: center; scroll-snap-stop: always; border: 1px solid var(--line); border-radius: 15px; color: var(--muted); background: rgba(255, 255, 255, 0.86); text-align: left; cursor: pointer; opacity: 0.72; transform: scale(0.96); transition: border-color 220ms ease, box-shadow 220ms ease, opacity 220ms ease, transform 220ms ease, background 220ms ease; }
+    .chapter-card::before { content: ""; position: absolute; top: 0; right: 0; left: 0; height: 3px; background: var(--line-strong); transition: background 220ms ease; }
+    .chapter-card:hover, .chapter-card.active { border-color: #b7c2c8; opacity: 1; transform: scale(1); box-shadow: 0 8px 20px rgba(52, 73, 88, 0.1); }
+    .chapter-card.active { color: var(--ink); background: white; }
+    .chapter-card.touched::before { background: linear-gradient(90deg, var(--violet), var(--coral)); }
+    .chapter-card.touched { border-color: #b9c5cc; background: var(--violet-wash); }
+    .chapter-number { color: var(--quiet); font-family: var(--utility); font-size: 8px; font-weight: 750; letter-spacing: 0.08em; }
+    .chapter-card strong { align-self: end; font-family: var(--display); font-size: 15px; font-weight: 600; line-height: 1.12; }
+    .chapter-state { align-self: end; color: var(--quiet); font-size: 8px; line-height: 1.25; }
+    .chapter-card.touched .chapter-state { color: var(--violet-deep); font-weight: 700; }
+    .chapter-position { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 2px; color: var(--muted); font-size: 9px; }
+    .chapter-position strong { color: var(--ink); font-size: 10px; }
+    .chapters-body { margin: 9px 0 0; color: var(--muted); font-size: 9px; line-height: 1.45; }
 
     .done-panel {
       margin-top: 20px;
@@ -669,6 +646,8 @@
       .knows { border-left: 0; border-top: 1px solid var(--line); }
       .top { grid-template-columns: 1fr auto; }
       .top-progress { display: none; }
+      .chapter-card { flex-basis: 148px; }
+      .chapter-track { padding-right: 42%; }
     }
 
     @media (max-width: 640px) {
@@ -755,10 +734,22 @@
           <div class="knows-empty" id="knowsEmpty">Nothing yet. This fills in as you talk.</div>
         </div>
 
-        <section class="chapters-mini">
-          <h3>The fourteen chapters <span id="touchedCount">0 touched</span></h3>
-          <div class="mini-arc" id="miniArc" aria-hidden="true"></div>
-          <p>Answering here quietly opens the chapters this affects. None of them become work until you decide something.</p>
+        <section class="chapters-mini" aria-labelledby="chaptersTitle">
+          <div class="chapters-head">
+            <div>
+              <h3 id="chaptersTitle">Your fourteen chapters</h3>
+              <p id="touchedCount">0 connected to what you shared</p>
+            </div>
+            <div class="chapter-controls">
+              <button type="button" id="previousChapter" aria-label="Show the previous wedding chapter">‹</button>
+              <button type="button" id="nextChapter" aria-label="Show the next wedding chapter">›</button>
+            </div>
+          </div>
+          <div class="chapter-viewport">
+            <div class="chapter-track" id="chapterTrack" role="group" aria-roledescription="carousel" aria-label="The fourteen wedding chapter carousel"></div>
+          </div>
+          <div class="chapter-position" aria-live="polite"><span id="chapterPosition">Chapter 1 of 14</span><strong id="chapterName">Vision &amp; budget</strong></div>
+          <p class="chapters-body">Answering here quietly connects the chapters this affects. None become work until you decide something.</p>
         </section>
 
         <div id="donePanelSlot"></div>
@@ -783,7 +774,7 @@
           value: answer,
           note: 'A compass for later choices, not a theme to lock in.',
         }),
-        touch: [0, 6, 8],
+        touch: [0, 8, 9],
         reply: (answer) => ({
           text: answer.toLowerCase().includes('differently')
             ? 'That is useful to know this early. I will keep both pictures open instead of blending them into an answer neither of you gave.'
@@ -801,7 +792,7 @@
           value: answer,
           note: 'Everything Bliss schedules will count back from this only after you confirm it.',
         }),
-        touch: [1, 4, 11, 12],
+        touch: [0, 1, 11, 13],
         reply: (answer) => ({
           text: answer.toLowerCase().includes('open')
             ? 'Open is a real answer. I can keep the plan useful without inventing a deadline for you.'
@@ -819,7 +810,7 @@
           value: answer,
           note: 'Helps Bliss bring in local and legal information only when relevant.',
         }),
-        touch: [1, 3, 9],
+        touch: [1, 6, 11],
         reply: (answer) => ({
           text: answer.toLowerCase().includes('no idea')
             ? 'Then I’ll leave the map blank. When you are ready, we can compare places by what matters to you instead of opening an endless venue search.'
@@ -837,7 +828,7 @@
           value: answer,
           note: answer.toLowerCase().includes('differently') ? 'Both positions stay open until each person is heard.' : 'A planning range, not a final guest count.',
         }),
-        touch: [2, 5, 7, 8],
+        touch: [0, 1, 5, 6],
         reply: (answer) => ({
           text: answer.toLowerCase().includes('differently')
             ? 'That is a real trade-off, not a problem to solve in one message. I’ll keep it open and later help you compare what each version protects.'
@@ -855,7 +846,7 @@
           value: answer,
           note: 'Bliss will use this to pace questions and recommendations.',
         }),
-        touch: [0, 4, 10, 13],
+        touch: [0, 2, 12, 13],
         reply: (answer) => ({
           text: `I can do that: ${answer.toLowerCase()}. I’ll keep this as a preference you can change, and I won’t confuse being helpful with taking over.`,
           next: null,
@@ -863,7 +854,22 @@
       },
     ];
 
-    const CHAPTERS = 14;
+    const CHAPTERS = [
+      'Vision & budget',
+      'Venue & date',
+      'Vendor team',
+      'Wedding party',
+      'Attire & beauty',
+      'Guests & invitations',
+      'Guest experience',
+      'Food & drink',
+      'Design & flowers',
+      'Ceremony',
+      'Rings, registry & honeymoon',
+      'Legal',
+      'Pre-wedding events',
+      'Final month & wedding day',
+    ];
 
     const turns = document.getElementById('turns');
     const talkScroll = document.getElementById('talkScroll');
@@ -873,8 +879,12 @@
     const claims = document.getElementById('claims');
     const knowsEmpty = document.getElementById('knowsEmpty');
     const claimCount = document.getElementById('claimCount');
-    const miniArc = document.getElementById('miniArc');
+    const chapterTrack = document.getElementById('chapterTrack');
     const touchedCount = document.getElementById('touchedCount');
+    const previousChapter = document.getElementById('previousChapter');
+    const nextChapter = document.getElementById('nextChapter');
+    const chapterPosition = document.getElementById('chapterPosition');
+    const chapterName = document.getElementById('chapterName');
     const pips = document.getElementById('pips');
     const progressText = document.getElementById('progressText');
     const donePanelSlot = document.getElementById('donePanelSlot');
@@ -883,16 +893,45 @@
 
     let stepIndex = 0;
     let claimTotal = 0;
+    let activeChapterIndex = 0;
     const confirmedClaims = [];
     const touched = new Set();
 
-    for (let i = 0; i < CHAPTERS; i += 1) {
-      const dot = document.createElement('span');
-      dot.className = 'mini-dot';
-      miniArc.appendChild(dot);
+    CHAPTERS.forEach((name, index) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'chapter-card';
+      card.setAttribute('aria-roledescription', 'slide');
+      card.setAttribute('aria-label', `Chapter ${index + 1} of ${CHAPTERS.length}: ${name}`);
+      card.innerHTML = `<span class="chapter-number">${String(index + 1).padStart(2, '0')}</span><strong>${name}</strong><span class="chapter-state">Ready when you are</span>`;
+      card.addEventListener('click', () => showChapter(index));
+      chapterTrack.appendChild(card);
+    });
+
+    const chapterCards = Array.from(chapterTrack.children);
+
+    function showChapter(index) {
+      activeChapterIndex = Math.max(0, Math.min(CHAPTERS.length - 1, index));
+      chapterCards.forEach((card, cardIndex) => {
+        const isActive = cardIndex === activeChapterIndex;
+        card.classList.toggle('active', isActive);
+        if (isActive) card.setAttribute('aria-current', 'true');
+        else card.removeAttribute('aria-current');
+      });
+      chapterPosition.textContent = `Chapter ${activeChapterIndex + 1} of ${CHAPTERS.length}`;
+      chapterName.textContent = CHAPTERS[activeChapterIndex];
+      previousChapter.disabled = activeChapterIndex === 0;
+      nextChapter.disabled = activeChapterIndex === CHAPTERS.length - 1;
+      const card = chapterCards[activeChapterIndex];
+      if (card) chapterTrack.scrollTo({
+        left: card.offsetLeft - (chapterTrack.clientWidth - card.offsetWidth) / 2,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      });
     }
 
-    const dots = Array.from(miniArc.children);
+    previousChapter.addEventListener('click', () => showChapter(activeChapterIndex - 1));
+    nextChapter.addEventListener('click', () => showChapter(activeChapterIndex + 1));
+    showChapter(0);
 
     function scrollDown() {
       window.requestAnimationFrame(() => { talkScroll.scrollTop = talkScroll.scrollHeight; });
@@ -1000,9 +1039,13 @@
     function markTouched(list) {
       (list || []).forEach((i) => {
         touched.add(i);
-        dots[i]?.classList.add('touched');
+        const card = chapterCards[i];
+        card?.classList.add('touched');
+        const state = card?.querySelector('.chapter-state');
+        if (state) state.textContent = 'Connected to your answers';
       });
-      touchedCount.textContent = `${touched.size} touched`;
+      touchedCount.textContent = `${touched.size} connected to what you shared`;
+      if (list?.length) showChapter(list[0]);
     }
 
     function syncPips() {
