@@ -13,6 +13,13 @@ import type {
 
 const API_URL = process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:3001'
 
+export class ApiError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message)
+    this.name = 'ApiError'
+  }
+}
+
 async function apiFetch<T>(
   path: string,
   options: RequestInit & { token?: string } = {}
@@ -31,7 +38,7 @@ async function apiFetch<T>(
 
   if (!res.ok) {
     const error = await res.json().catch(() => ({ error: res.statusText }))
-    throw new Error(error.error ?? `API error ${res.status}`)
+    throw new ApiError(error.error ?? `API error ${res.status}`, res.status)
   }
 
   if (res.status === 204) return undefined as T

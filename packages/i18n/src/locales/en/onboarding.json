@@ -133,11 +133,14 @@
     "brand": "Bliss",
     "couple": "{selfName} & {partnerName}",
     "coupleFallback": "Your shared beginning",
+    "sharedSpace": "Your shared planning space",
     "ready": "Ready when you are",
     "enough": "This is enough for now",
     "talkLabel": "Setting up with Bliss",
     "title": "Let's start where",
     "titleEmphasis": "you actually are.",
+    "conversationEyebrow": "Begin with Bliss",
+    "conversationTitle": "Start with what feels true.",
     "intro": "You do not have to answer like a planner. Start with what feels true; Bliss will turn it into a path only when it helps.",
     "orb": "b",
     "welcome": "{coupleName}, I'm glad you're here.",
@@ -152,8 +155,22 @@
     "note": "Nothing here is locked in. Bliss only records what you confirm.",
     "finishedNote": "You can keep talking in your workspace. Everything here remains editable.",
     "error": "Your starting point could not be saved. Check your connection and try again.",
+    "journey": {
+      "label": "Onboarding journey",
+      "eyebrow": "Your shared beginning",
+      "title": "Five questions, one starting point",
+      "body": "A short conversation before the chapters open.",
+      "count": "{current} of {total}"
+    },
+    "path": {
+      "eyebrow": "Our starting point",
+      "title": "A small beginning",
+      "body": "Each answer gives Bliss context. Nothing here becomes a decision until you choose it together."
+    },
     "steps": {
       "feeling": {
+        "label": "How it feels",
+        "hint": "The feeling you want to protect",
         "progress": "Finding your compass",
         "question": "Before dates or lists: when you picture the day from the inside—not how it looks—what do you hope the two of you feel?",
         "reply": "I'm hearing “{answer}.” I'll use that as a compass when choices get noisy, not as a theme you have to defend.",
@@ -167,6 +184,8 @@
         }
       },
       "date": {
+        "label": "When",
+        "hint": "A date, season, or open horizon",
         "progress": "Giving the story a horizon",
         "question": "Looking ahead, is there already a date or season in view, or does the calendar still feel completely open?",
         "reply": "“{answer}” gives us enough of a horizon. I'll tell you when timing changes a choice; until then, nothing needs to feel urgent.",
@@ -179,6 +198,8 @@
         }
       },
       "place": {
+        "label": "Where",
+        "hint": "A place already pulling you",
         "progress": "Finding a possible setting",
         "question": "Is there a place pulling you already—a city, a region, somewhere near family—or is that open too?",
         "reply": "I'll hold “{answer}” as a direction, not a commitment. Local rules and venue information can wait until the place is real enough to need them.",
@@ -191,6 +212,8 @@
         }
       },
       "people": {
+        "label": "Who is there",
+        "hint": "The shape of the room around you",
         "progress": "Understanding the circle around you",
         "question": "When you imagine the room around you, does it feel small and close, lively and generous, or is guest count something you see differently?",
         "reply": "That gives the celebration a shape without turning anyone into a number. “{answer}” is enough for now.",
@@ -204,6 +227,8 @@
         }
       },
       "support": {
+        "label": "How Bliss helps",
+        "hint": "The support that feels useful",
         "progress": "Choosing how Bliss shows up",
         "question": "One last thing: when planning gets complicated, what kind of help would feel most supportive from Bliss?",
         "reply": "I can do that: {answer}. I'll keep this as a preference you can change, and I won't confuse being helpful with taking over.",
@@ -256,10 +281,16 @@
       }
     },
     "done": {
+      "eyebrow": "Your beginning is ready",
       "title": "That is plenty to start",
       "body": "Bliss has enough to be useful. What you shared arrives as an editable starting point, not a locked decision.",
-      "action": "See what carries into our workspace →",
-      "saving": "Building your workspace…"
+      "action": "Enter our workspace",
+      "saving": "Opening your workspace…",
+      "sessionError": "Your sign-in session needs to be refreshed. Sign in again, then continue.",
+      "connectionError": "Bliss cannot reach the workspace service right now. Your answers are still here.",
+      "saveError": "Bliss could not finish opening the workspace. Your answers are still here.",
+      "signInAgain": "Sign in again",
+      "retry": "Try again"
     }
   },
   "generating": {

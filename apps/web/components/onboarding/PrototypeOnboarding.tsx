@@ -6,7 +6,7 @@ import { QUEST_KEYS } from '@bliss/types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/routing'
-import { api } from '@/lib/api'
+import { api, ApiError } from '@/lib/api'
 import { useToken } from '@/lib/useToken'
 import styles from './PrototypeOnboarding.module.css'
 
@@ -51,7 +51,7 @@ export function PrototypeOnboarding() {
   const [thinking, setThinking] = useState(false)
   const [finished, setFinished] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [errorKey, setErrorKey] = useState<'sessionError' | 'connectionError' | 'saveError' | null>(null)
   const [editingClaimKey, setEditingClaimKey] = useState<OnboardingIntakeClaim['key'] | null>(null)
   const [correctionDraft, setCorrectionDraft] = useState('')
 
@@ -121,7 +121,10 @@ export function PrototypeOnboarding() {
         return next
       })
       setThinking(false)
-      if (nextIndex >= STEPS.length) finish()
+      if (nextIndex >= STEPS.length) {
+        setStepIndex(nextIndex)
+        finish()
+      }
       else setStepIndex(nextIndex)
       scrollDown()
     }, 650)
@@ -135,7 +138,10 @@ export function PrototypeOnboarding() {
   function skip() {
     if (!current || thinking) return
     const nextIndex = stepIndex + 1
-    if (nextIndex >= STEPS.length) finish()
+    if (nextIndex >= STEPS.length) {
+      setStepIndex(nextIndex)
+      finish()
+    }
     else {
       setStepIndex(nextIndex)
       setTurns(items => [...items, {
@@ -173,9 +179,18 @@ export function PrototypeOnboarding() {
   async function openWorkspace() {
     if (saving) return
     setSaving(true)
-    setError(null)
+    setErrorKey(null)
     try {
       const token = await getToken()
+      try {
+        await api.getMyWedding(token)
+        window.localStorage.removeItem('bliss:intake')
+        router.replace('/dashboard')
+        return
+      } catch (caught) {
+        if (!(caught instanceof ApiError) || caught.status !== 404) throw caught
+      }
+
       const payload: OnboardingPayload = {
         ownerDisplayName: draft.selfName || undefined,
         partnerDisplayName: draft.partnerName || undefined,
@@ -185,34 +200,55 @@ export function PrototypeOnboarding() {
         intakeClaims: claims.map(({ key, kind, value }) => ({ key, kind, value })),
         weeklyCapacityHours: 5,
       }
-      await api.createWedding(payload, token)
-      window.localStorage.removeItem('bliss:intake')
-      router.push('/dashboard')
-    } catch (caught) {
-      const message = caught instanceof Error ? caught.message : ''
-      if (message.includes('already has a wedding')) {
-        router.push('/dashboard')
-        return
+      try {
+        await api.createWedding(payload, token)
+      } catch (caught) {
+        if (!(caught instanceof ApiError) || caught.status !== 409) throw caught
       }
-      setError(t('error'))
+      window.localStorage.removeItem('bliss:intake')
+      router.replace('/dashboard')
+    } catch (caught) {
+      if ((caught instanceof ApiError && caught.status === 401) || (caught instanceof Error && caught.message === 'Authentication required')) setErrorKey('sessionError')
+      else if (caught instanceof TypeError) setErrorKey('connectionError')
+      else setErrorKey('saveError')
+    } finally {
       setSaving(false)
     }
   }
+
+  const completedSteps = stepIndex
 
   return (
     <main className={styles.root}>
       <section className={styles.shell}>
         <header className={styles.top}>
           <div className={styles.brand}><span className={styles.brandMark} aria-hidden="true" /><span>{t('brand')}</span></div>
-          <div className={styles.topProgress}><span className={styles.pips} aria-hidden="true">{STEPS.map((step, index) => <i key={step.key} data-state={index < stepIndex ? 'filled' : index === stepIndex && !finished ? 'active' : 'idle'} />)}</span><span>{finished ? t('ready') : t(`steps.${current?.key ?? 'support'}.progress`)}</span></div>
+          <div className={styles.identity}><strong>{coupleName}</strong><span>{t('sharedSpace')}</span></div>
           <button className={styles.leaveButton} type="button" onClick={finish}>{t('enough')}</button>
         </header>
 
-        <div className={styles.body}>
+        <section className={styles.journey} aria-label={t('journey.label')}>
+          <div className={styles.journeyCopy}><p className={styles.eyebrow}>{t('journey.eyebrow')}</p><strong>{t('journey.title')}</strong><span>{t('journey.body')}</span></div>
+          <div className={styles.stepTrack}>
+            {STEPS.map((step, index) => <div className={styles.stepNode} data-state={index < completedSteps ? 'complete' : index === stepIndex && !finished ? 'current' : 'waiting'} key={step.key}><i /><span>{t(`steps.${step.key}.label`)}</span></div>)}
+          </div>
+          <div className={styles.journeyScore}><strong>{t('journey.count', { current: completedSteps, total: STEPS.length })}</strong><span>{finished ? t('ready') : t(`steps.${current?.key ?? 'support'}.progress`)}</span></div>
+        </section>
+
+        <div className={styles.workspace}>
+          <aside className={styles.intakeRail} aria-labelledby="onboardingPathTitle">
+            <p className={styles.eyebrow}>{t('path.eyebrow')}</p>
+            <h1 id="onboardingPathTitle">{t('path.title')}</h1>
+            <p>{t('path.body')}</p>
+            <ol className={styles.pathList}>
+              {STEPS.map((step, index) => <li data-state={index < completedSteps ? 'complete' : index === stepIndex && !finished ? 'current' : 'waiting'} key={step.key}><span>{index + 1}</span><div><strong>{t(`steps.${step.key}.label`)}</strong><small>{t(`steps.${step.key}.hint`)}</small></div></li>)}
+            </ol>
+          </aside>
+
           <section className={styles.talk} aria-label={t('talkLabel')}>
             <div className={styles.talkScroll} ref={scrollRef}>
               <div className={styles.talkInner}>
-                <div className={styles.opening}><p className={styles.eyebrow}>{coupleName}</p><h1>{t('title')} <em>{t('titleEmphasis')}</em></h1><p>{t('intro')}</p></div>
+                <div className={styles.opening}><p className={styles.eyebrow}>{t('conversationEyebrow')}</p><h2>{t('conversationTitle')}</h2><p>{t('intro')}</p></div>
                 <div className={styles.turns}>
                   <article className={`${styles.turn} ${styles.agentTurn}`}><span className={styles.blissOrb} aria-hidden="true">{t('orb')}</span><div className={styles.bubble}><p>{t('welcome', { coupleName })}</p><p>{t('steps.feeling.question')}</p></div></article>
                   {turns.map(turn => turn.role === 'user' ? (
@@ -221,14 +257,15 @@ export function PrototypeOnboarding() {
                     <article className={`${styles.turn} ${styles.agentTurn}`} key={turn.id}><span className={styles.blissOrb} aria-hidden="true">{t('orb')}</span><div className={styles.bubble}><p>{turn.text}</p>{turn.next && <p>{turn.next}</p>}</div></article>
                   ))}
                   {thinking && <article className={`${styles.turn} ${styles.agentTurn}`}><span className={styles.blissOrb} aria-hidden="true">{t('orb')}</span><span className={styles.thinking}><i />{t('thinking')}</span></article>}
+                  {finished && <article className={styles.handoff}><span className={styles.handoffMark} aria-hidden="true">✓</span><div><p className={styles.eyebrow}>{t('done.eyebrow')}</p><h2>{t('done.title')}</h2><p>{t('done.body')}</p><button type="button" onClick={openWorkspace} disabled={saving}>{saving ? t('done.saving') : t('done.action')}</button>{errorKey && <div className={styles.handoffError} role="alert"><p>{t(`done.${errorKey}`)}</p><button type="button" onClick={() => errorKey === 'sessionError' ? router.push('/sign-in') : openWorkspace()}>{errorKey === 'sessionError' ? t('done.signInAgain') : t('done.retry')}</button></div>}</div></article>}
                 </div>
               </div>
             </div>
-            <div className={styles.composerShell}>
-              {!finished && current && <div className={styles.chipRow}>{current.chips.map(key => <button className={styles.chip} key={key} type="button" onClick={() => answer(t(`steps.${current.key}.chips.${key}`))}>{t(`steps.${current.key}.chips.${key}`)}</button>)}<button className={`${styles.chip} ${styles.skipChip}`} type="button" onClick={skip}>{t('skip')}</button></div>}
+            {!finished && <div className={styles.composerShell}>
+              {current && <div className={styles.chipRow}>{current.chips.map(key => <button className={styles.chip} key={key} type="button" onClick={() => answer(t(`steps.${current.key}.chips.${key}`))}>{t(`steps.${current.key}.chips.${key}`)}</button>)}<button className={`${styles.chip} ${styles.skipChip}`} type="button" onClick={skip}>{t('skip')}</button></div>}
               <form className={styles.composer} onSubmit={submit}><textarea value={input} onChange={event => setInput(event.target.value)} rows={1} disabled={thinking || finished} aria-label={t('inputLabel')} placeholder={finished ? t('finishedPlaceholder') : t('placeholder')} /><button type="submit" disabled={!input.trim() || thinking || finished} aria-label={t('send')}>↑</button></form>
-              <p className={styles.composerNote}>{finished ? t('finishedNote') : t('note')}</p>
-            </div>
+              <p className={styles.composerNote}>{t('note')}</p>
+            </div>}
           </section>
 
           <aside className={styles.knows} aria-labelledby="knowsTitle">
@@ -275,7 +312,6 @@ export function PrototypeOnboarding() {
               </div>
               <p className={styles.chaptersBody}>{t('chapters.body')}</p>
             </section>
-            {finished && <div className={styles.donePanel}><strong>{t('done.title')}</strong><p>{t('done.body')}</p><button type="button" onClick={openWorkspace} disabled={saving}>{saving ? t('done.saving') : t('done.action')}</button>{error && <p className={styles.error}>{error}</p>}</div>}
           </aside>
         </div>
       </section>
