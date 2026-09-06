@@ -39,6 +39,7 @@ export function PrototypeOnboarding() {
   const router = useRouter()
   const getToken = useToken()
   const scrollRef = useRef<HTMLDivElement>(null)
+  const chapterTrackRef = useRef<HTMLDivElement>(null)
   const chapterRefs = useRef<Array<HTMLButtonElement | null>>([])
   const [draft, setDraft] = useState<IntakeDraft>({})
   const [stepIndex, setStepIndex] = useState(0)
@@ -76,10 +77,12 @@ export function PrototypeOnboarding() {
   function showChapter(index: number) {
     const nextIndex = Math.max(0, Math.min(QUEST_KEYS.length - 1, index))
     setActiveChapterIndex(nextIndex)
-    chapterRefs.current[nextIndex]?.scrollIntoView({
+    const track = chapterTrackRef.current
+    const card = chapterRefs.current[nextIndex]
+    if (!track || !card) return
+    track.scrollTo({
+      left: card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2,
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-      block: 'nearest',
-      inline: 'center',
     })
   }
 
@@ -241,7 +244,7 @@ export function PrototypeOnboarding() {
                 </div>
               </div>
               <div className={styles.chapterViewport}>
-                <div className={styles.chapterTrack} role="group" aria-roledescription="carousel" aria-label={t('chapters.label')}>
+                <div ref={chapterTrackRef} className={styles.chapterTrack} role="group" aria-roledescription="carousel" aria-label={t('chapters.label')}>
                   {QUEST_KEYS.map((chapterKey, index) => {
                     const isTouched = touched.includes(chapterKey)
                     const isActive = index === activeChapterIndex
